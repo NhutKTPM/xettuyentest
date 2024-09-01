@@ -1,10 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- DataTables -->
+<link rel="stylesheet" href="/admin/admin_24/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/admin/admin_24/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="/admin/admin_24/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+
+<script src="/admin/admin_24/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/admin/admin_24/plugins/jszip/jszip.min.js"></script>
+<script src="/admin/admin_24/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/admin/admin_24/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+
+
+</script>
 
     @include('user_24.admin24.include.header')
     <link rel="stylesheet" href="/admin/admin_24/plugins/summernote/summernote.min.css">
@@ -14,6 +41,12 @@
         /* div.dataTables_scrollHead table.dataTable{
             margin-bottom: -11px !important;
         } */
+
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
     </style>
 
 </head>
@@ -111,12 +144,44 @@
                             <div class="card" style="min-height: 600px;">
                                 <!-- Code bảng giấy xác nhận đã đăng ký -->
                                 <div class="card-header">
-                                    aaaaaaa
+                                    <button onclick="loaddangkygiay()" class="btn btn-primary">Làm Mới</button>
                                 </div>
-                            
                                 <div class="card-body">
-                                    aaaaa
+                                    <table id="example1" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Mã Đăng Ký</th>
+                                                <th>Tiến Độ</th>
+                                                <th>Ngày Đăng Ký</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>12345</td>
+                                                <td>Đang xử lý</td>
+                                                <td>2024-09-01</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>67890</td>
+                                                <td>Hoàn thành</td>
+                                                <td>2024-08-31</td>
+                                            </tr>
+                                            <!-- Thêm các hàng khác tại đây -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Mã Đăng Ký</th>
+                                                <th>Tiến Độ</th>
+                                                <th>Ngày Đăng Ký</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
                                 </div>
+                                
                                 <div class="card-footer">
                                     assss
                                 </div>
