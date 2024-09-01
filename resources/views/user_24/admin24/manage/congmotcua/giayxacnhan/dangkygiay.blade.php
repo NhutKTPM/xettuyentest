@@ -67,7 +67,7 @@
                                                         
                                                     </div>
                                                     <div class="col-4">
-                                                        <button type="button" id="laydulieutheodot" onclick="" class="btn btn-block btn-info btn-xs"><i class="fa fa-registered" aria-hidden="true"></i>
+                                                        <button type="button" id="laydulieutheodot" onclick="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-pen-to-square"></i>
                                                         &nbsp;&nbsp;Đăng ký</button>
                                                     </div>
                                                                                                             
@@ -84,27 +84,6 @@
                                         
                                     </div>
 
-                                 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                    <div class="col-12">
-                                        <!-- Code Thông tin -->
-                                        
-
-                                    </div>
                                 </div>
 
                             </div>
