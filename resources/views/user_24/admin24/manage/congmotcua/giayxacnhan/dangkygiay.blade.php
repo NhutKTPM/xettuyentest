@@ -56,8 +56,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div> 
-                                        <div class="col-12">
+
+                                            
                                             <div class="style_all_button">
                                                 <div class="row">
                                                     <div class="col-4">
@@ -72,8 +72,16 @@
                                                     </div>
                                                                                                             
                                                 </div>
-                                            </div>
-                                        </div>
+                                             </div>
+
+
+                                             Thông tin sinh viên
+                                            
+
+
+
+                                        </div> 
+                                        
                                     </div>
 
                                  
