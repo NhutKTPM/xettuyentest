@@ -38,8 +38,8 @@
         <div class="content-wrapper">
             <section class="content">
                 <div class="container-fluid">
-                  
-                    <div class="row">
+                    
+                    <div class="row" >
                         <div class="col-12 col-sm-12 col-md-6 col-xl-4">
                             <div class="card" style="min-height: 600px;">
                                 <div class="row">
@@ -98,14 +98,14 @@
                             <div class="card" style="min-height: 600px;">
                                 <!-- Code bảng giấy xác nhận đã đăng ký -->
                                 <div class="card-header">
-                                    aaaaaaa
+                                    Header
                                 </div>
                             
                                 <div class="card-body">
-                                    aaaaa
+                                    Body
                                 </div>
                                 <div class="card-footer">
-                                    assss
+                                    Footer
                                 </div>
                             </div>
                         </div>
