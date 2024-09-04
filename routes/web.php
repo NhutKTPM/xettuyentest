@@ -615,8 +615,7 @@ Route::middleware(['loginadmin::class'])->group(function () {
 
 
         //Cổng một cửa
-        Route::get('/dangkygiay',[DangKyGiay::class,'dangkygiay']);
-
+        Route::get('/dangkygiay', [DangKyGiay::class, 'dangkygiay']);
 
 
 
