@@ -70,8 +70,7 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <section class="content">
-                <div class="container-fluid">
-                    
+                <div class="container-fluid">                    
                     <div class="row" >
                         <div class="col-12 col-sm-12 col-md-6 col-xl-4">
                             <div class="card" style="min-height: 600px;">
@@ -115,7 +114,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p>KTPM2211013872364783</p>
+                                                                <p>KTPM2211013</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -192,7 +191,7 @@
                                                         </div>
                                                         <div class ="row">
                                                             <div class ="col-4">
-                                                                <p><strong>Nghành:</strong></p>
+                                                                <p><strong>Ngành:</strong></p>
                                                             </div>
 
                                                             <div class ="col-8"> 
@@ -293,14 +292,16 @@
                             <div class="card" style="min-height: 600px;">
                                 <!-- Code bảng giấy xác nhận đã đăng ký -->
                                 <div class="card-header">
-                                    <button onclick="loaddangkygiay()" class="btn btn-primary">Làm Mới</button>
+                                    
+                                            <button onclick="loaddangkygiay()" class="btn btn-primary btn-xs" style="width:100px;"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;Làm Mới</button>
+                                        
                                 </div>
                                 <div class="card-body">
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Mã Đăng Ký</th>
+                                                <th>Loại giấy</th>
                                                 <th>Tiến Độ</th>
                                                 <th>Ngày Đăng Ký</th>
                                             </tr>
@@ -308,32 +309,23 @@
                                         <tbody>
                                             <tr>
                                                 <td>1</td>
-                                                <td>12345</td>
+                                                <td>Giấy xác nhận nghĩa vụ quân sự</td>
                                                 <td>Đang xử lý</td>
                                                 <td>2024-09-01</td>
                                             </tr>
                                             <tr>
                                                 <td>2</td>
-                                                <td>67890</td>
+                                                <td>Giấy xác nhận vay vốn sinh viên</td>
                                                 <td>Hoàn thành</td>
                                                 <td>2024-08-31</td>
                                             </tr>
                                             <!-- Thêm các hàng khác tại đây -->
                                         </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Mã Đăng Ký</th>
-                                                <th>Tiến Độ</th>
-                                                <th>Ngày Đăng Ký</th>
-                                            </tr>
-                                        </tfoot>
+                                        
                                     </table>
                                 </div>
                                 
-                                <div class="card-footer">
-                                    Footer
-                                </div>
+                                
                             </div>
                         </div>
 
