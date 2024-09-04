@@ -70,15 +70,177 @@
                                                         <button type="button" id="laydulieutheodot" onclick="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-pen-to-square"></i>
                                                         &nbsp;&nbsp;Đăng ký</button>
                                                     </div>
-                                                                                                            
+                                                       
+                                                    
+                                            
+
+                                                     <div class="container">
+                                                        <h5 class = "" >Thông tin sinh viên</h5>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>MSSV:</strong> </p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>KTPM2211013872364783</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Họ tên:</strong> </p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>Đình sang</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Giới tính:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>Nam</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Ngày sinh:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>28/11/2004</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                            <p><strong>Nơi sinh:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>Ninh Kiều,Cần Thơ</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Lớp học:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>KTPM2211</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Khóa học:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>2022</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Cơ sở:</strong> </p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>Đại học Kỹ thuật-Công nghệ Cần Thơ</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Loại hình đào tạo:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>Chính quy</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Nghành:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>Kỹ thuật phần mềm</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>CCCD:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>68732648732648</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Địa chỉ:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>quận Ninh Kiều, Cần Thơ </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p><strong>Email:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p>nguyenvana@student.edu.vn</p>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <!-- <div class="row" >
+                                                            
+                                                            <div class="col-4">
+                                                                <p><strong>MSSV:</strong> </p>
+                                                                <p><strong>Họ tên:</strong> </p>
+                                                                <p><strong>Giới tính:</strong></p>
+                                                                <p><strong>Ngày sinh:</strong></p>
+                                                                <p><strong>Nơi sinh:</strong></p>
+                                                                <p><strong>Lớp học:</strong></p>
+                                                                <p><strong>Khóa học:</strong></p>
+                                                                <p><strong> Cơ sở:</strong></p>
+                                                                <p><strong>Loại hình đào tạo:</strong></p>
+                                                                <p><strong>Ngành:</strong></p>
+                                                                <p><strong>CCCD:</strong></p>
+                                                                <p><strong>Địa chỉ:</strong></p>
+                                                                <p><strong>Email:</strong></p>
+                                                            </div>
+                                                            <div class="col-8">
+                                                                <p>KTPM2211013</p>
+                                                                <p>Đình sang</p>
+                                                                <p>nam</p>
+                                                                <p>28/11/2004</p>
+                                                                <p>Tỉnh Đồng Tháp</p>
+                                                                <p>KTPM2211</p>
+                                                                <p>2022</p>
+                                                                <p>Đại học Kỹ thuật-Công nghệ Cần Thơ</p>
+                                                                <p>Chính quy</p>
+                                                                <p>Kỹ thuật phần mềm</p>
+                                                                <p>6879324923948</p>
+                                                                <p>quận Ninh Kiều, Cần Thơ </p>
+                                                                <p>nguyenvana@student.edu.vn</p>
+
+
+                                                            </div>
+                                          
+                        
+                                                        </div> -->
+                                                    </div>
+
+
                                                 </div>
                                              </div>
 
 
-                                             Thông tin sinh viên
-                                            
-
-
+                                  
 
                                         </div> 
                                         
