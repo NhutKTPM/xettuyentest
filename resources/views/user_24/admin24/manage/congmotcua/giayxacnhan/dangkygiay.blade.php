@@ -281,11 +281,7 @@
                         <div class="col-12 col-sm-12 col-md-6 col-xl-8">
                             <div class="card" style="min-height: 600px;">
                                 <!-- Code bảng giấy xác nhận đã đăng ký -->
-                                <div class="card-header">
-                                    
-                                            <button onclick="loaddangkygiay()" class="btn btn-primary btn-xs" style="width:100px;"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;Làm Mới</button>
-                                        
-                                </div>
+                                
                                 <div class="card-body">
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
