@@ -47,6 +47,15 @@
             vertical-align: middle;
         }
 
+        .info{
+            margin-bottom: 10px
+        }
+        .dangky{
+            padding-top: 8px; 
+            border-top: 1px solid rgba(0, 0, 0, .125)
+        }
+
+
     </style>
 
 </head>
@@ -109,127 +118,147 @@
                                             <hr style="margin-top:0;">
                                                        
                                                     
+                                                    
                                             
 
                                             <!-- <div class="container"> -->
-                                            
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>MSSV:</strong> </p>
-                                                </div>
+                                                        
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>MSSV:</strong> </p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>KTPM2211013</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Họ tên:</strong> </p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">KTPM2211013</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Họ tên:</strong> </p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>Đình sang</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Giới tính:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Đình sang</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Giới tính:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>Nam</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Ngày sinh:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Nam</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Ngày sinh:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>28/11/2004</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                <p><strong>Nơi sinh:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">28/11/2004</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                            <p class="info"><strong>Nơi sinh:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>Ninh Kiều,Cần Thơ</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Lớp học:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Ninh Kiều,Cần Thơ</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Lớp học:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>KTPM2211</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Khóa học:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">KTPM2211</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Khóa học:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>2022</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Cơ sở:</strong> </p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">2022</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Cơ sở:</strong> </p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>Đại học Kỹ thuật-Công nghệ Cần Thơ</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Loại hình đào tạo:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Đại học Kỹ thuật-Công nghệ Cần Thơ</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Loại hình:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>Chính quy</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Ngành:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Chính quy</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Ngành:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>Kỹ thuật phần mềm</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>CCCD:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Kỹ thuật phần mềm</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>CCCD:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>68732648732648</p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Địa chỉ:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">68732648732648</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Ngày cấp:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>quận Ninh Kiều, Cần Thơ </p>
-                                                </div>
-                                            </div>
-                                            <div class ="row">
-                                                <div class ="col-4">
-                                                    <p><strong>Email:</strong></p>
-                                                </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">22/4/2021</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>nơi cấp:</strong></p>
+                                                            </div>
 
-                                                <div class ="col-8"> 
-                                                    <p>nguyenvana@student.edu.vn</p>
-                                                </div>
-                                            </div>
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Cục cảnh sát</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Địa chỉ:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p class="info">quận Ninh Kiều, Cần Thơ </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Email:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p class="info">nguyenvana@student.edu.vn</p>
+                                                            </div>
+                                                        </div>
+                                                       
 
 
 
