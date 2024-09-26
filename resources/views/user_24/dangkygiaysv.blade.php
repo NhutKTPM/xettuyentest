@@ -1,119 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- DataTables -->
-<link rel="stylesheet" href="/admin/admin_24/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="/admin/admin_24/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-<link rel="stylesheet" href="/admin/admin_24/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-
-<script src="/admin/admin_24/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="/admin/admin_24/plugins/jszip/jszip.min.js"></script>
-<script src="/admin/admin_24/plugins/pdfmake/pdfmake.min.js"></script>
-<script src="/admin/admin_24/plugins/pdfmake/vfs_fonts.js"></script>
-<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="/admin/admin_24/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-  });
-
-
-</script>
-
-    @include('user_24.admin24.include.header')
-    <link rel="stylesheet" href="/admin/admin_24/plugins/summernote/summernote.min.css">
-    <style>
-
-
-        /* div.dataTables_scrollHead table.dataTable{
-            margin-bottom: -11px !important;
-        } */
-
-        .table td, .table th {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .info{
-            margin-bottom: 10px
-        }
-        .dangky{
-            padding-top: 8px; 
-            border-top: 1px solid rgba(0, 0, 0, .125)
-        }
-
-
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>CTUT | Đăng ký giấy</title>
+  @include('user_24.head')
 
 </head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
 
-<body class="sidebar-mini sidebar-collapse">
-    <div class="wrapper">
-        <!-- Preloader -->
-        <!-- @include('user_24.admin24.include.preloader')  -->
-        <!-- /.preloader -->
 
-        <!-- Navbar -->
-        @include('user_24.admin24.include.navbar')
-        <!-- /.navbar -->
+@include('user_24.navbar')
+  <div class="content-wrapper" style="margin-left:0px;background-color:#f4f6f9 ">
+    <div class="content-header" style="padding: 10px 0.5rem">
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+            
 
-        <!-- Main Sidebar Container -->
-
-        @include('user_24.admin24.include.sidebar')
-        <!-- /.sidebar -->
-        {{-- @yield('sidebar1') --}}
-
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <section class="content">
-                <div class="container-fluid">                    
-                    <div class="row" >
-                        
-                        <div class="col-12 col-sm-12 col-md-6 col-xl-4">
+            
+            <div class="col-12 col-sm-12 col-md-6 col-xl-4">
                             <div class="card" style="min-height: 600px;">
                                 <!-- <div class="row"> -->
 
                                     <!-- <div class="col-12"> -->
                                         <div class="card-body">
-                                            <div class="form-group row" style="margin-bottom: 3px">
-                                                <label for="" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Loại giấy:</label>
-                                                <div class="col-sm-8">
-                                                    <select id = "dkg_chonloaigiay" name = "" style="width:100%">  
-                                                        <option value = "0">Chọn Loại giấy</option>
-                                                        <option value = "1">Giấy xác nhận nghĩa vụ quân sự</option>
-                                                        <option value = "2">Giấy xác nhận vay vốn sinh viên</option>
-                                                    </select>
-                                                </div>
-                                            </div>
 
                                             
-                                            <!-- <div class="style_all_button"> -->
-                                            <div class="row">
-                                                <div class="col-4">
+                                                <div class="row form-group" style="margin-bottom: 3px">
+                                                    <label for="" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Loại giấy:</label>
+                                                    <div class="col-sm-8">
+                                                        <select id = "id_loaigiay" name = "" style="width:100%">  
+                                                            <option value = "0">Chọn Loại giấy</option>
+                                                            <option value = "1">Giấy xác nhận nghĩa vụ quân sự</option>
+                                                            <option value = "2">Giấy xác nhận vay vốn sinh viên</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
 
+                                                <!-- <div class="style_all_button"> -->
+                                                <div class="row">
+                                                    <div class="col-4">
+
+                                                    </div>
+                                                    <div class="col-4">
+                                                        
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <button type="button" id = "luudangkygiaysv" onclick="luudangkygiaysv()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-pen-to-square"></i>
+                                                        &nbsp;&nbsp;Đăng ký</button>
+                                                    </div>
+                                                    <hr>
                                                 </div>
-                                                <div class="col-4">
-                                                    
-                                                </div>
-                                                <div class="col-4">
-                                                    <button type="button" id="laydulieutheodot" onclick="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-pen-to-square"></i>
-                                                    &nbsp;&nbsp;Đăng ký</button>
-                                                </div>
-                                                <hr>
-                                            </div>
+                                            
+                                            
                                             <!-- </div> -->
                                             <hr style="margin-top:0;">
                                                        
@@ -129,7 +72,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_mssv">KTPM2211013</p>
+                                                                <p class="info" id="id_taikhoan">{{$id_taikhoan}}</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -137,17 +80,17 @@
                                                                 <p class="info"><strong>Họ tên:</strong> </p>
                                                             </div>
 
-                                                            <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_hoten">Đình sang</p>
+                                                            <div class ="col-8">
+                                                                <p class="info">{{$hoten}}</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
                                                             <div class ="col-4">
-                                                                <p class="info" ><strong>Giới tính:</strong></p>
+                                                                <p class="info"><strong>Giới tính:</strong></p>
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_gioitinh">Nam</p>
+                                                                <p class="info">Nam</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -156,16 +99,16 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_ngaysinh">28/11/2004</p>
+                                                                <p class="info">{{$ngaysinh}}</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
                                                             <div class ="col-4">
-                                                            <p class="info" ><strong>Nơi sinh:</strong></p>
+                                                            <p class="info"><strong>Nơi sinh:</strong></p>
                                                             </div>
-                                                            
+
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_noisinh"></p>
+                                                                <p class="info">Ninh Kiều,Cần Thơ</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -174,7 +117,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_lop"></p>
+                                                                <p class="info">KTPM2211</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -183,18 +126,34 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_khoa">2022</p>
+                                                                <p class="info">2022</p>
                                                             </div>
                                                         </div>
-                                                       
-                                                
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Cơ sở:</strong> </p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Đại học Kỹ thuật-Công nghệ Cần Thơ</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class ="row">
+                                                            <div class ="col-4">
+                                                                <p class="info"><strong>Loại hình:</strong></p>
+                                                            </div>
+
+                                                            <div class ="col-8"> 
+                                                                <p class="info">Chính quy</p>
+                                                            </div>
+                                                        </div>
                                                         <div class ="row">
                                                             <div class ="col-4">
                                                                 <p class="info"><strong>Ngành:</strong></p>
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_nganh">Kỹ thuật phần mềm</p>
+                                                                <p class="info">Kỹ thuật phần mềm</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -203,7 +162,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_cccd">68732648732648</p>
+                                                                <p class="info">68732648732648</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -212,7 +171,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_ngaycapcccd">22/4/2021</p>
+                                                                <p class="info">22/4/2021</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -221,7 +180,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_noicapcccd" >Cục cảnh sát</p>
+                                                                <p class="info">Cục cảnh sát</p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -230,7 +189,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info"  id="dangkygiay_diachi">quận Ninh Kiều, Cần Thơ </p>
+                                                                <p class="info">quận Ninh Kiều, Cần Thơ </p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -239,7 +198,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_email">nguyenvana@student.edu.vn</p>
+                                                                <p class="info">nguyenvana@student.edu.vn</p>
                                                             </div>
                                                         </div>
                                                        
@@ -306,7 +265,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            @foreach ($ds_tiendo as $tiendo)
+                                                <tr>
+                                                    <td>{{$tiendo->id_loaigiay}}</td>
+                                                    <td>{{$tiendo->tenloaigiay}}</td>
+                                                    <td>{{$tiendo->tiendo}}</td>
+                                                    <td>{{$tiendo->ngaydangky}}</td>
+                                                </tr>
+                                            @endforeach
+                                            <!-- <tr>
                                                 <td>1</td>
                                                 <td>Giấy xác nhận nghĩa vụ quân sự</td>
                                                 <td>Đang xử lý</td>
@@ -317,7 +284,7 @@
                                                 <td>Giấy xác nhận vay vốn sinh viên</td>
                                                 <td>Hoàn thành</td>
                                                 <td>2024-08-31</td>
-                                            </tr>
+                                            </tr> -->
                                             <!-- Thêm các hàng khác tại đây -->
                                         </tbody>
                                         
@@ -327,32 +294,110 @@
                                 
                             </div>
                         </div>
+            </div>
 
-                    </div>
-
-                     
-
-
-                </div>
-            </section>
-            @include('user_24.modalevent')
-        </div>
-        {{-- @include('user_24.admin_24.footer') --}}
-        @include('user_24.admin24.include.footer')
-    </div>
+           
+        
+      </div>
+    </section>
+  </div>
+  @include('user_24.navbarfooter')
+  @include('user_24.modalevent')
+  @include('user_24.info_popup')
+</div>
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+@include('user_24.footer')
+
+
+<script src="/template/admin/plugins/select2/js/select2.full.min.js"></script>
+<script src="/swiper/swiper.js"></script>
+<script src="/user_24/js/thongtincanhan.js"></script>
 </body>
-<script src="/admin/admin24/js/congmotcua/dangkygiay.js"></script>
 </html>
 
+
 <script>
-    // var id = $('#dkg_chonloaigiay').val();
-    // alert(id)
-
-
-
-
+    function luudangkygiaysv(){
+        $.ajax({
+            type: "post",
+            url: "/dangkygiaysv/luudangkygiaysv",
+            data: {
+                id_taikhoan: document.getElementById('id_taikhoan').textContent,
+                id_loaigiay: document.getElementById('id_loaigiay').value,
+                tiendo: 0
+            }
+        });
+    }
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
