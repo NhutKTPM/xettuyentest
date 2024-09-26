@@ -99,9 +99,26 @@ class DangKyGiay extends Controller
             'menu' =>    $this->sidebar(),
             'title' => 'Đăng ký giấy xác nhận'
         ]);
-
     }
     
-    
+    function loadthongtin(){
+        // $data = DB::select('SELECT * FROM `24_thongtincanhan` WHERE id_taikhoan = ');
+
+        $id_taikhoan = Auth::guard('loginbygoogles')->id();
+        $data = DB::table('24_thongtincanhan')
+        ->leftJoin('l_province','l_province.id','24_thongtincanhan.noisinh')
+        ->leftJoin('24_mssv','24_mssv.id_taikhoan','24_thongtincanhan.id_taikhoan')
+        ->leftJoin('24_trungtuyen','24_trungtuyen.id_taikhoan','24_thongtincanhan.id_taikhoan')
+        ->leftJoin('l_major','l_major.id','24_trungtuyen.id_chuyennganh')
+        ->leftJoin('account24s','account24s.id','24_thongtincanhan.id_taikhoan')
+        ->leftJoin('24_hosonhaphoc','24_hosonhaphoc.id_taikhoan','24_thongtincanhan.id_taikhoan')
+
+        ->where('24_thongtincanhan.id_taikhoan',$id_taikhoan)->get();
+        if($data){
+            return $data;
+        }
+
+        // ->leftJoin('24_mssv','24_mssv.id_taikhoan','24_thongtincanhan.id_taikhoan')
+    }
 
 }

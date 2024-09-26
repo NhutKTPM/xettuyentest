@@ -112,6 +112,7 @@ use \App\Http\Controllers\User_24\Dangkyxettuyen24Controller;
 use \App\Http\Controllers\User_24\Thongtinlienhe24Controller;
 use \App\Http\Controllers\User_24\Thanhtoanlephi24Controller;
 use \App\Http\Controllers\User_24\CongboketquaController;
+use \App\Http\Controllers\User_24\DangKyGiaySVController;
 
 //Cổng một cửa
 use \App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan;
@@ -223,7 +224,18 @@ Route::middleware(['checklogin24::class'])->group(function () {
     });
 
 
+    Route::prefix('dangkygiaysv')->group(function(){
+        Route::get('/',[DangKyGiaySVController::class,'dangkygiaysv']);
+        Route::post('/luudangkygiaysv',[DangKyGiaySVController::class,'luudangkygiaysv']);
+    });
 
+
+    Route::prefix('dangkygiay')->group(function(){
+        //Cổng một cửa
+        Route::get('/', [DangKyGiay::class, 'dangkygiay']);
+        Route::get('/loadthongtin', [DangKyGiay::class, 'loadthongtin']);
+
+    }); 
 
 });
 
@@ -613,9 +625,7 @@ Route::middleware(['loginadmin::class'])->group(function () {
         });
     });
 
-
-        //Cổng một cửa
-        Route::get('/dangkygiay', [DangKyGiay::class, 'dangkygiay']);
+   
 
 
 
