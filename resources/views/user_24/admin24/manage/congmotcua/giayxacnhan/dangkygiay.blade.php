@@ -92,9 +92,9 @@
                                                 <label for="" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Loại giấy:</label>
                                                 <div class="col-sm-8">
                                                     <select id = "dkg_chonloaigiay" name = "" style="width:100%">  
-                                                        <option value = "0">Chọn Loại giấy</option>
+                                                        <!-- <option value = "0">Chọn Loại giấy</option>
                                                         <option value = "1">Giấy xác nhận nghĩa vụ quân sự</option>
-                                                        <option value = "2">Giấy xác nhận vay vốn sinh viên</option>
+                                                        <option value = "2">Giấy xác nhận vay vốn sinh viên</option> -->
                                                     </select>
                                                 </div>
                                             </div>
@@ -296,8 +296,8 @@
                                 <!-- Code bảng giấy xác nhận đã đăng ký -->
                                 
                                 <div class="card-body">
-                                    <table id="example1" class="table table-bordered table-striped">
-                                        <thead>
+                                    <table id="dangkygiay_load_danhsachloaigiay" class="table table-bordered table-striped">
+                                        <!-- <thead>
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Loại giấy</th>
@@ -318,10 +318,10 @@
                                                 <td>Hoàn thành</td>
                                                 <td>2024-08-31</td>
                                             </tr>
-                                            <!-- Thêm các hàng khác tại đây -->
+                                          
                                         </tbody>
                                         
-                                    </table>
+                                    </table> -->
                                 </div>
                                 
                                 

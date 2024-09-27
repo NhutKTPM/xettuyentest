@@ -24,6 +24,39 @@ class DangKyGiay extends Controller
 
 {
 
+    //Thư viên
+
+    function load_seclectbox($table,$feild_id,$feild_text,$seclected_id,$text_0){
+        $data0 = new Collection([
+            'id' => 0,
+            'text' => $text_0,
+            'selected' =>'selected'
+        ]);
+        $data = DB::table($table)->select($feild_id." as id",$feild_text." as text")->get();
+        $i = 0;
+        foreach ($data as $value) {
+            if($value->$feild_id == $seclected_id){
+                $value->selected =  'selected';
+                $i++;
+            }else{
+                $value->selected =  '';
+            }
+        }
+        if( $i == 1){
+            $data[] = new Collection([
+                'id' => 0,
+                'text' => $text_0,
+                'selected' =>''
+            ]);
+        }else{
+            $data[] = new Collection([
+                'id' => 0,
+                'text' => $text_0,
+                'selected' =>'selected'
+            ]);
+        }
+        return $data;
+    }
 
     function datasidebar($menus, $parent_id = 0, $level = 0, &$html)
     {
@@ -102,23 +135,46 @@ class DangKyGiay extends Controller
     }
     
     function loadthongtin(){
-        // $data = DB::select('SELECT * FROM `24_thongtincanhan` WHERE id_taikhoan = ');
-
         $id_taikhoan = Auth::guard('loginbygoogles')->id();
         $data = DB::table('24_thongtincanhan')
+        ->select("noicap.name_province as noicap","l_province.name_province as noisinh",'24_thongtincanhan.hoten')
         ->leftJoin('l_province','l_province.id','24_thongtincanhan.noisinh')
         ->leftJoin('24_mssv','24_mssv.id_taikhoan','24_thongtincanhan.id_taikhoan')
         ->leftJoin('24_trungtuyen','24_trungtuyen.id_taikhoan','24_thongtincanhan.id_taikhoan')
         ->leftJoin('l_major','l_major.id','24_trungtuyen.id_chuyennganh')
         ->leftJoin('account24s','account24s.id','24_thongtincanhan.id_taikhoan')
         ->leftJoin('24_hosonhaphoc','24_hosonhaphoc.id_taikhoan','24_thongtincanhan.id_taikhoan')
-
+        ->leftJoin('l_province as noicap', 'noicap.id', '=', '24_hosonhaphoc.noicapcccd')
         ->where('24_thongtincanhan.id_taikhoan',$id_taikhoan)->get();
         if($data){
             return $data;
         }
-
-        // ->leftJoin('24_mssv','24_mssv.id_taikhoan','24_thongtincanhan.id_taikhoan')
     }
+
+
+
+    function dangkygiay_load_loaigiay(){
+        $data = $this->load_seclectbox('24_danhmuc_loaigiay','id','tenloaigiay',0,'Chọn loại giấy');
+        return $data;
+    }
+
+
+
+
+    function dangkygiay_load_danhsachloaigiay(){
+        $data = DB::table('24_cmc_dangkygiay')
+        ->select("24_cmc_dangkygiay.*","24_danhmuc_loaigiay.*", DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt') )
+        ->leftJoin('24_danhmuc_loaigiay', '24_danhmuc_loaigiay.id', '=', '24_cmc_dangkygiay.id_loaigiay')
+        ->get();
+
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+        // return $data;
+    }
+
+
+
+
 
 }

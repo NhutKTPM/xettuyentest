@@ -234,7 +234,10 @@ Route::middleware(['checklogin24::class'])->group(function () {
         //Cổng một cửa
         Route::get('/', [DangKyGiay::class, 'dangkygiay']);
         Route::get('/loadthongtin', [DangKyGiay::class, 'loadthongtin']);
+        Route::get('/dangkygiay_load_loaigiay', [DangKyGiay::class, 'dangkygiay_load_loaigiay']);
+        Route::get('/dangkygiay_load_danhsachloaigiay', [DangKyGiay::class, 'dangkygiay_load_danhsachloaigiay']);
 
+        
     }); 
 
 });
