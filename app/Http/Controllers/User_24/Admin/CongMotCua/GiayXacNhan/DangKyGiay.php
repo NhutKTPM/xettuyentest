@@ -137,7 +137,7 @@ class DangKyGiay extends Controller
     function loadthongtin(){
         $id_taikhoan = Auth::guard('loginbygoogles')->id();
         $data = DB::table('24_thongtincanhan')
-        ->select("noicap.name_province as noicap","l_province.name_province as noisinh",'24_thongtincanhan.hoten')
+        ->select("noicap.name_province as noicap","l_province.name_province as noisinh",'24_thongtincanhan.hoten','24_mssv.mssv','gioitinh','l_major.lop','l_province.name_province','dottuyensinh','name_major','cccd','ngaycapcccd','email','diachi')
         ->leftJoin('l_province','l_province.id','24_thongtincanhan.noisinh')
         ->leftJoin('24_mssv','24_mssv.id_taikhoan','24_thongtincanhan.id_taikhoan')
         ->leftJoin('24_trungtuyen','24_trungtuyen.id_taikhoan','24_thongtincanhan.id_taikhoan')
