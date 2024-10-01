@@ -127,22 +127,28 @@ function dangkygiay_load_danhsachloaigiay(){
             //     }
             // },
             { title: "STT", data: "stt" },
+            { title: "Mã loại giấy", data: "maloaigiay" },
             { title: "Tên loại giấy", data: "tenloaigiay" },
+            { title: "Id đơn vị", data: "iddonvi" },
 
             { 
                 title: "Tiến độ", 
                 data: "tiendoxyly",
-                render: function(data,type,row){
+                render: function(data, type, row) {
+                    var tiendo = ''; 
+                
                     if(data == 1) {
-                        var tiendo = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>'
-                    }else{
-                         var tiendo = "sáafsdf"
-                    }
-                    return tiendo
+                        tiendo = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>';
+                    } else {  
+                        tiendo = '<small class="badge badge-primary"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Hoàn thành</small>';
+                    } 
+                    
+                    return tiendo;
                 }
                         
             },
             { title: "Ngày đăng ký", data: "create_at" },
+    
     
           
         ],
