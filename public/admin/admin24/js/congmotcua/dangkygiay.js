@@ -32,11 +32,8 @@ function loadthongtin(){
             $('#dangkygiay_email').text(res[0].email);
             $('#dangkygiay_khoa').text(res[0].dottuyensinh);
             $('#dangkygiay_ngaycapcccd').text(res[0].ngaycapcccd);
-            $('#dangkygiay_noicapcccd').text(res[0].name_province);
-            
-
-            dangkygiay_noisinh
-            // alert()
+            $('#dangkygiay_noicapcccd').text(res[0].noicap);
+                        // alert()
 
         }
     })
