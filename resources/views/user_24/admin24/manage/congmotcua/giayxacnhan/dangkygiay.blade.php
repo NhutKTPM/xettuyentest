@@ -129,7 +129,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_mssv">KTPM2211013</p>
+                                                                <p class="info" id = "dangkygiay_mssv"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -138,7 +138,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_hoten">Đình sang</p>
+                                                                <p class="info" id = "dangkygiay_hoten"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -147,7 +147,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_gioitinh">Nam</p>
+                                                                <p class="info" id = "dangkygiay_gioitinh"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -156,7 +156,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_ngaysinh">28/11/2004</p>
+                                                                <p class="info" id = "dangkygiay_ngaysinh"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -183,7 +183,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id = "dangkygiay_khoa">2022</p>
+                                                                <p class="info" id = "dangkygiay_khoa"></p>
                                                             </div>
                                                         </div>
                                                        
@@ -194,7 +194,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_nganh">Kỹ thuật phần mềm</p>
+                                                                <p class="info" id="dangkygiay_nganh"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -203,7 +203,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_cccd">68732648732648</p>
+                                                                <p class="info" id="dangkygiay_cccd"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -212,16 +212,16 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_ngaycapcccd">22/4/2021</p>
+                                                                <p class="info" id="dangkygiay_ngaycapcccd"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
                                                             <div class ="col-4">
-                                                                <p class="info"><strong>nơi cấp:</strong></p>
+                                                                <p class="info"><strong>Nơi cấp:</strong></p>
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_noicapcccd" >Cục cảnh sát</p>
+                                                                <p class="info" id="dangkygiay_noicapcccd" ></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -230,7 +230,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info"  id="dangkygiay_diachi">quận Ninh Kiều, Cần Thơ </p>
+                                                                <p class="info"  id="dangkygiay_diachi"></p>
                                                             </div>
                                                         </div>
                                                         <div class ="row">
@@ -239,7 +239,7 @@
                                                             </div>
 
                                                             <div class ="col-8"> 
-                                                                <p class="info" id="dangkygiay_email">nguyenvana@student.edu.vn</p>
+                                                                <p class="info" id="dangkygiay_email"></p>
                                                             </div>
                                                         </div>
                                                        
