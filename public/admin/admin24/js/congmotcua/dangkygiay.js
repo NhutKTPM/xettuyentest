@@ -10,8 +10,8 @@ $(document).ready(function () {
 
     dangkygiay_load_loaigiay();
 
-    dangkygiay_load_danhsachloaigiay()
-
+    dangkygiay_load_danhsachloaigiay().ajax.url('/dangkygiay/dangkygiay_load_danhsachloaigiay').load()
+    // bhyt_thongke(0).ajax.url("loadthongtin_bhyt_thongke/0").load();
 });
 
 
@@ -45,67 +45,13 @@ function dangkygiay_load_loaigiay(){
         type: 'get',
         url: '/dangkygiay/dangkygiay_load_loaigiay',
         success: function (res) {
-
-
-            // var html = ""
-            // for (let i = 0; i < res.length; i++) {
-            //     html += '<option selected = "'+res[i].selected+'"  value = "'+res[i].id+'">'+ res[i].text +'</option>'
-            // }
             $('#dkg_chonloaigiay').select2({
-
                 data: res
-
-
             })
 
         }
     })
 }
-
-
-
-// function dangkygiay_load_danhsachloaigiay(){
-//     $.ajax({
-//         type: 'get',
-//         url: '/dangkygiay/dangkygiay_load_danhsachloaigiay',
-//         success: function (res) {
-//             // var html = "";
-//             // html += '<thead>'
-//             // html += '   <tr>'
-//             // html += '       <th>ID</th>'
-//             // html += '       <th>Loại giấy</th>'
-//             // html += '       <th>Tiến Độ</th>'
-//             // html += '       <th>Ngày Đăng Ký</th>'
-//             // html += '   </tr>'
-//             // html += ' </thead>'
-//             // html += '  <tbody>'
-//             // for (let i = 0; i < res.length; i++) {
-//             //     if(res[i].tiendoxyly =  1){
-//             //         var xuly = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>'
-//             //     }else{
-//             //          var xuly = "Đã hoàn thành"
-//             //     }
-//             //     html += '  <tr>'
-//             //     html += '  <td>1</td>'
-//             //     html += '  <td>'+res[i].tenloaigiay+'</td>'
-//             //     html += '   <td>'+xuly+'</td>'
-//             //     html += '   <td>'+res[i].create_at+'</td>'
-//             //     html += '   </tr>'
-//             // }
-           
-                          
-            
-
-//             // html += '  </tbody>'
-                                        
-//             // html += '  </table>'
-           
-           
-//         }
-//     })
-// }
-
-
 
 
 function dangkygiay_load_danhsachloaigiay(){
@@ -149,9 +95,6 @@ function dangkygiay_load_danhsachloaigiay(){
     
           
         ],
-    
-    
-    
         columnDefs: [
             {
                 targets: 0,
@@ -187,21 +130,36 @@ function dangkygiay_load_danhsachloaigiay(){
         responsive: true,
         select: true,
     });
+    return ds_canbo;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-$('#dkg_chonloaigiay').on('change',function(){
-    var id = $('#dkg_chonloaigiay').val();
-    alert(id)
-})
+function dkg_dangky(){//Chi dang ky id > 0
+    let id = $('#dkg_chonloaigiay').val();
+    if(id > 0){
+        $("#modal_event").show();
+        $("#dkg_dangky").prop("disabled", true)
+        $.ajax({
+            type: 'post',
+            url: '/dangkygiay/dkg_dangky',
+            data: {
+                id: id,
+            },
+            success: function (res) {
+                if(res == 1){
+                    toastr.success('Đã đăng ký thành công!'); //Xu ly ngoai le
+                    dangkygiay_load_danhsachloaigiay().ajax.url('/dangkygiay/dangkygiay_load_danhsachloaigiay').load()
+                }else{
+                    if(res == 0){
+                        toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
+                    }else{
+                        toastr.warning(res.id);
+                    }
+                }
+                $("#dkg_dangky").prop("disabled", false)
+                $("#modal_event").hide();
+            }
+        })
+    }else{
+        toastr.warning('Vui long chonj loai giay!'); //Xu ly ngoai le
+    }
+}
