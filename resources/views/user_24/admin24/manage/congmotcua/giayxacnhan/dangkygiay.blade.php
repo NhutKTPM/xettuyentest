@@ -109,7 +109,7 @@
                                                     
                                                 </div>
                                                 <div class="col-4">
-                                                    <button type="button" id="laydulieutheodot" onclick="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-pen-to-square"></i>
+                                                    <button id = "dkg_dangky"  onclick = 'dkg_dangky()' type="button"  onclick="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-pen-to-square"></i>
                                                     &nbsp;&nbsp;Đăng ký</button>
                                                 </div>
                                                 <hr>

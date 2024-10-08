@@ -159,12 +159,11 @@ class DangKyGiay extends Controller
     }
 
 
-
-
     function dangkygiay_load_danhsachloaigiay(){
         $data = DB::table('24_cmc_dangkygiay')
-        ->select("24_cmc_dangkygiay.*","24_danhmuc_loaigiay.*", DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt') )
+        ->select("maloaigiay","tenloaigiay", DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt'), 'tiendoxyly', 'iddonvi', '24_cmc_dangkygiay.create_at')
         ->leftJoin('24_danhmuc_loaigiay', '24_danhmuc_loaigiay.id', '=', '24_cmc_dangkygiay.id_loaigiay')
+        ->orderBy('24_cmc_dangkygiay.create_at','desc')
         ->get();
 
         $json_data['data'] = $data;
@@ -174,7 +173,50 @@ class DangKyGiay extends Controller
     }
 
 
+    function dkg_dangky(Request $r){
+        $id_loaigiay = $r ->input('id');
+        $id_taikhoan = Auth::guard('loginbygoogles')->id();
+        $tiendoxyly = 1;
+
+
+        $validator = Validator::make($r->all(), 
+        [
+            'id' => 'required|integer|min:1'
+        ],
+        [
+            'id.min' => "Vui lòng chọn loại giấy"
+        ]
+    
+    );
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors());// Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
+        }else{
+            try{
+                DB::table('24_cmc_dangkygiay')
+                ->insert(
+                    [
+                        'id_taikhoan' => $id_taikhoan,
+                        'id_loaigiay' => $id_loaigiay,
+                        'tiendoxyly' => $tiendoxyly,
+                    ]
+                );
+                return  1;
+            }catch(Exception $e){
+                return  0;
+            }
+        }
+    
+        
 
 
 
+      
+
+
+
+       
+        
+      
+    }
 }
