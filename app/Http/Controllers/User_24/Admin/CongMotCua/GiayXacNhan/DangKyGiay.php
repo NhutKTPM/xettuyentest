@@ -161,8 +161,9 @@ class DangKyGiay extends Controller
 
     function dangkygiay_load_danhsachloaigiay(){
         $data = DB::table('24_cmc_dangkygiay')
-        ->select("maloaigiay","tenloaigiay", DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt'), 'tiendoxyly', 'iddonvi', '24_cmc_dangkygiay.create_at')
+        ->select("maloaigiay","tenloaigiay", DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt'), 'tiendoxyly', 'tendonvi', '24_cmc_dangkygiay.create_at')
         ->leftJoin('24_danhmuc_loaigiay', '24_danhmuc_loaigiay.id', '=', '24_cmc_dangkygiay.id_loaigiay')
+        ->leftjoin('24_donvi','24_donvi.iddonvi', '=','24_danhmuc_loaigiay.iddonvi')
         ->orderBy('24_cmc_dangkygiay.create_at','desc')
         ->get();
 
