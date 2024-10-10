@@ -20,7 +20,7 @@ use Exception;
 
 use function PHPUnit\Framework\countOf;
 
-class DangKyGiay extends Controller
+class DotTuyenSinhController extends Controller
 
 {
 
@@ -123,101 +123,19 @@ class DangKyGiay extends Controller
     }
 
 
+    function dottuyensinh(){
 
-
-    function dangkygiay(){
-
-        return view('user_24.admin24.manage.congmotcua.giayxacnhan.dangkygiay',
+        return view('user_24.admin24.manage.congmotcua.giayxacnhan.dottuyensinh',
         [
             'menu' =>    $this->sidebar(),
             'title' => 'Đăng ký giấy xác nhận'
         ]);
     }
     
-    function loadthongtin(){
-        $id_taikhoan = Auth::guard('loginbygoogles')->id();
-        $data = DB::table('24_thongtincanhan')
-        ->select("noicap.name_province as noicap","l_province.name_province as noisinh",'24_thongtincanhan.hoten','24_mssv.mssv','gioitinh','l_major.lop','l_province.name_province','dottuyensinh','name_major','cccd','ngaycapcccd','email','diachi', 'ngaysinh')
-        ->leftJoin('l_province','l_province.id','24_thongtincanhan.noisinh')
-        ->leftJoin('24_mssv','24_mssv.id_taikhoan','24_thongtincanhan.id_taikhoan')
-        ->leftJoin('24_trungtuyen','24_trungtuyen.id_taikhoan','24_thongtincanhan.id_taikhoan')
-        ->leftJoin('l_major','l_major.id','24_trungtuyen.id_chuyennganh')
-        ->leftJoin('account24s','account24s.id','24_thongtincanhan.id_taikhoan')
-        ->leftJoin('24_hosonhaphoc','24_hosonhaphoc.id_taikhoan','24_thongtincanhan.id_taikhoan')
-        ->leftJoin('l_province as noicap', 'noicap.id', '=', '24_hosonhaphoc.noicapcccd')
-        ->where('24_thongtincanhan.id_taikhoan',$id_taikhoan)->get();
-        if($data){
-            return $data;
-        }
-    }
 
 
-
-    function dangkygiay_load_loaigiay(){
-        $data = $this->load_seclectbox('24_danhmuc_loaigiay','id','tenloaigiay',0,'Chọn loại giấy');
-        return $data;
-    }
-
-
-    function dangkygiay_load_danhsachloaigiay(){
-        $data = DB::table('24_cmc_dangkygiay')
-        ->select("maloaigiay","tenloaigiay","tendonvi", DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt'), 'tiendoxyly', 'iddonvi', '24_cmc_dangkygiay.create_at')
-        ->leftJoin('24_danhmuc_loaigiay', '24_danhmuc_loaigiay.id', '=', '24_cmc_dangkygiay.id_loaigiay')
-        ->leftjoin('24_donvi','24_donvi.iddonvi', '=','24_danhmuc_loaigiay.iddonvi')
-        ->orderBy('24_cmc_dangkygiay.create_at','desc')
-        ->get();
-
-        $json_data['data'] = $data;
-        $res = json_encode($json_data);
-        return  $res;
-        // return $data;
-    }
-
-
-    function dkg_dangky(Request $r){
-        $id_loaigiay = $r ->input('id');
-        $id_taikhoan = Auth::guard('loginbygoogles')->id();
-        $tiendoxyly = 1;
-
-
-        $validator = Validator::make($r->all(), 
-        [
-            'id' => 'required|integer|min:1'
-        ],
-        [
-            'id.min' => "Vui lòng chọn loại giấy"
-        ]
-    
-    );
-    
-        if ($validator->fails()) {
-            return response()->json($validator->errors());// Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
-        }else{
-            try{
-                DB::table('24_cmc_dangkygiay')
-                ->insert(
-                    [
-                        'id_taikhoan' => $id_taikhoan,
-                        'id_loaigiay' => $id_loaigiay,
-                        'tiendoxyly' => $tiendoxyly,
-                    ]
-                );
-                return  1;
-            }catch(Exception $e){
-                return  0;
-            }
-        }
-    
+    function ds_dottuyensinh(){
         
-
-
-
-      
-
-
-
-       
-        
-      
     }
+
 }

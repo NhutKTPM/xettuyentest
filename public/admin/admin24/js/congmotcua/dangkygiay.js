@@ -72,7 +72,7 @@ function dangkygiay_load_danhsachloaigiay(){
             { title: "STT", data: "stt" },
             { title: "Mã loại giấy", data: "maloaigiay" },
             { title: "Tên loại giấy", data: "tenloaigiay" },
-            { title: "Id đơn vị", data: "iddonvi" },
+            { title: "Id đơn vị", data: "tendonvi" },
 
             { 
                 title: "Tiến độ", 
@@ -98,7 +98,8 @@ function dangkygiay_load_danhsachloaigiay(){
         columnDefs: [
             {
                 targets: 0,
-                className: "text-left",
+                className: "text-center",
+
             },
             {
                 targets: 1,

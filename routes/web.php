@@ -119,6 +119,8 @@ use \App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan;
 use App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan\DangKyGiay;
 use \App\Http\Controllers\User_24\Admin\Loginbygoogleadmin24Controller;
 
+use App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan\DotTuyenSinhController;
+
 use \App\Http\Controllers\User_24\TestController;
 use \App\Http\Controllers\User_24\ConnectionController;
 
@@ -238,6 +240,10 @@ Route::middleware(['checklogin24::class'])->group(function () {
         Route::get('/dangkygiay_load_danhsachloaigiay', [DangKyGiay::class, 'dangkygiay_load_danhsachloaigiay']);
         Route::post('/dkg_dangky', [DangKyGiay::class, 'dkg_dangky']);
     }); 
+
+
+
+
 
 });
 
@@ -625,6 +631,14 @@ Route::middleware(['loginadmin::class'])->group(function () {
             Route::get('/excel_hsnh_thongtinsinhvien_bhyt_thongke/{major}',[Admin_24Controller::class,'excel_hsnh_thongtinsinhvien_bhyt_thongke']);//bhyt
 
         });
+
+
+
+        // Đợt tuyển sinh
+        Route::get('/dottuyensinh',[DotTuyenSinhController::class,'dottuyensinh']);
+        Route::get('/ds_dottuyensinh',[DotTuyenSinhController::class,'ds_dottuyensinh']);
+
+
     });
 
    
