@@ -20,26 +20,29 @@ function bang_ds_dotxettuyen(){
         },
         columns: [
             { title: "STT", data: "stt" },
-            { title: "Mã loại giấy", data: "maloaigiay" },
-            { title: "Tên loại giấy", data: "tenloaigiay" },
-            { title: "Id đơn vị", data: "iddonvi" },
+            { title: "ID đts", data: "maloaigiay" },
+            { title: "Tên đợt", data: "tenloaigiay" },
+            { title: "ID QT", data: "tenloaigiay" },
+            // { title: "Trạng thái ", data: "iddonvi" },
 
-            { 
-                title: "Tiến độ", 
-                data: "tiendoxyly",
-                render: function(data, type, row) {
-                    var tiendo = ''; 
+            // { 
+            //     title: "Trạng thái", 
+            //     data: "tiendoxyly",
+            //     render: function(data, type, row) {
+            //         var tiendo = ''; 
                 
-                    if(data == 1) {
-                        tiendo = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>';
-                    } else {  
-                        tiendo = '<small class="badge badge-primary"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Hoàn thành</small>';
-                    } 
+            //         if(data == 1) {
+            //             tiendo = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>';
+            //         } else {  
+            //             tiendo = '<small class="badge badge-primary"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Hoàn thành</small>';
+            //         } 
                     
-                    return tiendo;
-                }
+            //         return tiendo;
+            //     }
                         
-            },
+            // },
+            { title: "Ghi chú", data: "create_at" },
+            { title: "Khóa đợt", data: "create_at" },
             { title: "Ngày đăng ký", data: "create_at" },
     
     

@@ -20,12 +20,12 @@ function bang_ds_dottuyensinh(){
         },
         columns: [
             { title: "STT", data: "stt" },
-            { title: "Mã loại giấy", data: "maloaigiay" },
-            { title: "Tên loại giấy", data: "tenloaigiay" },
-            { title: "Id đơn vị", data: "iddonvi" },
+            { title: "Mã đợt", data: "maloaigiay" },
+            { title: "Tên đợt", data: "tenloaigiay" },
+            // { title: "Trạng thái ", data: "iddonvi" },
 
             { 
-                title: "Tiến độ", 
+                title: "Trạng thái", 
                 data: "tiendoxyly",
                 render: function(data, type, row) {
                     var tiendo = ''; 
@@ -40,6 +40,7 @@ function bang_ds_dottuyensinh(){
                 }
                         
             },
+            { title: "Khóa đợt", data: "create_at" },
             { title: "Ngày đăng ký", data: "create_at" },
     
     
