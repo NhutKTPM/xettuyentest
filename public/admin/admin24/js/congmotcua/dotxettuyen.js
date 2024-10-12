@@ -5,18 +5,18 @@ $(document).ready(function () {
         }
     });
     
-    bang_ds_dottuyensinh();
+    bang_ds_dotxettuyen();
 
 
 });
 
 
 
-function bang_ds_dottuyensinh(){
-    var ds_dottuyensinh = $("#bang_ds_dottuyensinh").DataTable({
+function bang_ds_dotxettuyen(){
+    var ds_dotxettuyen = $("#bang_ds_dotxettuyen").DataTable({
         ajax: {
             type: "get",
-            url: "/admin24/bang_ds_dottuyensinh",
+            url: "/admin24/bang_ds_dotxettuyen",
         },
         columns: [
             { title: "STT", data: "stt" },
@@ -80,7 +80,7 @@ function bang_ds_dottuyensinh(){
         responsive: true,
         select: true,
     });
-    return ds_dottuyensinh;
+    return ds_dotxettuyen;
 }
 
 

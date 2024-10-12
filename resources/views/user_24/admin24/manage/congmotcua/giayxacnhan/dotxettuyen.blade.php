@@ -54,7 +54,16 @@
             padding-top: 8px; 
             border-top: 1px solid rgba(0, 0, 0, .125)
         }
-
+        /* .input-p{
+           margin-top: 10px;
+        }
+        /* .all-input{
+            display: flex;
+        } */
+         /* .input-g{
+            margin-top: 14px ;
+            margin-bottom: 22px;
+         } */ 
 
     </style>
 
@@ -90,46 +99,55 @@
                                     <div class="col-12 col-md-3 col-lg-3">
                                         <div class="card card-navy card-outline" style="min-height:600px">
                                             <div>
-                                                <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;">Thêm đợt tuyển sinh</div>
+                                                <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;">Thêm đợt xét tuyển</div>
                                                 <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
-                                                    
                                                     <div class="col-md-12 col-12">
-                                                        <div class="form-group row" style="margin-bottom: 3px">
-                                                            <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Mã đợt:</label>
+                                                        <div class="form-group row mb-3">
+                                                            <label for="id_user_check" class="col-sm-4 col-form-label text-sm-end">ID đợt tuyển sinh:</label>
                                                             <div class="col-sm-8">
-                                                                <input type="text" class="form-control" id='account_email' style="height:28px;">
+                                                                <input type="text" class="form-control" id="account_email">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12 col-12 validate_themtaikhoan " id="error_email" style="font-size: 13px; color : red;text-align: right;"></div>
+                                                    <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_email" style="font-size: 13px; color : red;"></div>
                                                     <div class="col-md-12 col-12">
-                                                        <div class="form-group row" style="margin-bottom: 3px">
-                                                            <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Tên đợt:</label>
+                                                        <div class="form-group row mb-3">
+                                                            <label for="id_user_check" class="col-sm-4 col-form-label text-sm-end">Tên đợt xét tuyển:</label>
                                                             <div class="col-sm-8">
-                                                                <input type="text" class="form-control" id='account_name' style="height:28px;">
+                                                                <input type="text" class="form-control" id="account_name">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12 col-12 validate_themtaikhoan" id="error_name" style="font-size: 13px; color : red;text-align: right;"></div>
+                                                    <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_name" style="font-size: 13px; color : red;"></div>
                                                     <div class="col-md-12 col-12">
-                                                        <div class="form-group row" style="margin-bottom: 3px">
-                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
+                                                        <div class="form-group row mb-3">
+                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label text-sm-end">ID quy trình công bố:</label>
                                                             <div class="col-sm-8">
-                                                                <input type="text" class="form-control" id='account_pass' style="height:28px;">
+                                                                <input type="text" class="form-control" id="account_pass">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div>
+                                                    <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_pass" style="font-size: 13px; color : red;"></div>
                                                     <div class="col-md-12 col-12">
-                                                        <div class="form-group row" style="margin-bottom: 3px">
-                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
+                                                        <div class="form-group row mb-3">
+                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label text-sm-end">Ghi chú:</label>
                                                             <div class="col-sm-8">
-                                                                <input type="text" class="form-control" id='account_pass' style="height:28px;">
+                                                                <input type="text" class="form-control" id="account_pass">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div>
+                                                    <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_pass" style="font-size: 13px; color : red;"></div>
+                                                    <div class="col-md-12 col-12">
+                                                        <div class="form-group row mb-3">
+                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label text-sm-end">Khóa đợt:</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="account_pass">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_pass" style="font-size: 13px; color : red;"></div>
                                                 </div>
+
                                             </div>
                                             <div class="card-header" style="padding: 0;margin-left: 10px;"></div>
                                             <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
@@ -148,12 +166,12 @@
                                     <div class="col-12 col-md-9 col-lg-9">
                                         <div class="card card-navy" style="min-height:600px">
                                             <div>
-                                                <div class="card-header" style="padding: 0;margin-left: 10px;margin-top: 3px;font-weight: bold;">Danh sách đợt tuyển sinh</div>
+                                                <div class="card-header" style="padding: 0;margin-left: 10px;margin-top: 3px;font-weight: bold;">Danh sách đợt xét tuyển </div>
                                                 <div class="card-body" style="padding-bottom: 0px;padding-top: 3px" id="list_accounts_tmp">
                                                     <table class="table table-bordered table-hover table-striped dataTable no-footer dtr-inline" id="list_accounts"></table>
                                                     <div class="card-body">
-                                                        <table id="bang_ds_dottuyensinh" class="table table-bordered table-striped">
-                                                             {{-- <thead>
+                                                        <table id="bang_ds_dotxettuyen" class="table table-bordered table-striped">
+                                                             <thead>
                                                                 <tr>
                                                                     <th>ID</th>
                                                                     <th>Loại giấy</th>
@@ -175,7 +193,7 @@
                                                                     <td>2024-08-31</td>
                                                                 </tr>
                                                               
-                                                            </tbody> --}}
+                                                            </tbody>
                                                             
                                                         
                                                         </table>
@@ -203,7 +221,7 @@
 
 
 </body>
-<script src="/admin/admin24/js/congmotcua/dottuyensinh.js"></script>
+<script src="/admin/admin24/js/congmotcua/dotxettuyen.js"></script>
 </html>
 
 <script>

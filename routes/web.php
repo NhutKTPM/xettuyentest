@@ -120,7 +120,7 @@ use App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan\DangKyGiay;
 use \App\Http\Controllers\User_24\Admin\Loginbygoogleadmin24Controller;
 
 use App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan\DotTuyenSinhController;
-
+use App\Http\Controllers\User_24\Admin\CongMotCua\GiayXacNhan\DotXetTuyenController;
 use \App\Http\Controllers\User_24\TestController;
 use \App\Http\Controllers\User_24\ConnectionController;
 
@@ -636,7 +636,10 @@ Route::middleware(['loginadmin::class'])->group(function () {
 
         // Đợt tuyển sinh
         Route::get('/dottuyensinh',[DotTuyenSinhController::class,'dottuyensinh']);
-        Route::get('/ds_dottuyensinh',[DotTuyenSinhController::class,'ds_dottuyensinh']);
+        Route::get('/bang_ds_dottuyensinh',[DotTuyenSinhController::class,'bang_ds_dottuyensinh']);
+
+        Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
+        Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
 
 
     });
