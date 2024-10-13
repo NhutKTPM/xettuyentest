@@ -134,8 +134,20 @@ class DotTuyenSinhController extends Controller
     
 
 
-    function ds_dottuyensinh(){
-        
+        function ds_dottuyensinh(){
+            $data = DB::table('24_dotxettuyen')
+            ->select("*")
+
+            ->get();
+
+            
+    
+            
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+        // return $data;
     }
 
-}
+ }
+    
