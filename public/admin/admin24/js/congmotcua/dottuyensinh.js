@@ -19,32 +19,29 @@ function bang_ds_dottuyensinh(){
             url: "/admin24/bang_ds_dottuyensinh",
         },
         columns: [
-            { title: "STT", data: "stt" },
-            { title: "Mã đợt", data: "maloaigiay" },
-            { title: "Tên đợt", data: "tenloaigiay" },
-            // { title: "Trạng thái ", data: "iddonvi" },
+            { title: "ID", data: "id" },
+            { title: "Mã đợt", data: "madot" },
+            { title: "Tên đợt", data: "tendot" },
+            { title: "Trạng thái", data: "trangthai" },
+            { title: "Khóa đợt", data: "khoadot" },
+            {
+                title: "Chức năng",
+                data: 'id',
+                render: function (data, type, row) {
+                    var icon_sua = '<i id="btt_chucnang_edit" class="fa-regular fa-pen-to-square" >&nbsp&nbsp</i>';
+                    // var icon_sua = '<i id="btt_chucnang_edit" class="fa-regular fa-pen-to-square" onclick = "edit_accounts(' + row.sua.id_nguoidung + ',' + row.sua.id_chucnang + ',' + row.sua.active + ')">&nbsp&nbsp</i>';
 
-            { 
-                title: "Trạng thái", 
-                data: "tiendoxyly",
-                render: function(data, type, row) {
-                    var tiendo = ''; 
-                
-                    if(data == 1) {
-                        tiendo = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>';
-                    } else {  
-                        tiendo = '<small class="badge badge-primary"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Hoàn thành</small>';
-                    } 
-                    
-                    return tiendo;
-                }
-                        
+                    // var icon_phanquyen = '<i style ="color: blue;" id="btt_chucnang_role" class="fa-solid fa-gears" onclick = "loadUser_Menus_Roles(' + row.phanquyen.id_nguoidung + ',' + row.phanquyen.id_chucnang + ',' + row.phanquyen.active + ')">&nbsp&nbsp</i>';
+                    // if (row.status == 1) {
+                    //     var icon_xoa = '<i style ="color: red;" id="btt_chucnang_dlt" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_accounts(' + row.xoa.id_nguoidung + ',' + row.xoa.id_chucnang + ',' + row.xoa.active + ','+row.status+')">&nbsp&nbsp</i>';
+                    // } else {
+                    //     var icon_xoa = '<i style ="color: #007bff;" id="btt_chucnang_dlt" class="fa-solid fa-user-check" onclick = "delete_accounts(' + row.xoa.id_nguoidung + ',' + row.xoa.id_chucnang + ',' + row.xoa.active + ','+row.status+')">&nbsp&nbsp</i>';
+                    // }
+                    return html = icon_sua 
+                    // + icon_phanquyen + icon_xoa
+                },
             },
-            { title: "Khóa đợt", data: "create_at" },
-            { title: "Ngày đăng ký", data: "create_at" },
-    
-    
-          
+
         ],
         columnDefs: [
             {
@@ -82,6 +79,69 @@ function bang_ds_dottuyensinh(){
         select: true,
     });
     return ds_dottuyensinh;
+}
+
+
+function them_dottuyensinh(){
+        // $("#modal_event").show();
+        // $("#dkg_dangky").prop("disabled", true)
+        
+        $.ajax({
+            type: 'post',
+            url: '/admin24/them_dottuyensinh',
+            data: {
+                madot: $("#madot").val(),
+                tendot: $("#tendot").val(),
+                trangthai: $("#trangthai").val(),
+                khoadot: $("#khoadot").val(),
+            },
+            // success: function (res) {
+            //     if(res == 1){
+            //         toastr.success('Đã đăng ký thành công!'); //Xu ly ngoai le
+            //         dangkygiay_load_danhsachloaigiay().ajax.url('/dangkygiay/dangkygiay_load_danhsachloaigiay').load()
+            //     }else{
+            //         if(res == 0){
+            //             toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
+            //         }else{
+            //             toastr.warning(res.id);
+            //         }
+            //     }
+            //     $("#dkg_dangky").prop("disabled", false)
+            //     $("#modal_event").hide();
+            // }
+        })
+    
+}
+
+
+async function themtaikhoan() {
+    $('.validate_themtaikhoan').text('')
+    let id_chucnang = 3;
+    // const time = await lay_time(id_chucnang);
+    const check = await laythongtincheckquyen(id_chucnang);
+    $.ajax({
+        type: "post",
+        url: "/admin24/themtaikhoan",
+        data: {
+            email: $("#account_email").val(),
+            name: $("#account_name").val(),
+            pass: $("#account_pass").val(),
+            id_manhinh: check[0],
+            id_chucnang: id_chucnang, //Quyền thêm
+            time: check[1]
+        },
+        success: function (res) {
+            if (res.loaithongbao == "thongbao") {
+                // table.ajax.reload();
+                $('#list_accounts').DataTable().ajax.reload();
+                thongbao(res.thongbao)
+            } else {
+                var keys = Object.keys(res.thongbao['original'])
+                var dom_validate = document.getElementsByClassName('validate_themtaikhoan')
+                validate(res.thongbao, keys, dom_validate)
+            }
+        },
+    });
 }
 
 

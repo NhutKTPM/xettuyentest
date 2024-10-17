@@ -226,10 +226,10 @@ Route::middleware(['checklogin24::class'])->group(function () {
     });
 
 
-    Route::prefix('dangkygiaysv')->group(function(){
-        Route::get('/',[DangKyGiaySVController::class,'dangkygiaysv']);
-        Route::post('/luudangkygiaysv',[DangKyGiaySVController::class,'luudangkygiaysv']);
-    });
+    // Route::prefix('dangkygiaysv')->group(function(){
+    //     Route::get('/',[DangKyGiaySVController::class,'dangkygiaysv']);
+    //     Route::post('/luudangkygiaysv',[DangKyGiaySVController::class,'luudangkygiaysv']);
+    // });
 
 
     Route::prefix('dangkygiay')->group(function(){
@@ -637,9 +637,10 @@ Route::middleware(['loginadmin::class'])->group(function () {
         // Đợt tuyển sinh
         Route::get('/dottuyensinh',[DotTuyenSinhController::class,'dottuyensinh']);
         Route::get('/bang_ds_dottuyensinh',[DotTuyenSinhController::class,'bang_ds_dottuyensinh']);
+        Route::post('/them_dottuyensinh',[DotTuyenSinhController::class,'them_dottuyensinh']);
 
-        Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
-        Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
+        // Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
+        // Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
 
 
     });

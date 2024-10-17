@@ -26,33 +26,34 @@ class DotTuyenSinhController extends Controller
 
     //Thư viên
 
-    function load_seclectbox($table,$feild_id,$feild_text,$seclected_id,$text_0){
+    function load_seclectbox($table, $feild_id, $feild_text, $seclected_id, $text_0)
+    {
         $data0 = new Collection([
             'id' => 0,
             'text' => $text_0,
-            'selected' =>'selected'
+            'selected' => 'selected'
         ]);
-        $data = DB::table($table)->select($feild_id." as id",$feild_text." as text")->get();
+        $data = DB::table($table)->select($feild_id . " as id", $feild_text . " as text")->get();
         $i = 0;
         foreach ($data as $value) {
-            if($value->$feild_id == $seclected_id){
+            if ($value->$feild_id == $seclected_id) {
                 $value->selected =  'selected';
                 $i++;
-            }else{
+            } else {
                 $value->selected =  '';
             }
         }
-        if( $i == 1){
+        if ($i == 1) {
             $data[] = new Collection([
                 'id' => 0,
                 'text' => $text_0,
-                'selected' =>''
+                'selected' => ''
             ]);
-        }else{
+        } else {
             $data[] = new Collection([
                 'id' => 0,
                 'text' => $text_0,
-                'selected' =>'selected'
+                'selected' => 'selected'
             ]);
         }
         return $data;
@@ -123,31 +124,85 @@ class DotTuyenSinhController extends Controller
     }
 
 
-    function dottuyensinh(){
+    function dottuyensinh()
+    {
 
-        return view('user_24.admin24.manage.congmotcua.giayxacnhan.dottuyensinh',
-        [
-            'menu' =>    $this->sidebar(),
-            'title' => 'Đăng ký giấy xác nhận'
-        ]);
+        return view(
+            'user_24.admin24.manage.congmotcua.giayxacnhan.dottuyensinh',
+            [
+                'menu' =>    $this->sidebar(),
+                'title' => 'Đăng ký giấy xác nhận'
+            ]
+        );
     }
-    
 
 
-        function ds_dottuyensinh(){
-            $data = DB::table('24_dotxettuyen')
+
+    function bang_ds_dottuyensinh()
+    {
+        $data = DB::table('24_dottuyensinh')
             ->select("*")
 
             ->get();
 
-            
-    
-            
+
+
+
         $json_data['data'] = $data;
         $res = json_encode($json_data);
         return  $res;
         // return $data;
     }
 
- }
+    function them_dottuyensinh(Request $r){
+        // try{
+        //                 DB::table('24_dottuyensinh')
+        //                 ->insert(
+        //                     [
+        //                         'madot' => $$r ->input('madot'),
+        //                         'tendot' => $$r ->input('madot'),
+        //                         'trangthai' => $$r ->input('madot'),
+        //                         'khoadot' => 
+        //                     ]
+        //                 );
+        //                 return  1;
+        //             }catch(Exception $e){
+        //                 return  0;
+        //             }
+        
+    //     $id_loaigiay = $r ->input('id');
+    //     $id_taikhoan = Auth::guard('loginbygoogles')->id();
+    //     $tiendoxyly = 1;
+
+
+    //     $validator = Validator::make($r->all(), 
+    //     [
+    //         'id' => 'required|integer|min:1'
+    //     ],
+    //     [
+    //         'id.min' => "Vui lòng chọn loại giấy"
+    //     ]
     
+    // );
+    
+    //     if ($validator->fails()) {
+    //         return response()->json($validator->errors());// Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
+    //     }else{
+    //         try{
+    //             DB::table('24_cmc_dangkygiay')
+    //             ->insert(
+    //                 [
+    //                     'id_taikhoan' => $id_taikhoan,
+    //                     'id_loaigiay' => $id_loaigiay,
+    //                     'tiendoxyly' => $tiendoxyly,
+    //                 ]
+    //             );
+    //             return  1;
+    //         }catch(Exception $e){
+    //             return  0;
+    //         }
+    //     }
+    }
+
+
+}
