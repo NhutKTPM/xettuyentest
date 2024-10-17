@@ -97,13 +97,14 @@ function them_dottuyensinh(){
             },
             success: function (res) {
                 if(res == 1){
-                    toastr.success('Đã thêm thành công!'); //Xu ly ngoai le
+                    toastr.success('Đã thêm thành công! abc'); //Xu ly ngoai le
                     bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
                 }else{
+                    toastr.error("Thêm thất bại");
                     if(res == 0){
                         toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
                     }else{
-                        toastr.warning(res.id);
+                        toastr.warning(res);
                     }
                 }
                 // $("#dkg_dangky").prop("disabled", false)
