@@ -95,20 +95,20 @@ function them_dottuyensinh(){
                 trangthai: $("#trangthai").val(),
                 khoadot: $("#khoadot").val(),
             },
-            // success: function (res) {
-            //     if(res == 1){
-            //         toastr.success('Đã đăng ký thành công!'); //Xu ly ngoai le
-            //         dangkygiay_load_danhsachloaigiay().ajax.url('/dangkygiay/dangkygiay_load_danhsachloaigiay').load()
-            //     }else{
-            //         if(res == 0){
-            //             toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
-            //         }else{
-            //             toastr.warning(res.id);
-            //         }
-            //     }
-            //     $("#dkg_dangky").prop("disabled", false)
-            //     $("#modal_event").hide();
-            // }
+            success: function (res) {
+                if(res == 1){
+                    toastr.success('Đã thêm thành công!'); //Xu ly ngoai le
+                    bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
+                }else{
+                    if(res == 0){
+                        toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
+                    }else{
+                        toastr.warning(res.id);
+                    }
+                }
+                // $("#dkg_dangky").prop("disabled", false)
+                // $("#modal_event").hide();
+            }
         })
     
 }

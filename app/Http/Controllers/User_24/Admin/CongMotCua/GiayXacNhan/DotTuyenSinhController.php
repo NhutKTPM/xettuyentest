@@ -154,55 +154,76 @@ class DotTuyenSinhController extends Controller
         // return $data;
     }
 
-    function them_dottuyensinh(Request $r){
-        // try{
-        //                 DB::table('24_dottuyensinh')
-        //                 ->insert(
-        //                     [
-        //                         'madot' => $$r ->input('madot'),
-        //                         'tendot' => $$r ->input('madot'),
-        //                         'trangthai' => $$r ->input('madot'),
-        //                         'khoadot' => 
-        //                     ]
-        //                 );
-        //                 return  1;
-        //             }catch(Exception $e){
-        //                 return  0;
-        //             }
-        
-    //     $id_loaigiay = $r ->input('id');
-    //     $id_taikhoan = Auth::guard('loginbygoogles')->id();
-    //     $tiendoxyly = 1;
+    function them_dottuyensinh(Request $r)
+    {
+        $validator = Validator::make(
+            $r->all(),
+            [
+                // 'id' => 'required|integer|min:1'
+                'madot' => 'required',
+                'tendot' => 'required',
+                'trangthai' => 'required|integer',
+                'khoadot' => 'required|integer',
+            ],
+            [
+                // 'id.min' => "Vui lòng chọn loại giấy"
+                'madot.required' => "Vui lòng nhập mã đợt",
+                'tendot.required' => "Vui lòng nhập tên đợt",
+                'trangthai.required' => "Vui lòng nhập trạng thái",
+                'khoadot.required' => "Vui lòng nhập khóa đợt",
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()); // Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
+        } else {
+            try {
+                DB::table('24_dottuyensinh')
+                    ->insert(
+                        [
+                            'madot' => $r->input('madot'),
+                            'tendot' => $r->input('tendot'),
+                            'trangthai' => $r->input('trangthai'),
+                            'khoadot' => $r->input('khoadot')
+                        ]
+                    );
+                return  1;
+            } catch (Exception $e) {
+                return  0;
+            }
+        }
+
+        //     $id_loaigiay = $r ->input('id');
+        //     $id_taikhoan = Auth::guard('loginbygoogles')->id();
+        //     $tiendoxyly = 1;
 
 
-    //     $validator = Validator::make($r->all(), 
-    //     [
-    //         'id' => 'required|integer|min:1'
-    //     ],
-    //     [
-    //         'id.min' => "Vui lòng chọn loại giấy"
-    //     ]
-    
-    // );
-    
-    //     if ($validator->fails()) {
-    //         return response()->json($validator->errors());// Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
-    //     }else{
-    //         try{
-    //             DB::table('24_cmc_dangkygiay')
-    //             ->insert(
-    //                 [
-    //                     'id_taikhoan' => $id_taikhoan,
-    //                     'id_loaigiay' => $id_loaigiay,
-    //                     'tiendoxyly' => $tiendoxyly,
-    //                 ]
-    //             );
-    //             return  1;
-    //         }catch(Exception $e){
-    //             return  0;
-    //         }
-    //     }
+        //     $validator = Validator::make($r->all(), 
+        //     [
+        //         'id' => 'required|integer|min:1'
+        //     ],
+        //     [
+        //         'id.min' => "Vui lòng chọn loại giấy"
+        //     ]
+
+        // );
+
+        //     if ($validator->fails()) {
+        //         return response()->json($validator->errors());// Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
+        //     }else{
+        //         try{
+        //             DB::table('24_cmc_dangkygiay')
+        //             ->insert(
+        //                 [
+        //                     'id_taikhoan' => $id_taikhoan,
+        //                     'id_loaigiay' => $id_loaigiay,
+        //                     'tiendoxyly' => $tiendoxyly,
+        //                 ]
+        //             );
+        //             return  1;
+        //         }catch(Exception $e){
+        //             return  0;
+        //         }
+        //     }
     }
-
-
 }
