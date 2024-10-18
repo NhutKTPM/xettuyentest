@@ -46,7 +46,7 @@ function bang_ds_dottuyensinh(){
         columnDefs: [
             {
                 targets: 0,
-                className: "text-left",
+                className: "text-center",
             },
             {
                 targets: 1,

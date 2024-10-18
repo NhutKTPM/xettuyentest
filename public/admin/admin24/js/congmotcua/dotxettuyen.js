@@ -20,9 +20,13 @@ function bang_ds_dotxettuyen(){
         },
         columns: [
             { title: "STT", data: "stt" },
-            { title: "ID đts", data: "maloaigiay" },
-            { title: "Tên đợt", data: "tenloaigiay" },
-            { title: "ID QT", data: "tenloaigiay" },
+            { title: "ID đts", data: "iddotts" },
+            { title: "ID đxt", data: "iddotxt" },
+            { title: "Tên đợt", data: "tendotxettuyen" },
+            { title: "ID QT", data: "id_quytrinhcongbo" },
+            { title: "Ghi chú", data: "ghichu_quytrinh" },
+            { title: "Khóa đợt", data: "khoadot" },
+            { title: "Ngày đăng ký", data: "create_at" },
             // { title: "Trạng thái ", data: "iddonvi" },
 
             // { 
@@ -41,9 +45,7 @@ function bang_ds_dotxettuyen(){
             //     }
                         
             // },
-            { title: "Ghi chú", data: "create_at" },
-            { title: "Khóa đợt", data: "create_at" },
-            { title: "Ngày đăng ký", data: "create_at" },
+            
     
     
           
@@ -51,7 +53,7 @@ function bang_ds_dotxettuyen(){
         columnDefs: [
             {
                 targets: 0,
-                className: "text-left",
+                className: "text-center",
             },
             {
                 targets: 1,

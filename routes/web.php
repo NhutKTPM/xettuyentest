@@ -639,8 +639,8 @@ Route::middleware(['loginadmin::class'])->group(function () {
         Route::get('/bang_ds_dottuyensinh',[DotTuyenSinhController::class,'bang_ds_dottuyensinh']);
         Route::post('/them_dottuyensinh',[DotTuyenSinhController::class,'them_dottuyensinh']);
 
-        // Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
-        // Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
+        Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
+        Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
 
 
     });

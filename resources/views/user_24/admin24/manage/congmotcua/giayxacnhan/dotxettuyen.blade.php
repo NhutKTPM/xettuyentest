@@ -109,6 +109,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-12 col-12">
+                                                        <div class="form-group row mb-3">
+                                                            <label for="id_user_check" class="col-sm-4 col-form-label text-sm-end">ID đợt xét tuyển:</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" id="account_email">
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_email" style="font-size: 13px; color : red;"></div>
                                                     <div class="col-md-12 col-12">
                                                         <div class="form-group row mb-3">
@@ -130,7 +138,7 @@
                                                     <div class="col-md-12 col-12 validate_themtaikhoan text-end" id="error_pass" style="font-size: 13px; color : red;"></div>
                                                     <div class="col-md-12 col-12">
                                                         <div class="form-group row mb-3">
-                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label text-sm-end">Ghi chú:</label>
+                                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label text-sm-end">Ghi chú quy trình:</label>
                                                             <div class="col-sm-8">
                                                                 <input type="text" class="form-control" id="account_pass">
                                                             </div>
@@ -171,7 +179,7 @@
                                                     <table class="table table-bordered table-hover table-striped dataTable no-footer dtr-inline" id="list_accounts"></table>
                                                     <div class="card-body">
                                                         <table id="bang_ds_dotxettuyen" class="table table-bordered table-striped">
-                                                             <thead>
+                                                             {{-- <thead>
                                                                 <tr>
                                                                     <th>ID</th>
                                                                     <th>Loại giấy</th>
@@ -191,7 +199,7 @@
                                                                     <td>Giấy xác nhận vay vốn sinh viên</td>
                                                                     <td>Hoàn thành</td>
                                                                     <td>2024-08-31</td>
-                                                                </tr>
+                                                                </tr> --}}
                                                               
                                                             </tbody>
                                                             
