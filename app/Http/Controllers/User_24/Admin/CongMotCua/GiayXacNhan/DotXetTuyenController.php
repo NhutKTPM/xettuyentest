@@ -134,8 +134,61 @@ class DotXetTuyenController extends Controller
     
 
 
-    function ds_dotxettuyen(){
-        
+    function bang_ds_dotxettuyen()
+    {
+        $data = DB::table('24_dotxettuyen')
+            ->select("*")
+
+            ->get();
+
+
+
+
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+        // return $data;
     }
+
+    function them_dotxettuyen(Request $r)
+    {
+        $validator = Validator::make(
+            $r->all(),
+            [
+                'iddotts' => 'required|integer',
+                'iddotxt' => 'required|integer',
+                'tendotxettuyen' => 'required',  // Đã sửa dấu cách dư thừa
+                'id_quytrinhcongbo' => 'required|integer',
+                'ghichu_quytrinh' => 'nullable',
+                'khoadot' => 'required|integer',
+            ],
+            [
+                'iddotts.required' => "Vui lòng nhập mã đợt tuyển sinh",
+                'iddotxt.required' => "Vui lòng nhập mã đợt xét tuyển",
+                'tendotxettuyen.required' => "Vui lòng nhập tên đợt",
+                'id_quytrinhcongbo.required' => "Vui lòng nhập id quy trình",
+                'khoadot.required' => "Vui lòng nhập khóa đợt",
+            ]
+        );
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422); // Trả về lỗi với status 422
+        } else {
+            try {
+                DB::table('24_dotxettuyen')->insert([
+                    'iddotts' => $r->input('iddotts'),
+                    'iddotxt' => $r->input('iddotxt'),
+                    'tendotxettuyen' => $r->input('tendotxettuyen'),
+                    'id_quytrinhcongbo' => $r->input('id_quytrinhcongbo'),
+                    'ghichu_quytrinh' => $r->input('ghichu_quytrinh'),
+                    'khoadot' => $r->input('khoadot'),
+                ]);
+               return 1;//  response()->json(['message' => 'Thêm thành công'], 200); // Trả về phản hồi thành công
+            } catch (Exception $e) {
+               return 0;  // response()->json(['error' => 'Lỗi khi thêm dữ liệu: ' . $e->getMessage()], 500); // Trả về lỗi nếu có ngoại lệ
+            }
+        }
+    }
+    
 
 }

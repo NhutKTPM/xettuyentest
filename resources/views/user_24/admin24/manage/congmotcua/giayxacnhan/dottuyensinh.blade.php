@@ -80,7 +80,7 @@
         <div class="content-wrapper" style="min-height: 1302.12px;">
             <section class="content">
                 <div class="container-fluid">
-                    @include('user_24.admin24.include.contentheader')
+                    
                     <div class="row">
                         <div class="col-md-12">
                             <div id="loadpage">
@@ -174,7 +174,7 @@
         @include('user_24.admin24.include.footer')
     </div>
         {{-- @include('user_24.admin_24.footer') --}}
-        @include('user_24.admin24.include.footer')
+
     </div>
 
 

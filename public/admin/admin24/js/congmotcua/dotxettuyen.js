@@ -6,7 +6,7 @@ $(document).ready(function () {
     });
     
     bang_ds_dotxettuyen();
-
+    // them_dotxettuyen();
 
 });
 
@@ -19,14 +19,14 @@ function bang_ds_dotxettuyen(){
             url: "/admin24/bang_ds_dotxettuyen",
         },
         columns: [
-            { title: "STT", data: "stt" },
+            // { title: "STT", data: "stt" },
             { title: "ID đts", data: "iddotts" },
             { title: "ID đxt", data: "iddotxt" },
             { title: "Tên đợt", data: "tendotxettuyen" },
             { title: "ID QT", data: "id_quytrinhcongbo" },
             { title: "Ghi chú", data: "ghichu_quytrinh" },
             { title: "Khóa đợt", data: "khoadot" },
-            { title: "Ngày đăng ký", data: "create_at" },
+            // { title: "Ngày đăng ký", data: "create_at" },
             // { title: "Trạng thái ", data: "iddonvi" },
 
             // { 
@@ -89,3 +89,69 @@ function bang_ds_dotxettuyen(){
 }
 
 
+
+
+function them_dotxettuyen(){
+    // $("#modal_event").show();
+    // $("#dkg_dangky").prop("disabled", true)
+    
+    $.ajax({
+        type: 'post',
+        url: '/admin24/them_dotxettuyen',
+        data: {
+            iddotts: $("#iddotts").val(),
+            iddotxt: $("#iddotxt").val(),
+            tendotxettuyen: $("#tendotxettuyen").val(),
+            id_quytrinhcongbo: $("#id_quytrinhcongbo").val(),
+            ghichu_quytrinh: $("#ghichu_quytrinh").val(),
+            khoadot: $("#khoadot").val(),
+        },
+        success: function (res) {
+            if(res == 1){
+                toastr.success('Đã thêm thành công! abc'); //Xu ly ngoai le
+                bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load()
+            }else{
+                toastr.error("Thêm thất bại");
+                if(res == 0){
+                    toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
+                }else{
+                    toastr.warning(res);
+                }
+            }
+            // $("#dkg_dangky").prop("disabled", false)
+            // $("#modal_event").hide();
+        }
+    })
+
+}
+
+
+async function themtaikhoan() {
+$('.validate_themtaikhoan').text('')
+let id_chucnang = 3;
+// const time = await lay_time(id_chucnang);
+const check = await laythongtincheckquyen(id_chucnang);
+$.ajax({
+    type: "post",
+    url: "/admin24/themtaikhoan",
+    data: {
+        email: $("#account_email").val(),
+        name: $("#account_name").val(),
+        pass: $("#account_pass").val(),
+        id_manhinh: check[0],
+        id_chucnang: id_chucnang, //Quyền thêm
+        time: check[1]
+    },
+    success: function (res) {
+        if (res.loaithongbao == "thongbao") {
+            // table.ajax.reload();
+            $('#list_accounts').DataTable().ajax.reload();
+            thongbao(res.thongbao)
+        } else {
+            var keys = Object.keys(res.thongbao['original'])
+            var dom_validate = document.getElementsByClassName('validate_themtaikhoan')
+            validate(res.thongbao, keys, dom_validate)
+        }
+    },
+});
+}
