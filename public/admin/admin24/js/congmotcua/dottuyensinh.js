@@ -110,8 +110,11 @@ function them_dottuyensinh(){
                 // $("#dkg_dangky").prop("disabled", false)
                 // $("#modal_event").hide();
             }
-        })
-    
+        });
+        document.getElementById('madot').value = "";
+        document.getElementById('tendot').value = "";
+        document.getElementById('trangthai').value = "";
+        document.getElementById('khoadot').value = "";
 }
 
 
