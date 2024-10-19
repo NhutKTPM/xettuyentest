@@ -137,7 +137,8 @@ class DotXetTuyenController extends Controller
     function bang_ds_dotxettuyen()
     {
         $data = DB::table('24_dotxettuyen')
-            ->select("*")
+            ->select("24_dotxettuyen.*", "24_dottuyensinh.tendot")
+            ->leftJoin('24_dottuyensinh', '24_dottuyensinh.id', '24_dotxettuyen.iddotts')
 
             ->get();
 

@@ -118,34 +118,5 @@ function them_dottuyensinh(){
 }
 
 
-async function themtaikhoan() {
-    $('.validate_themtaikhoan').text('')
-    let id_chucnang = 3;
-    // const time = await lay_time(id_chucnang);
-    const check = await laythongtincheckquyen(id_chucnang);
-    $.ajax({
-        type: "post",
-        url: "/admin24/themtaikhoan",
-        data: {
-            email: $("#account_email").val(),
-            name: $("#account_name").val(),
-            pass: $("#account_pass").val(),
-            id_manhinh: check[0],
-            id_chucnang: id_chucnang, //Quyền thêm
-            time: check[1]
-        },
-        success: function (res) {
-            if (res.loaithongbao == "thongbao") {
-                // table.ajax.reload();
-                $('#list_accounts').DataTable().ajax.reload();
-                thongbao(res.thongbao)
-            } else {
-                var keys = Object.keys(res.thongbao['original'])
-                var dom_validate = document.getElementsByClassName('validate_themtaikhoan')
-                validate(res.thongbao, keys, dom_validate)
-            }
-        },
-    });
-}
 
 
