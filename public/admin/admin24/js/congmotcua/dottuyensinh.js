@@ -22,8 +22,28 @@ function bang_ds_dottuyensinh(){
             { title: "ID", data: "id" },
             { title: "Mã đợt", data: "madot" },
             { title: "Tên đợt", data: "tendot" },
-            { title: "Trạng thái", data: "trangthai" },
-            { title: "Khóa đợt", data: "khoadot" },
+            { title: "Trạng thái", data: "trangthai", 
+                render: function (data, type, row){
+                    var cbtrangthai = ''
+                    if (data == 1){
+                        cbtrangthai = '<input type="checkbox" checked="" onclick="return false;" style="height:18px;background-color:inhert">';
+                    } else{
+                        cbtrangthai = '<input type="checkbox" onclick="return false;" style="height:18px;background-color:inhert">';
+                    }
+                    return cbtrangthai
+                }
+            },
+            { title: "Khóa đợt", data: "khoadot",
+                render: function (data, type, row){
+                    var cbtrangthai = ''
+                    if (data == 1){
+                        cbtrangthai = '<input type="checkbox" checked="" onclick="return false;" style="height:18px;background-color:inhert">';
+                    } else{
+                        cbtrangthai = '<input type="checkbox" onclick="return false;" style="height:18px;background-color:inhert">';
+                    }
+                    return cbtrangthai
+                }
+             },
             {
                 title: "Chức năng",
                 data: 'id',
@@ -85,15 +105,20 @@ function bang_ds_dottuyensinh(){
 function them_dottuyensinh(){
         // $("#modal_event").show();
         // $("#dkg_dangky").prop("disabled", true)
-        
+
+        let trangthaichecked = 0;
+        if ($("#trangthai").is(":checked")) {  
+            trangthaichecked = 1
+        }
+
         $.ajax({
             type: 'post',
             url: '/admin24/them_dottuyensinh',
             data: {
                 madot: $("#madot").val(),
                 tendot: $("#tendot").val(),
-                trangthai: $("#trangthai").val(),
-                khoadot: $("#khoadot").val(),
+                trangthai: trangthaichecked,
+                khoadot: 0,
             },
             success: function (res) {
                 if(res == 1){

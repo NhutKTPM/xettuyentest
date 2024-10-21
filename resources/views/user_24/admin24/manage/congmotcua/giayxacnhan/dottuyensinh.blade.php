@@ -115,12 +115,13 @@
                                                         <div class="form-group row" style="margin-bottom: 3px">
                                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
                                                             <div class="col-sm-8">
-                                                                <input type="text" class="form-control" id='trangthai' style="height:28px;">
+                                                                <!-- <input type="text" class="form-control"  style="height:28px;"> -->
+                                                                <input id='trangthai' type="checkbox" style="height:18px;background-color:inhert">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div>
-                                                    <div class="col-md-12 col-12">
+                                                    <!-- <div class="col-md-12 col-12">
                                                         <div class="form-group row" style="margin-bottom: 3px">
                                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
                                                             <div class="col-sm-8">
@@ -128,7 +129,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div>
+                                                    <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div> -->
                                                 </div>
                                             </div>
                                             <div class="card-header" style="padding: 0;margin-left: 10px;"></div>
