@@ -638,12 +638,17 @@ Route::middleware(['loginadmin::class'])->group(function () {
         Route::get('/dottuyensinh',[DotTuyenSinhController::class,'dottuyensinh']);
         Route::get('/bang_ds_dottuyensinh',[DotTuyenSinhController::class,'bang_ds_dottuyensinh']);
         Route::post('/them_dottuyensinh',[DotTuyenSinhController::class,'them_dottuyensinh']);
+        Route::get('/edit_dottuyensinh', [DotTuyenSinhController::class, 'edit_dottuyensinh']);
+        Route::post('/update_dottuyensinh', [DotTuyenSinhController::class, 'update_dottuyensinh']);
+        Route::post('/delete_dottuyensinh', [DotTuyenSinhController::class, 'delete_dottuyensinh']);
 
         Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
         Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
         Route::post('/them_dotxettuyen',[DotXetTuyenController::class,'them_dotxettuyen']);
 
+ 
 
+        
     });
 
    

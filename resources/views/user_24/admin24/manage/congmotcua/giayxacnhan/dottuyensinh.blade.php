@@ -104,7 +104,7 @@
                                                         <div class="form-group row" style="margin-bottom: 3px">
                                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
                                                             <div class="col-sm-8">
-                                                                <input id='trangthai' type="checkbox" style="height:18px;background-color:inhert">
+                                                                <input id='trangthai_load' type="checkbox" style="height:18px;background-color:inhert">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -166,7 +166,7 @@
 
     </div>
 
-    <div class="modal" id="modal_sua_dts">
+    <div class="" id="modal_sua_dts">
         <div style="vertical-align:middle;background-color: rgba(0,0,0,0.5);height: 100%;">
             <div class="row">
                 <div class="col-md-2 col-12">
@@ -208,7 +208,7 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
                                             <div class="col-sm-8">
-                                                <input id='trangthai' type="checkbox" style="height:18px;background-color:inhert">
+                                                <input id='trangthai_1' type="checkbox" style="height:18px;background-color:inhert">
                                             </div>
                                         </div>
                                     </div>
@@ -230,7 +230,7 @@
                                                 <div class="col-md-6 col-12">
                                                 </div>
                                                 <div class="col-md-2 col-6">
-                                                    <button type="button" onclick="update_dts()" id="Update_button" data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
+                                                    <button type="button"  id="update_dottuyensinh" data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
                                                 </div>
                                                 <div class="col-md-2 col-6">
                                                     <button style="background-color: #fff; color:#007bff" type="button" onclick="refresh_modal_sua_dts()" id='Refresh_update_button' data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>

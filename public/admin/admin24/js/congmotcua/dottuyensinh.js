@@ -6,7 +6,7 @@ $(document).ready(function () {
     });
     
     bang_ds_dottuyensinh();
-    
+    $('#trangthai_load').prop('checked','true')
 
 });
 
@@ -19,7 +19,7 @@ function bang_ds_dottuyensinh(){
             url: "/admin24/bang_ds_dottuyensinh",
         },
         columns: [
-            { title: "ID", data: "id" },
+            { title: "STT", data: "stt" },
             { title: "Mã đợt", data: "madot" },
             { title: "Tên đợt", data: "tendot" },
             { title: "Trạng thái", data: "trangthai", 
@@ -48,10 +48,17 @@ function bang_ds_dottuyensinh(){
                 title: "Chức năng",
                 data: 'id',
                 render: function (data, type, row) {
-                    var icon_sua = '<i id="btt_chucnang_edit" class="fa-regular fa-pen-to-square" onclick = "edit_dottuyensinh()" >&nbsp&nbsp</i>';
+                    var icon_sua = '<i id="" class="fa-regular fa-pen-to-square" onclick = "edit_load_dottuyensinh('+row.id+')" >&nbsp&nbsp</i>';
 
-                    var icon_xoa = '<i style ="color: red;" id="btt_chucnang_dlt" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_dts()">&nbsp&nbsp</i>';
+                    var icon_xoa = '<i style ="color: red;" id="" class="fa-regular fa-solid fa-user-xmark" onclick = "del_dottuyensinh('+row.id+')">&nbsp&nbsp</i>';
 
+                    // var icon_sua = '<i id="btt_chucnang_edit" class="fa-regular fa-pen-to-square" onclick = "edit_accounts(' + row.sua.id_nguoidung + ',' + row.sua.id_chucnang + ',' + row.sua.active + ')">&nbsp&nbsp</i>';
+                    // var icon_phanquyen = '<i style ="color: blue;" id="btt_chucnang_role" class="fa-solid fa-gears" onclick = "loadUser_Menus_Roles(' + row.phanquyen.id_nguoidung + ',' + row.phanquyen.id_chucnang + ',' + row.phanquyen.active + ')">&nbsp&nbsp</i>';
+                    // if (row.status == 1) {
+                    //     var icon_xoa = '<i style ="color: red;" id="btt_chucnang_dlt" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_accounts(' + row.xoa.id_nguoidung + ',' + row.xoa.id_chucnang + ',' + row.xoa.active + ','+row.status+')">&nbsp&nbsp</i>';
+                    // } else {
+                    //     var icon_xoa = '<i style ="color: #007bff;" id="btt_chucnang_dlt" class="fa-solid fa-user-check" onclick = "delete_accounts(' + row.xoa.id_nguoidung + ',' + row.xoa.id_chucnang + ',' + row.xoa.active + ','+row.status+')">&nbsp&nbsp</i>';
+                    // }
                     return html = icon_sua + icon_xoa
                 },
             },
@@ -136,17 +143,62 @@ function them_dottuyensinh(){
         document.getElementById('khoadot').value = "";
 }
 
-function edit_dottuyensinh(){
-    $("#modal_sua_dts").show();
+function edit_load_dottuyensinh(id){
+    alert(id)
+    $('#update_dottuyensinh').attr('data-id',id)
+    // alert(id)
+    // $.ajax({
+    //     type: 'post',
+    //     url: '/admin24/edit_dottuyensinh',
+    //     data: {
+    //         id: id,
+    //     },
+    //     success: function (res) {
+    //         alert(res)
+    //         // if(res == 1){
+    //         //     toastr.success('Đã thêm thành công! abc'); //Xu ly ngoai le
+    //         //     bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
+    //         // }else{
+    //         //     toastr.error("Thêm thất bại");
+    //         //     if(res == 0){
+    //         //         toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
+    //         //     }else{
+    //         //         toastr.warning(res);
+    //         //     }
+    //         // }
+    //         // $("#dkg_dangky").prop("disabled", false)
+    //         // $("#modal_event").hide();
+    //     }
+    // });
+
+    // $("#modal_sua_dts").show();
 }
 
 function close_modal_sua_dts(){
     $("#modal_sua_dts").hide();
 }
 
-function update_dts(){
 
-}
+
+$('#update_dottuyensinh').on('click',function(){
+    var trangthai = $('#trangthai_1').prop('checked') == true ? trangthai = 1 : trangthai = 0;
+    var id = $('#update_dottuyensinh').attr('data-id')
+    alert(id)
+    alert(trangthai)
+    $.ajax({
+        type: 'post',
+        url: '/admin24/update_dottuyensinh',
+        data: {
+            id: id,
+            trangthai : trangthai
+        },
+        success: function (res) {
+            thongbao(res)
+
+        }
+    })
+    
+})
 
 function refresh_modal_sua_dts(){
 

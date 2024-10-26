@@ -17,6 +17,7 @@ use PhpParser\Node\Expr\FuncCall;
 use \App\Http\Controllers\User\Main\InfoUserController;
 use \App\Http\Controllers\User\Main\RegisterWishController;
 use Exception;
+use PhpParser\Node\Stmt\If_;
 
 use function PHPUnit\Framework\countOf;
 
@@ -141,13 +142,10 @@ class DotTuyenSinhController extends Controller
     function bang_ds_dottuyensinh()
     {
         $data = DB::table('24_dottuyensinh')
-            ->select("*")
-
+            // DB::raw('ROW_NUMBER() OVER (ORDER BY 24_cmc_dangkygiay.id) AS stt')
+            ->select("*",DB::raw('ROW_NUMBER() OVER (ORDER BY id DESC) AS stt'))
+            ->orderBy('id','DESC')
             ->get();
-
-
-
-
         $json_data['data'] = $data;
         $res = json_encode($json_data);
         return  $res;
@@ -192,38 +190,42 @@ class DotTuyenSinhController extends Controller
                 return  0;
             }
         }
+    }
 
-        //     $id_loaigiay = $r ->input('id');
-        //     $id_taikhoan = Auth::guard('loginbygoogles')->id();
-        //     $tiendoxyly = 1;
+    function edit_load_dottuyensinh(Request $request){
+        DB::table('24_dottuyensinh')->where('id',$request->input('id'))->get();
+    }
 
+    function update_dottuyensinh(Request $request){
+        $id = $request->input('id');
+        $trangthai = $request->input('trangthai');
 
-        //     $validator = Validator::make($r->all(), 
-        //     [
-        //         'id' => 'required|integer|min:1'
-        //     ],
-        //     [
-        //         'id.min' => "Vui lòng chọn loại giấy"
-        //     ]
+        DB::beginTransaction();
+        try{
+            $res = DB::table('24_dottuyensinh')
+            ->where('id',$id)
+            ->update([
+                'trangthai' => $trangthai,
+            ]);
+            if($res != 0){
+                if($res == 1){
+                    DB::commit();
+                    return 'upd_1';
+                }else{
+                    DB::rollBack();
+                    return 'upd_0';
+                }
+            }else{
+                return 'upd_2';
+            }
+        }catch(Exception $e){
+            DB::rollBack();
+            return 'upd_0';
+        }
+        
+    }
 
-        // );
-
-        //     if ($validator->fails()) {
-        //         return response()->json($validator->errors());// Nếu không có lỗi, lưu dữ liệu vào cơ sở dữ liệu
-        //     }else{
-        //         try{
-        //             DB::table('24_cmc_dangkygiay')
-        //             ->insert(
-        //                 [
-        //                     'id_taikhoan' => $id_taikhoan,
-        //                     'id_loaigiay' => $id_loaigiay,
-        //                     'tiendoxyly' => $tiendoxyly,
-        //                 ]
-        //             );
-        //             return  1;
-        //         }catch(Exception $e){
-        //             return  0;
-        //         }
-        //     }
+    function delete_dottuyensinh(){
+        
     }
 }
