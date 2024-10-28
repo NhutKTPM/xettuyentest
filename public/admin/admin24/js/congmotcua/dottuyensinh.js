@@ -8,6 +8,9 @@ $(document).ready(function () {
     bang_ds_dottuyensinh();
     $('#trangthai_load').prop('checked','true')
 
+    $('#update_dottuyensinh_button').attr('data-id',"");
+    close_modal_sua_dts();
+
 });
 
 
@@ -144,8 +147,8 @@ function them_dottuyensinh(){
 }
 
 function edit_load_dottuyensinh(id){
-    alert(id)
-    $('#update_dottuyensinh').attr('data-id',id)
+    // alert(id)
+    
     // alert(id)
     // $.ajax({
     //     type: 'post',
@@ -170,35 +173,92 @@ function edit_load_dottuyensinh(id){
     //         // $("#modal_event").hide();
     //     }
     // });
+    $.ajax({
+        type: "get",
+        url: "/admin24/edit_load_dottuyensinh",
+        dataType: "json",
+        data: {
+            id: id,
+        },
+        success: function (res) {
+                var dts_data = res[0];
+                $("#modal_accounts").show();                
+                // $("#Update_button").attr("id_nguoidung", id_nguoidung);
+                // $('#Update_button').attr("id_chucnang", id_chucnang)
+                // $('#Update_button').attr("active", active)
+                $("#edit_madot").val(dts_data.madot);
+                $("#edit_tendot").val(dts_data.tendot);
+                if (dts_data.trangthai == 1){
+                    $("#edit_trangthai").prop("checked",true);
+                }
+                if (dts_data.khoadot == 1){
+                    $("#edit_khoadot").prop("checked",true);
+                }
+                // $("#edit_trangthai").val(dts_data.trangthai);
+                // $("#edit_khoadot").val(dts_data.khoadot);
+                // $("#Refresh_update_button").attr("id_nguoidung", id_nguoidung);
+                $('#update_dottuyensinh_button').attr('data-id',id);
+        },
+    });
 
-    // $("#modal_sua_dts").show();
+    $("#modal_sua_dts").show();
 }
 
 function close_modal_sua_dts(){
     $("#modal_sua_dts").hide();
+    $("#edit_madot").val("");
+    $("#edit_tendot").val("");
+    $("#edit_trangthai").prop("checked",false);
+    $("#edit_khoadot").prop("checked",false);
 }
 
 
-
-$('#update_dottuyensinh').on('click',function(){
-    var trangthai = $('#trangthai_1').prop('checked') == true ? trangthai = 1 : trangthai = 0;
-    var id = $('#update_dottuyensinh').attr('data-id')
-    alert(id)
-    alert(trangthai)
-    $.ajax({
-        type: 'post',
-        url: '/admin24/update_dottuyensinh',
-        data: {
-            id: id,
-            trangthai : trangthai
-        },
-        success: function (res) {
-            thongbao(res)
-
-        }
-    })
+function update_dottuyensinh(){
+        var id = $('#update_dottuyensinh_button').attr('data-id');
+        var madot = $("#edit_madot").val();
+        var tendot = $("#edit_tendot").val();
+        var trangthai = $('#edit_trangthai').prop('checked') == true ? trangthai = 1 : trangthai = 0;
+        // alert(trangthai);
+        var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
+        // alert(id)
+        // alert(trangthai)
+        $.ajax({
+            type: 'post',
+            url: '/admin24/update_dottuyensinh',
+            data: {
+                id: id,
+                madot: madot,
+                tendot: tendot,
+                trangthai: trangthai,
+                khoadot: khoadot,
+            },
+            success: function (res) {
+                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
+                thongbao(res)
     
-})
+            }
+        })
+        
+    }
+// $('#update_dottuyensinh').on('click',function(){
+//     var trangthai = $('#trangthai_1').prop('checked') == true ? trangthai = 1 : trangthai = 0;
+//     var id = $('#update_dottuyensinh').attr('data-id')
+//     alert(id)
+//     alert(trangthai)
+//     $.ajax({
+//         type: 'post',
+//         url: '/admin24/update_dottuyensinh',
+//         data: {
+//             id: id,
+//             trangthai : trangthai
+//         },
+//         success: function (res) {
+//             thongbao(res)
+
+//         }
+//     })
+    
+// })
 
 function refresh_modal_sua_dts(){
 

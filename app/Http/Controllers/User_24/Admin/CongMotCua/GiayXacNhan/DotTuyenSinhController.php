@@ -193,19 +193,28 @@ class DotTuyenSinhController extends Controller
     }
 
     function edit_load_dottuyensinh(Request $request){
-        DB::table('24_dottuyensinh')->where('id',$request->input('id'))->get();
+        $data = DB::table('24_dottuyensinh')->where('id',$request->input('id'))->get();
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $data; 
     }
 
     function update_dottuyensinh(Request $request){
         $id = $request->input('id');
+        $madot = $request->input('madot');
+        $tendot = $request->input('tendot');
         $trangthai = $request->input('trangthai');
+        $khoadot = $request->input('khoadot');
 
         DB::beginTransaction();
         try{
             $res = DB::table('24_dottuyensinh')
             ->where('id',$id)
             ->update([
+                'madot' => $madot,
+                'tendot' => $tendot,
                 'trangthai' => $trangthai,
+                'khoadot' => $khoadot,
             ]);
             if($res != 0){
                 if($res == 1){

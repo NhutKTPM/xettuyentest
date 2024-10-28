@@ -166,7 +166,7 @@
 
     </div>
 
-    <div class="" id="modal_sua_dts">
+    <div class="modal" id="modal_sua_dts">
         <div style="vertical-align:middle;background-color: rgba(0,0,0,0.5);height: 100%;">
             <div class="row">
                 <div class="col-md-2 col-12">
@@ -189,18 +189,18 @@
                                 <div class="row">
                                     <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Tên:</label>
+                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Mã đợt:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_name" id='update_accounts_name' value="" class="validate form-control" style="height:28px">
+                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_name" style="font-size: 13px; color : red;text-align: right;"></div>
                                     <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Email:</label>
+                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Tên đợt:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_email" id='update_accounts_email' value="" class="form-control validate" style="height:28px">
+                                                <input type="text" name="update_accounts_email" id='edit_tendot' value="" class="form-control validate" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
@@ -208,7 +208,7 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
                                             <div class="col-sm-8">
-                                                <input id='trangthai_1' type="checkbox" style="height:18px;background-color:inhert">
+                                                <input id='edit_trangthai' type="checkbox" style="height:18px;background-color:inhert">
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +216,7 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
                                             <div class="col-sm-8">
-                                                <input id='trangthai' type="checkbox" style="height:18px;background-color:inhert">
+                                                <input id='edit_khoadot' type="checkbox" style="height:18px;background-color:inhert">
                                             </div>
                                         </div>
                                     </div>
@@ -230,7 +230,7 @@
                                                 <div class="col-md-6 col-12">
                                                 </div>
                                                 <div class="col-md-2 col-6">
-                                                    <button type="button"  id="update_dottuyensinh" data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
+                                                    <button type="button"  id="update_dottuyensinh_button" data-id="" onclick="update_dottuyensinh()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
                                                 </div>
                                                 <div class="col-md-2 col-6">
                                                     <button style="background-color: #fff; color:#007bff" type="button" onclick="refresh_modal_sua_dts()" id='Refresh_update_button' data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
