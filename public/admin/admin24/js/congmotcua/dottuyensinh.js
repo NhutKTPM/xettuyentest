@@ -106,45 +106,47 @@ function bang_ds_dottuyensinh(){
 }
 
 
-function them_dottuyensinh(){
-        // $("#modal_event").show();
-        // $("#dkg_dangky").prop("disabled", true)
 
-        let trangthaichecked = 0;
-        if ($("#trangthai").is(":checked")) {  
-            trangthaichecked = 1
-        }
+function them_dottuyensinh() {
+    let trangthaichecked = 0;
+    if ($("#trangthai").is(":checked")) {  
+        trangthaichecked = 1;
+    }
 
-        $.ajax({
-            type: 'post',
-            url: '/admin24/them_dottuyensinh',
-            data: {
-                madot: $("#madot").val(),
-                tendot: $("#tendot").val(),
-                trangthai: trangthaichecked,
-                khoadot: 0,
-            },
-            success: function (res) {
-                if(res == 1){
-                    toastr.success('Đã thêm thành công! abc'); //Xu ly ngoai le
-                    bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
-                }else{
-                    toastr.error("Thêm thất bại");
-                    if(res == 0){
-                        toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
-                    }else{
-                        toastr.warning(res);
-                    }
+    $("#modal_event").show(); 
+
+    $.ajax({
+        type: 'post',
+        url: '/admin24/them_dottuyensinh',
+        data: {
+            madot: $("#madot").val(),
+            tendot: $("#tendot").val(),
+            trangthai: trangthaichecked,
+            khoadot: 0,
+        },
+        success: function (res) {
+            if(res == 1){
+                toastr.success('Đã thêm thành công!');
+                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load();
+            } else {
+                toastr.error("Thêm thất bại");
+                if(res == 0){
+                    toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
+                } else {
+                    toastr.warning(res);
                 }
-                // $("#dkg_dangky").prop("disabled", false)
-                // $("#modal_event").hide();
             }
-        });
-        document.getElementById('madot').value = "";
-        document.getElementById('tendot').value = "";
-        document.getElementById('trangthai').value = "";
-        document.getElementById('khoadot').value = "";
+
+            $("#modal_event").hide(); 
+        }
+    });
+
+    $("#madot").val("");
+    $("#tendot").val("");
+    $("#trangthai").prop("checked", false); 
+    $("#khoadot").val("");
 }
+
 
 function edit_load_dottuyensinh(id){
 
@@ -191,6 +193,7 @@ function update_dottuyensinh(){
         var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
         // alert(id)
         // alert(trangthai)
+        $("#modal_event").show();
         $.ajax({
             type: 'post',
             url: '/admin24/update_dottuyensinh',
@@ -204,7 +207,7 @@ function update_dottuyensinh(){
             success: function (res) {
                 bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
                 thongbao(res)
-    
+                $("#modal_event").hide();
             }
         })
         

@@ -158,6 +158,7 @@
                     </div>
                 </div>
             </section>
+            @include('user_24.modalevent')
         </div>
         
         @include('user_24.admin24.include.footer')
@@ -245,6 +246,7 @@
                             </form>
                         </div>
                     </div>
+                    @include('user_24.modalevent')
                 </div>
                 <div class="col-md-2 col-12">
 
