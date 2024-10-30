@@ -645,7 +645,9 @@ Route::middleware(['loginadmin::class'])->group(function () {
         Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
         Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
         Route::post('/them_dotxettuyen',[DotXetTuyenController::class,'them_dotxettuyen']);
-
+        Route::get('/edit_load_dotxettuyen', [DotXetTuyenController::class, 'edit_load_dotxettuyen']);
+        Route::post('/update_dotxettuyen', [DotXetTuyenController::class, 'update_dotxettuyen']);
+        Route::post('/delete_dotxettuyen', [DotXetTuyenController::class, 'delete_dotxettuyen']);
  
 
         

@@ -53,7 +53,7 @@ function bang_ds_dottuyensinh(){
                 render: function (data, type, row) {
                     var icon_sua = '<i id="" class="fa-regular fa-pen-to-square" onclick = "edit_load_dottuyensinh('+row.id+')" >&nbsp&nbsp</i>';
 
-                    var icon_xoa = '<i style ="color: red;" id="" class="fa-regular fa-solid fa-user-xmark" onclick = "del_dottuyensinh('+row.id+')">&nbsp&nbsp</i>';
+                    var icon_xoa = '<i style ="color: red;" id="" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_dts('+row.id+')">&nbsp&nbsp</i>';
 
                     // var icon_sua = '<i id="btt_chucnang_edit" class="fa-regular fa-pen-to-square" onclick = "edit_accounts(' + row.sua.id_nguoidung + ',' + row.sua.id_chucnang + ',' + row.sua.active + ')">&nbsp&nbsp</i>';
                     // var icon_phanquyen = '<i style ="color: blue;" id="btt_chucnang_role" class="fa-solid fa-gears" onclick = "loadUser_Menus_Roles(' + row.phanquyen.id_nguoidung + ',' + row.phanquyen.id_chucnang + ',' + row.phanquyen.active + ')">&nbsp&nbsp</i>';
@@ -147,32 +147,7 @@ function them_dottuyensinh(){
 }
 
 function edit_load_dottuyensinh(id){
-    // alert(id)
-    
-    // alert(id)
-    // $.ajax({
-    //     type: 'post',
-    //     url: '/admin24/edit_dottuyensinh',
-    //     data: {
-    //         id: id,
-    //     },
-    //     success: function (res) {
-    //         alert(res)
-    //         // if(res == 1){
-    //         //     toastr.success('Đã thêm thành công! abc'); //Xu ly ngoai le
-    //         //     bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
-    //         // }else{
-    //         //     toastr.error("Thêm thất bại");
-    //         //     if(res == 0){
-    //         //         toastr.error('Hệ thống bị lỗi, vui lòng ngưng sử dụng');
-    //         //     }else{
-    //         //         toastr.warning(res);
-    //         //     }
-    //         // }
-    //         // $("#dkg_dangky").prop("disabled", false)
-    //         // $("#modal_event").hide();
-    //     }
-    // });
+
     $.ajax({
         type: "get",
         url: "/admin24/edit_load_dottuyensinh",
@@ -183,9 +158,6 @@ function edit_load_dottuyensinh(id){
         success: function (res) {
                 var dts_data = res[0];
                 $("#modal_accounts").show();                
-                // $("#Update_button").attr("id_nguoidung", id_nguoidung);
-                // $('#Update_button').attr("id_chucnang", id_chucnang)
-                // $('#Update_button').attr("active", active)
                 $("#edit_madot").val(dts_data.madot);
                 $("#edit_tendot").val(dts_data.tendot);
                 if (dts_data.trangthai == 1){
@@ -194,9 +166,6 @@ function edit_load_dottuyensinh(id){
                 if (dts_data.khoadot == 1){
                     $("#edit_khoadot").prop("checked",true);
                 }
-                // $("#edit_trangthai").val(dts_data.trangthai);
-                // $("#edit_khoadot").val(dts_data.khoadot);
-                // $("#Refresh_update_button").attr("id_nguoidung", id_nguoidung);
                 $('#update_dottuyensinh_button').attr('data-id',id);
         },
     });
@@ -240,30 +209,25 @@ function update_dottuyensinh(){
         })
         
     }
-// $('#update_dottuyensinh').on('click',function(){
-//     var trangthai = $('#trangthai_1').prop('checked') == true ? trangthai = 1 : trangthai = 0;
-//     var id = $('#update_dottuyensinh').attr('data-id')
-//     alert(id)
-//     alert(trangthai)
-//     $.ajax({
-//         type: 'post',
-//         url: '/admin24/update_dottuyensinh',
-//         data: {
-//             id: id,
-//             trangthai : trangthai
-//         },
-//         success: function (res) {
-//             thongbao(res)
-
-//         }
-//     })
-    
-// })
 
 function refresh_modal_sua_dts(){
 
 }
 
-function delete_dts(){
-    let choice = confirm("Xóa đợt tuyển sinh! Đồng ý???");
+function delete_dts(id){
+    let choice = confirm("Xóa đợt tuyển sinh mã đợt " + id + "! Đồng ý???");
+    if (choice){
+        $.ajax({
+            type: "post",
+            url: "/admin24/delete_dottuyensinh",
+            dataType: "json",
+            data: {
+                id: id,
+            },
+            success: function (res) {
+                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load()
+                toastr.success('Xóa thành công');
+            },
+        });
+    }
 }

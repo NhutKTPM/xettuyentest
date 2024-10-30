@@ -27,25 +27,18 @@ function bang_ds_dotxettuyen(){
             { title: "ID QT", data: "id_quytrinhcongbo" },
             { title: "Ghi chú", data: "ghichu_quytrinh" },
             { title: "Khóa đợt", data: "khoadot" },
-            // { title: "Ngày đăng ký", data: "create_at" },
-            // { title: "Trạng thái ", data: "iddonvi" },
 
-            // { 
-            //     title: "Trạng thái", 
-            //     data: "tiendoxyly",
-            //     render: function(data, type, row) {
-            //         var tiendo = ''; 
-                
-            //         if(data == 1) {
-            //             tiendo = '<small class="badge badge-warning"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Đang xử lý</small>';
-            //         } else {  
-            //             tiendo = '<small class="badge badge-primary"><i class="fa-solid fa-file-circle-check fa-fw"></i>&nbsp;&nbsp;Hoàn thành</small>';
-            //         } 
-                    
-            //         return tiendo;
-            //     }
-                        
-            // },
+            {
+                title: "Chức năng",
+                data: 'id',
+                render: function (data, type, row) {
+                    var icon_sua = '<i id="" class="fa-regular fa-pen-to-square" onclick = "edit_load_dotxettuyen('+row.id+')" >&nbsp&nbsp</i>';
+
+                    var icon_xoa = '<i style ="color: red;" id="" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_dxt('+row.id+')">&nbsp&nbsp</i>';
+
+                    return html = icon_sua + icon_xoa
+                },
+            },
             
     
     
@@ -124,4 +117,94 @@ function them_dotxettuyen(){
         }
     })
 
+}
+
+function edit_load_dotxettuyen(id){
+
+    // $.ajax({
+    //     type: "get",
+    //     url: "/admin24/edit_load_dottuyensinh",
+    //     dataType: "json",
+    //     data: {
+    //         id: id,
+    //     },
+    //     success: function (res) {
+    //             var dts_data = res[0];
+    //             $("#modal_accounts").show();                
+    //             $("#edit_madot").val(dts_data.madot);
+    //             $("#edit_tendot").val(dts_data.tendot);
+    //             if (dts_data.trangthai == 1){
+    //                 $("#edit_trangthai").prop("checked",true);
+    //             }
+    //             if (dts_data.khoadot == 1){
+    //                 $("#edit_khoadot").prop("checked",true);
+    //             }
+    //             $('#update_dottuyensinh_button').attr('data-id',id);
+    //     },
+    // });
+
+    $("#modal_sua_dxt").show();
+}
+
+function close_modal_sua_dxt(){
+    $("#modal_sua_dxt").hide();
+    // $("#edit_madot").val("");
+    // $("#edit_tendot").val("");
+    // $("#edit_trangthai").prop("checked",false);
+    // $("#edit_khoadot").prop("checked",false);
+}
+
+
+function update_dotxettuyen(){
+        var id = $('#update_dottuyensinh_button').attr('data-id');
+        // var madot = $("#edit_madot").val();
+        // var tendot = $("#edit_tendot").val();
+        // var trangthai = $('#edit_trangthai').prop('checked') == true ? trangthai = 1 : trangthai = 0;
+        // var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
+
+        $.ajax({
+            type: 'post',
+            url: '/admin24/update_dotxettuyen',
+            data: {
+                id: id,
+                iddotts: '',
+                iddotxt: '',
+                tendotxettuyen: '',
+                id_quytrinhcongbo: '',
+                ghichu_quytrinh: '',
+                khoadot: '',
+                // madot: madot,
+                // tendot: tendot,
+                // trangthai: trangthai,
+                // khoadot: khoadot,
+            },
+            success: function (res) {
+                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dotxettuyen').load()
+                thongbao(res)
+    
+            }
+        })
+        
+    }
+
+function refresh_modal_sua_dxt(){
+
+}
+
+function delete_dxt(id){
+    let choice = confirm("Xóa đợt xét tuyển mã đợt " + id + "! Đồng ý???");
+    if (choice){
+        $.ajax({
+            type: "post",
+            url: "/admin24/delete_dotxettuyen",
+            dataType: "json",
+            data: {
+                id: id,
+            },
+            success: function (res) {
+                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dotxettuyen').load()
+                toastr.success('Xóa thành công');
+            },
+        });
+    }
 }

@@ -194,7 +194,92 @@
     </div>
 
 
+    <div class="modal" id="modal_sua_dxt">
+        <div style="vertical-align:middle;background-color: rgba(0,0,0,0.5);height: 100%;">
+            <div class="row">
+                <div class="col-md-2 col-12">
+                </div>
+                <div class="col-md-8 col-12">
+                    <div class="card card-navy card-outline" style="width:70%; height:auto; padding: 2px; background-color:#fff; margin-top: 20%;margin-left: 20%;">
+                        <div class="card-header" style="padding: 0;margin-left: 10px;margin-top: 3px;font-weight: bold;">
+                            <div class="row">
+                                <div class="col-md-11 col-lg-11 col-11">
+                                    <span class="">Cập nhật tài khoản</span>
+                                </div>
+                                <div class="col-md-1 col-lg-1 col-1">
+                                    <span class="float-right" style="margin-right: 10px"><i onclick="close_modal_sua_dxt()" id='modal_number_go_wish_start_end_close' class="fas fa-times"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding-bottom: 0px;padding-top: 3px">
+                            <form id="">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Mã đợt:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_name" style="font-size: 13px; color : red;text-align: right;"></div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Tên đợt:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="update_accounts_email" id='edit_tendot' value="" class="form-control validate" style="height:28px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
+                                            <div class="col-sm-8">
+                                                <input id='edit_trangthai' type="checkbox" style="height:18px;background-color:inhert">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
+                                            <div class="col-sm-8">
+                                                <input id='edit_khoadot' type="checkbox" style="height:18px;background-color:inhert">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--  -->
+                                    <!--  -->
+                                    <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_email" style="font-size: 13px; color : red;text-align: right;"></div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;"></div>
+                                        <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
+                                            <div class="row">
+                                                <div class="col-md-6 col-12">
+                                                </div>
+                                                <div class="col-md-2 col-6">
+                                                    <button type="button"  id="update_dottuyensinh_button" data-id="" onclick="update_dottuyensinh()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
+                                                </div>
+                                                <div class="col-md-2 col-6">
+                                                    <button style="background-color: #fff; color:#007bff" type="button" onclick="refresh_modal_sua_dts()" id='Refresh_update_button' data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
+                                                </div>
+                                                <div class="col-md-2 col-6">
+                                                    <button style="background-color: #fff; color:#007bff" type="button" id='destroyEditMenu' onclick="close_modal_sua_dxt()" class="btn btn-block btn-primary btn-xs"><i class="fa-regular fa-circle-xmark"></i>&nbsp;&nbsp;&nbsp;Hủy</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-12">
 
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 <script src="/admin/admin24/js/congmotcua/dotxettuyen.js"></script>

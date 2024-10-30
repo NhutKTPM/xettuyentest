@@ -234,7 +234,8 @@ class DotTuyenSinhController extends Controller
         
     }
 
-    function delete_dottuyensinh(){
-        
+    function delete_dottuyensinh(Request $request){
+        DB::table('24_dottuyensinh')->where('id',$request->input('id'))->delete();
+        return 1;
     }
 }
