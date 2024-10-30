@@ -90,7 +90,15 @@ function dangkygiay_load_danhsachloaigiay(){
                 }
                         
             },
-            { title: "Ngày đăng ký", data: "create_at" },
+            { title: "Ngày đăng ký", data: "create_at",
+                render: function(data, type, row) {
+                    var ngaydk = '';
+                    if(data){
+                        ngaydk = data.slice(0, 10);
+                    }
+                    return ngaydk;
+                }
+             },
     
     
           
