@@ -195,50 +195,54 @@ class DotXetTuyenController extends Controller
 
 
     function edit_load_dotxettuyen(Request $request){
-        // $data = DB::table('24_dottuyensinh')->where('id',$request->input('id'))->get();
-        // $json_data['data'] = $data;
-        // $res = json_encode($json_data);
-        // return  $data; 
+        $data = DB::table('24_dotxetsinh')->where('id',$request->input('id'))->get();
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $data; 
     }
 
     function update_dotxettuyen(Request $request){
-        // $id = $request->input('id');
-        // $madot = $request->input('madot');
-        // $tendot = $request->input('tendot');
-        // $trangthai = $request->input('trangthai');
-        // $khoadot = $request->input('khoadot');
+        $id = $request->input('id');
+        $tendot = $request->input('tendot');
+        $iddoxt = $request->input('iddoxt');
+        $tendotxettuyen = $request->input('tendotxettuyen');
+        $id_quytrinhcongbo = $request->input('id_quytrinhcongbo');
+        $ghichu_quytrinh = $request->input('ghichu_quytrinh');
+        $khoadot = $request->input('khoadot');
 
-        // DB::beginTransaction();
-        // try{
-        //     $res = DB::table('24_dottuyensinh')
-        //     ->where('id',$id)
-        //     ->update([
-        //         'madot' => $madot,
-        //         'tendot' => $tendot,
-        //         'trangthai' => $trangthai,
-        //         'khoadot' => $khoadot,
-        //     ]);
-        //     if($res != 0){
-        //         if($res == 1){
-        //             DB::commit();
-        //             return 'upd_1';
-        //         }else{
-        //             DB::rollBack();
-        //             return 'upd_0';
-        //         }
-        //     }else{
-        //         return 'upd_2';
-        //     }
-        // }catch(Exception $e){
-        //     DB::rollBack();
-        //     return 'upd_0';
-        // }
+        DB::beginTransaction();
+        try{
+            $res = DB::table('24_dotxettuyen')
+            ->where('id',$id)
+            ->update([
+                'tendot' => $tendot,
+                'iddoxt' => $iddoxt,
+                'tendotxettuyen' => $tendotxettuyen,
+                'id_quytrinhcongbo' => $id_quytrinhcongbo,
+                'ghichu_quytrinh' => $ghichu_quytrinh,
+                'khoadot' => $khoadot,
+            ]);
+            if($res != 0){
+                if($res == 1){
+                    DB::commit();
+                    return 'upd_1';
+                }else{
+                    DB::rollBack();
+                    return 'upd_0';
+                }
+            }else{
+                return 'upd_2';
+            }
+        }catch(Exception $e){
+            DB::rollBack();
+            return 'upd_0';
+        }
         
     }
 
     function delete_dotxettuyen(Request $request){
-        // DB::table('24_dottuyensinh')->where('id',$request->input('id'))->delete();
-        // return 1;
+        DB::table('24_dotxettuyen')->where('id',$request->input('id'))->delete();
+        return 1;
     }
     
 
