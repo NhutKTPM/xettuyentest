@@ -26,7 +26,17 @@ function bang_ds_dotxettuyen(){
             { title: "Tên đợt", data: "tendotxettuyen" },
             { title: "ID QT", data: "id_quytrinhcongbo" },
             { title: "Ghi chú", data: "ghichu_quytrinh" },
-            { title: "Khóa đợt", data: "khoadot" },
+            { title: "Khóa đợt", data: "khoadot",
+                render: function (data, type, row){
+                    var cbtrangthai = ''
+                    if (data == 1){
+                        cbtrangthai = '<input type="checkbox" checked="" onclick="return false;" style="height:18px;background-color:inhert">';
+                    } else{
+                        cbtrangthai = '<input type="checkbox" onclick="return false;" style="height:18px;background-color:inhert">';
+                    }
+                    return cbtrangthai
+                }
+            },
 
             {
                 title: "Chức năng",
@@ -121,27 +131,27 @@ function them_dotxettuyen(){
 
 function edit_load_dotxettuyen(id){
 
-    // $.ajax({
-    //     type: "get",
-    //     url: "/admin24/edit_load_dottuyensinh",
-    //     dataType: "json",
-    //     data: {
-    //         id: id,
-    //     },
-    //     success: function (res) {
-    //             var dts_data = res[0];
-    //             $("#modal_accounts").show();                
-    //             $("#edit_madot").val(dts_data.madot);
-    //             $("#edit_tendot").val(dts_data.tendot);
-    //             if (dts_data.trangthai == 1){
-    //                 $("#edit_trangthai").prop("checked",true);
-    //             }
-    //             if (dts_data.khoadot == 1){
-    //                 $("#edit_khoadot").prop("checked",true);
-    //             }
-    //             $('#update_dottuyensinh_button').attr('data-id',id);
-    //     },
-    // });
+    $.ajax({
+        type: "get",
+        url: "/admin24/edit_load_dotxettuyen",
+        dataType: "json",
+        data: {
+            id: id,
+        },
+        success: function (res) {
+                var dxt_data = res[0];
+                // $("#modal_accounts").show();                
+                $("#edit_iddotts").val(dxt_data.iddotts);
+                $("#edit_iddotxt").val(dxt_data.iddotxt);
+                $("#edit_tendotxettuyen").val(dxt_data.tendotxettuyen);
+                $("#edit_id_quytrinhcongbo").val(dxt_data.id_quytrinhcongbo);
+                $("#edit_ghichu_quytrinh").val(dxt_data.ghichu_quytrinh);
+                if (dxt_data.khoadot == 1){
+                    $("#edit_khoadot").prop("checked",true);
+                }
+                $('#update_dotxettuyen_button').attr('data-id',id);
+        },
+    });
 
     $("#modal_sua_dxt").show();
 }
@@ -157,26 +167,24 @@ function close_modal_sua_dxt(){
 
 function update_dotxettuyen(){
         var id = $('#update_dottuyensinh_button').attr('data-id');
-        // var madot = $("#edit_madot").val();
-        // var tendot = $("#edit_tendot").val();
-        // var trangthai = $('#edit_trangthai').prop('checked') == true ? trangthai = 1 : trangthai = 0;
-        // var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
+        var iddotts = $("#edit_iddotts").val();
+        var iddotxt = $("#edit_iddotxt").val();
+        var tendotxettuyen = $("#edit_tendotxettuyen").val();
+        var id_quytrinhcongbo = $("#edit_id_quytrinhcongbo").val();
+        var ghichu_quytrinh = $("#edit_ghichu_quytrinh").val();
+        var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
 
         $.ajax({
             type: 'post',
             url: '/admin24/update_dotxettuyen',
             data: {
                 id: id,
-                iddotts: '',
-                iddotxt: '',
-                tendotxettuyen: '',
-                id_quytrinhcongbo: '',
-                ghichu_quytrinh: '',
-                khoadot: '',
-                // madot: madot,
-                // tendot: tendot,
-                // trangthai: trangthai,
-                // khoadot: khoadot,
+                iddotts: iddotts,
+                iddotxt: iddotxt,
+                tendotxettuyen: tendotxettuyen,
+                id_quytrinhcongbo: id_quytrinhcongbo,
+                ghichu_quytrinh: ghichu_quytrinh,
+                khoadot: khoadot,
             },
             success: function (res) {
                 bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dotxettuyen').load()
