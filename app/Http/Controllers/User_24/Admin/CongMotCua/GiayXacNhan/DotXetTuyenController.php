@@ -235,6 +235,16 @@ class DotXetTuyenController extends Controller
         // }
         
     }
+    public function refresh_dotxettuyen(Request $request)
+    {
+        $exists = DB::table('24_dotxettuyen')->exists();
+
+        if ($exists) {
+            return response()->json(['status' => 'success']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Không có dữ liệu để làm mới'], 404);
+        }
+    }
 
     function delete_dotxettuyen(Request $request){
         // DB::table('24_dottuyensinh')->where('id',$request->input('id'))->delete();
