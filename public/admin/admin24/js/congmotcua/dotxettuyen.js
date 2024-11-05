@@ -106,8 +106,12 @@ function load_selectbox_dotxettuyen(){
             $("#iddotts").select2({
                 data: res,
             });
+            $("#iddotts").val('3');
+            $("#iddotts").trigger('change'); 
         },
     });
+    
+    // document.getElementById("iddotts").selectedIndex = 2;
 }
 
 function them_dotxettuyen(){
@@ -150,8 +154,6 @@ function them_dotxettuyen(){
 
 }
 
-var dxt_data_refresh = 0;
-
 function edit_load_dotxettuyen(id){
 
     $.ajax({
@@ -163,8 +165,7 @@ function edit_load_dotxettuyen(id){
         },
         success: function (res) {
                 console.log(res);
-                var dxt_data = res.edit_load_dotxettuyen[0];
-                dxt_data_refresh = dxt_data;             
+                var dxt_data = res.edit_load_dotxettuyen[0];           
                 $("#edit_iddotts").val(dxt_data.iddotts);
                 $("#edit_iddotxt").val(dxt_data.iddotxt);
                 $("#edit_tendotxettuyen").val(dxt_data.tendotxettuyen);
@@ -225,16 +226,16 @@ function update_dotxettuyen(){
 
 
 function refresh_modal_sua_dxt(){
-    $("#edit_iddotts").val(dxt_data_refresh.iddotts);
-    $("#edit_iddotxt").val(dxt_data_refresh.iddotxt);
-    $("#edit_tendotxettuyen").val(dxt_data_refresh.tendotxettuyen);
-    $("#edit_id_quytrinhcongbo").val(dxt_data_refresh.id_quytrinhcongbo);
-    $("#edit_ghichu_quytrinh").val(dxt_data_refresh.ghichu_quytrinh);
-    if (dxt_data_refresh.khoadot == 1){
-        $("#edit_khoadot").prop("checked",true);
-    } else{
-        $("#edit_khoadot").prop("checked",false);
-    }
+    // $("#edit_iddotts").val(dxt_data_refresh.iddotts);
+    // $("#edit_iddotxt").val(dxt_data_refresh.iddotxt);
+    // $("#edit_tendotxettuyen").val(dxt_data_refresh.tendotxettuyen);
+    // $("#edit_id_quytrinhcongbo").val(dxt_data_refresh.id_quytrinhcongbo);
+    // $("#edit_ghichu_quytrinh").val(dxt_data_refresh.ghichu_quytrinh);
+    // if (dxt_data_refresh.khoadot == 1){
+    //     $("#edit_khoadot").prop("checked",true);
+    // } else{
+    //     $("#edit_khoadot").prop("checked",false);
+    // }
 }
 
 function refresh_dotxettuyen() {

@@ -104,7 +104,7 @@
                                                         <div class="form-group row" style="margin-bottom: 3px">
                                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
                                                             <div class="col-sm-8">
-                                                                <input id='trangthai_load' type="checkbox" style="height:18px;background-color:inhert">
+                                                                <input id='trangthai' type="checkbox" style="height:18px;background-color:inhert">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -158,7 +158,7 @@
                     </div>
                 </div>
             </section>
-            @include('user_24.modalevent')
+            <!-- @include('user_24.modalevent') -->
         </div>
         
         @include('user_24.admin24.include.footer')
@@ -248,7 +248,7 @@
                             </form>
                         </div>
                     </div>
-                    @include('user_24.modalevent')
+                    
                 </div>
                 <div class="col-md-2 col-12">
 
@@ -257,7 +257,7 @@
         </div>
     </div>
 
-
+    @include('user_24.modalevent')
 </body>
 <script src="/admin/admin24/js/congmotcua/dottuyensinh.js"></script>
 </html>

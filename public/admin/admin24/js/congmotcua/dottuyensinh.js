@@ -6,7 +6,8 @@ $(document).ready(function () {
     });
     
     bang_ds_dottuyensinh();
-    $('#trangthai_load').prop('checked','true')
+    
+    refresh_dottuyensinh();
 
     $('#update_dottuyensinh_button').attr('data-id',"");
     close_modal_sua_dts();
@@ -141,13 +142,10 @@ function them_dottuyensinh() {
         }
     });
 
-    $("#madot").val("");
-    $("#tendot").val("");
-    $("#trangthai").prop("checked", false); 
-    $("#khoadot").val("");
+    refresh_dottuyensinh()
 }
 
-var dts_data_refresh = 0;
+// var dts_data_refresh = 0;
 
 function edit_load_dottuyensinh(id){
 
@@ -160,15 +158,19 @@ function edit_load_dottuyensinh(id){
         },
         success: function (res) {
                 var dts_data = res[0];
-                dts_data_refresh = dts_data;
+                // dts_data_refresh = dts_data;
                 // $("#modal_accounts").show();                
                 $("#edit_madot").val(dts_data.madot);
                 $("#edit_tendot").val(dts_data.tendot);
                 if (dts_data.trangthai == 1){
                     $("#edit_trangthai").prop("checked",true);
+                } else {
+                    $("#edit_trangthai").prop("checked",false);
                 }
                 if (dts_data.khoadot == 1){
                     $("#edit_khoadot").prop("checked",true);
+                } else {
+                    $("#edit_khoadot").prop("checked",false);
                 }
                 $('#update_dottuyensinh_button').attr('data-id',id);
         },
@@ -219,44 +221,49 @@ function update_dottuyensinh(){
 
 
 function refresh_modal_sua_dts(){
-    $("#edit_madot").val(dts_data_refresh.madot);
-    $("#edit_tendot").val(dts_data_refresh.tendot);
-    if (dts_data_refresh.trangthai == 1){
-        $("#edit_trangthai").prop("checked",true);
-    } else {
-        $("#edit_trangthai").prop("checked",false);
-    }
-    if (dts_data_refresh.khoadot == 1){
-        $("#edit_khoadot").prop("checked",true);
-    } else{
-        $("#edit_khoadot").prop("checked",false);
-    }
+    var id = $('#update_dottuyensinh_button').attr('data-id');
+    edit_load_dottuyensinh(id);
+    // $("#edit_madot").val(dts_data_refresh.madot);
+    // $("#edit_tendot").val(dts_data_refresh.tendot);
+    // if (dts_data_refresh.trangthai == 1){
+    //     $("#edit_trangthai").prop("checked",true);
+    // } else {
+    //     $("#edit_trangthai").prop("checked",false);
+    // }
+    // if (dts_data_refresh.khoadot == 1){
+    //     $("#edit_khoadot").prop("checked",true);
+    // } else{
+    //     $("#edit_khoadot").prop("checked",false);
+    // }
 }
 
 function refresh_dottuyensinh() {
-    $("#modal_event").show();
-    $.ajax({
-        type: "post",
-        url: "/admin24/refresh_dottuyensinh",
-        dataType: "json",
-        success: function(res) {
-            bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load();
-            if (res.status === 'success') {
-                document.getElementById("madot").value = "";
-                document.getElementById("tendot").value = "";
+    $("#madot").val("");
+    $("#tendot").val("");
+    $("#trangthai").prop("checked", true);
+    // $("#modal_event").show();
+    // $.ajax({
+    //     type: "post",
+    //     url: "/admin24/refresh_dottuyensinh",
+    //     dataType: "json",
+    //     success: function(res) {
+    //         bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load();
+    //         if (res.status === 'success') {
+    //             document.getElementById("madot").value = "";
+    //             document.getElementById("tendot").value = "";
                 
                 
                 
-                toastr.success("Làm mới thành công!");
-            } else {
-                toastr.error(res.message || "Có lỗi xảy ra!");
-            }
-            $("#modal_event").hide();
-        },
+    //             toastr.success("Làm mới thành công!");
+    //         } else {
+    //             toastr.error(res.message || "Có lỗi xảy ra!");
+    //         }
+    //         $("#modal_event").hide();
+    //     },
         // error: function() {
         //     toastr.error("Có lỗi xảy ra khi kiểm tra dữ liệu!");
         // }
-    });
+    // });
 }
 // function refresh_modal_sua_dts() {
 
