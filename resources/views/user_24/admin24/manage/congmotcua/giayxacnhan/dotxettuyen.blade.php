@@ -97,7 +97,8 @@
                                                         <div class="form-group row" style="margin-bottom: 3px">
                                                             <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">ID đợt tuyển sinh:</label>
                                                             <div class="col-sm-8">
-                                                                <input type="text" class="form-control" id='iddotts' style="height:28px;">
+                                                                <!-- <input type="text" class="form-control" id='iddotts' style="height:28px;"> -->
+                                                                <select class="form-control" id="iddotts" style="width: 100%;"> </select>
                                                             </div>
                                                         </div>
                                                     </div>

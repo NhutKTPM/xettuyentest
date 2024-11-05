@@ -151,6 +151,25 @@ class DotXetTuyenController extends Controller
         // return $data;
     }
 
+    function load_selectbox_dotxettuyen(){
+        $list_dts0 = new Collection(
+            [
+                'id' => 0,
+                'text' => "Chọn đợt tuyển sinh...",
+                'selected' => true
+            ]
+        );
+
+
+        $list_dts = DB::table('24_dottuyensinh')
+            ->select('id as id', 'tendot as text')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $list_dts[] =  $list_dts0;
+        return $list_dts;
+    }
+
     function them_dotxettuyen(Request $r)
     {
         $validator = Validator::make(
@@ -199,6 +218,14 @@ class DotXetTuyenController extends Controller
         // $json_data['data'] = $data;
         // $res = json_encode($json_data);
         // return  $data; 
+        
+        $edit_load_dotxettuyen = 0;
+        $selectbox_dottuyensinh = $this->load_selectbox_dotxettuyen();
+
+        return $res = array(
+            'edit_load_dotxettuyen' => $edit_load_dotxettuyen,
+            'selectbox_dottuyensinh' => $selectbox_dottuyensinh,
+        );
     }
 
     function update_dotxettuyen(Request $request){
@@ -233,7 +260,6 @@ class DotXetTuyenController extends Controller
         //     DB::rollBack();
         //     return 'upd_0';
         // }
-        
     }
 
     function delete_dotxettuyen(Request $request){

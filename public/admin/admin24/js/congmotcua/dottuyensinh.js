@@ -147,6 +147,7 @@ function them_dottuyensinh() {
     $("#khoadot").val("");
 }
 
+var dts_data_refresh = 0;
 
 function edit_load_dottuyensinh(id){
 
@@ -159,7 +160,8 @@ function edit_load_dottuyensinh(id){
         },
         success: function (res) {
                 var dts_data = res[0];
-                $("#modal_accounts").show();                
+                dts_data_refresh = dts_data;
+                // $("#modal_accounts").show();                
                 $("#edit_madot").val(dts_data.madot);
                 $("#edit_tendot").val(dts_data.tendot);
                 if (dts_data.trangthai == 1){
@@ -181,6 +183,8 @@ function close_modal_sua_dts(){
     $("#edit_tendot").val("");
     $("#edit_trangthai").prop("checked",false);
     $("#edit_khoadot").prop("checked",false);
+    $('#update_dottuyensinh_button').attr('data-id',"");
+    dts_data_refresh = 0;
 }
 
 
@@ -214,7 +218,18 @@ function update_dottuyensinh(){
     }
 
 function refresh_modal_sua_dts(){
-
+    $("#edit_madot").val(dts_data_refresh.madot);
+    $("#edit_tendot").val(dts_data_refresh.tendot);
+    if (dts_data_refresh.trangthai == 1){
+        $("#edit_trangthai").prop("checked",true);
+    } else {
+        $("#edit_trangthai").prop("checked",false);
+    }
+    if (dts_data_refresh.khoadot == 1){
+        $("#edit_khoadot").prop("checked",true);
+    } else{
+        $("#edit_khoadot").prop("checked",false);
+    }
 }
 
 function delete_dts(id){

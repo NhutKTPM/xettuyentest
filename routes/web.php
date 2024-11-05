@@ -648,7 +648,7 @@ Route::middleware(['loginadmin::class'])->group(function () {
         Route::get('/edit_load_dotxettuyen', [DotXetTuyenController::class, 'edit_load_dotxettuyen']);
         Route::post('/update_dotxettuyen', [DotXetTuyenController::class, 'update_dotxettuyen']);
         Route::post('/delete_dotxettuyen', [DotXetTuyenController::class, 'delete_dotxettuyen']);
- 
+        Route::get('/load_selectbox_dotxettuyen', [DotXetTuyenController::class, 'load_selectbox_dotxettuyen']);
 
         
     });

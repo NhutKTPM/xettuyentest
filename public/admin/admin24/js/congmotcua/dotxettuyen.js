@@ -5,8 +5,12 @@ $(document).ready(function () {
         }
     });
     
+    
+
     bang_ds_dotxettuyen();
     // them_dotxettuyen();
+
+    load_selectbox_dotxettuyen();
 
 });
 
@@ -93,7 +97,18 @@ function bang_ds_dotxettuyen(){
 }
 
 
-
+function load_selectbox_dotxettuyen(){
+    $.ajax({
+        type: "get",
+        url: "/admin24/load_selectbox_dotxettuyen",
+        dataType: "json",
+        success: function(res) {
+            $("#iddotts").select2({
+                data: res,
+            });
+        },
+    });
+}
 
 function them_dotxettuyen(){
     // $("#modal_event").show();
@@ -108,7 +123,7 @@ function them_dotxettuyen(){
             tendotxettuyen: $("#tendotxettuyen").val(),
             id_quytrinhcongbo: $("#id_quytrinhcongbo").val(),
             ghichu_quytrinh: $("#ghichu_quytrinh").val(),
-            khoadot: $("#khoadot").val(),
+            khoadot: 0,
         },
         success: function (res) {
             if(res == 1){
@@ -129,6 +144,8 @@ function them_dotxettuyen(){
 
 }
 
+var dxt_data_refresh = 0;
+
 function edit_load_dotxettuyen(id){
 
     $.ajax({
@@ -139,8 +156,9 @@ function edit_load_dotxettuyen(id){
             id: id,
         },
         success: function (res) {
-                var dxt_data = res[0];
-                // $("#modal_accounts").show();                
+                console.log(res);
+                var dxt_data = res.edit_load_dotxettuyen[0];
+                dxt_data_refresh = dxt_data;             
                 $("#edit_iddotts").val(dxt_data.iddotts);
                 $("#edit_iddotxt").val(dxt_data.iddotxt);
                 $("#edit_tendotxettuyen").val(dxt_data.tendotxettuyen);
@@ -158,10 +176,14 @@ function edit_load_dotxettuyen(id){
 
 function close_modal_sua_dxt(){
     $("#modal_sua_dxt").hide();
-    // $("#edit_madot").val("");
-    // $("#edit_tendot").val("");
-    // $("#edit_trangthai").prop("checked",false);
-    // $("#edit_khoadot").prop("checked",false);
+    $("#edit_iddotts").val("");
+    $("#edit_iddotxt").val("");
+    $("#edit_tendotxettuyen").val("");
+    $("#edit_id_quytrinhcongbo").val("");
+    $("#edit_ghichu_quytrinh").val("");
+    $("#edit_khoadot").prop("checked",false);
+    $('#update_dotxettuyen_button').attr('data-id',"");
+    dxt_data_refresh = 0;
 }
 
 
@@ -196,7 +218,16 @@ function update_dotxettuyen(){
     }
 
 function refresh_modal_sua_dxt(){
-
+    $("#edit_iddotts").val(dxt_data_refresh.iddotts);
+    $("#edit_iddotxt").val(dxt_data_refresh.iddotxt);
+    $("#edit_tendotxettuyen").val(dxt_data_refresh.tendotxettuyen);
+    $("#edit_id_quytrinhcongbo").val(dxt_data_refresh.id_quytrinhcongbo);
+    $("#edit_ghichu_quytrinh").val(dxt_data_refresh.ghichu_quytrinh);
+    if (dxt_data_refresh.khoadot == 1){
+        $("#edit_khoadot").prop("checked",true);
+    } else{
+        $("#edit_khoadot").prop("checked",false);
+    }
 }
 
 function delete_dxt(id){
