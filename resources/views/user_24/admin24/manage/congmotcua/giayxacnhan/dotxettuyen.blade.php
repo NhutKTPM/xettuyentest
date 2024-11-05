@@ -90,12 +90,12 @@
                                     <div class="col-12 col-md-3 col-lg-3">
                                         <div class="card card-navy card-outline" style="min-height:600px">
                                             <div>
-                                                <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;">Thêm đợt tuyển sinh</div>
+                                                <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;">Thêm đợt xét tuyển</div>
                                                 <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
                                                     
                                                     <div class="col-md-12 col-12">
                                                         <div class="form-group row" style="margin-bottom: 3px">
-                                                            <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">ID đợt tuyển sinh:</label>
+                                                            <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Đợt tuyển sinh:</label>
                                                             <div class="col-sm-8">
                                                                 <!-- <input type="text" class="form-control" id='iddotts' style="height:28px;"> -->
                                                                 <select class="form-control" id="iddotts" style="width: 100%;"> </select>
@@ -139,14 +139,14 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div>
-                                                    <div class="col-md-12 col-12">
+                                                    <!-- <div class="col-md-12 col-12">
                                                         <div class="form-group row" style="margin-bottom: 3px">
                                                             <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
                                                             <div class="col-sm-8">
                                                                 <input type="text" class="form-control" id='khoadot' style="height:28px;">
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="col-md-12 col-12 validate_themtaikhoan" id="error_pass" style="font-size: 13px; color : red;text-align: right;"></div>
                                                 </div>
                                             </div>
@@ -167,7 +167,7 @@
                                     <div class="col-12 col-md-9 col-lg-9">
                                         <div class="card card-navy" style="min-height:600px">
                                             <div>
-                                                <div class="card-header" style="padding: 0;margin-left: 10px;margin-top: 3px;font-weight: bold;">Danh sách đợt tuyển sinh</div>
+                                                <div class="card-header" style="padding: 0;margin-left: 10px;margin-top: 3px;font-weight: bold;">Danh sách đợt xét tuyển</div>
                                                 <div class="card-body" style="padding-bottom: 0px;padding-top: 3px" id="list_accounts_tmp">
                                                         <table id="bang_ds_dotxettuyen" class="table table-bordered table-striped">
                                                              
@@ -186,7 +186,7 @@
                     </div>
                 </div>
             </section>
-            @include('user_24.modalevent')
+            
         </div>
         
         @include('user_24.admin24.include.footer')
@@ -206,7 +206,7 @@
                         <div class="card-header" style="padding: 0;margin-left: 10px;margin-top: 3px;font-weight: bold;">
                             <div class="row">
                                 <div class="col-md-11 col-lg-11 col-11">
-                                    <span class="">Cập nhật tài khoản</span>
+                                    <span class="">Cập nhật đợt xét tuyển</span>
                                 </div>
                                 <div class="col-md-1 col-lg-1 col-1">
                                     <span class="float-right" style="margin-right: 10px"><i onclick="close_modal_sua_dxt()" id='modal_number_go_wish_start_end_close' class="fas fa-times"></i></span>
@@ -221,7 +221,8 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">ID đợt tuyển sinh:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                                <select class="form-control" id='edit_iddotts' style="width: 100%;"></select>
+                                                <!-- <input type="text" name="update_accounts_name" id='edit_iddotts' value="" class="validate form-control" style="height:28px"> -->
                                             </div>
                                         </div>
                                     </div>
@@ -229,7 +230,7 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Id đợt xét tuyển:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                                <input type="text" name="update_accounts_name" id='edit_iddotxt' value="" class="validate form-control" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
@@ -237,7 +238,7 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Tên đợt xét tuyển:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                                <input type="text" name="update_accounts_name" id='edit_tendotxettuyen' value="" class="validate form-control" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
@@ -245,29 +246,29 @@
                                         <div class="form-group row" style="margin-bottom: 3px">
                                             <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Id quy trình công bố:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                                <input type="text" name="update_accounts_name" id='edit_id_quytrinhcongbo' value="" class="validate form-control" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_name" style="font-size: 13px; color : red;text-align: right;"></div>
                                     <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Ghí chú quy trình:</label>
+                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Ghi chú quy trình:</label>
                                             <div class="col-sm-10">
-                                                <input type="text" name="update_accounts_email" id='edit_tendot' value="" class="form-control validate" style="height:28px">
+                                                <input type="text" name="update_accounts_email" id='edit_ghichu_quytrinh' value="" class="form-control validate" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!-- Checkbox Trạng thái và Khóa đợt nằm ngang nhau -->
-                                    <div class="col-md-12 col-12">
+                                    <!-- <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px; align-items: center;">
                                             <label class="col-sm-2 col-form-label" style="padding-bottom: 0px;">Trạng thái:</label>
                                             <div class="col-sm-10">
                                                 <input id="edit_trangthai" type="checkbox" style="height: 28px; vertical-align: middle;">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     
                                     <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px; align-items: center;">
@@ -287,7 +288,7 @@
                                                 <div class="col-md-6 col-12">
                                                 </div>
                                                 <div class="col-md-2 col-6">
-                                                    <button type="button"  id="update_dottuyensinh_button" data-id="" onclick="update_dottuyensinh()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
+                                                    <button type="button"  id="update_dotxettuyen_button" data-id="" onclick="update_dotxettuyen()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
                                                 </div>
                                                 <div class="col-md-2 col-6">
                                                     <button style="background-color: #fff; color:#007bff" type="button" onclick="refresh_modal_sua_dxt()" id='Refresh_update_button' data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
@@ -311,15 +312,7 @@
         </div>
     </div>
 
+    @include('user_24.modalevent')
 </body>
 <script src="/admin/admin24/js/congmotcua/dotxettuyen.js"></script>
 </html>
-
-<script>
-    // var id = $('#dkg_chonloaigiay').val();
-    // alert(id)
-
-
-
-
-</script>

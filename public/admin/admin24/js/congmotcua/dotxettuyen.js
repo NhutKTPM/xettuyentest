@@ -8,9 +8,10 @@ $(document).ready(function () {
     
 
     bang_ds_dotxettuyen();
-    // them_dotxettuyen();
 
     load_selectbox_dotxettuyen();
+
+    refresh_dotxettuyen();
 
 });
 
@@ -24,7 +25,7 @@ function bang_ds_dotxettuyen(){
         },
         columns: [
             // { title: "STT", data: "stt" },
-            { title: "STT", data: "id" },
+            { title: "STT", data: "stt" },
             { title: "Đợt tuyển sinh", data: "tendot" },
             { title: "ID đxt", data: "iddotxt" },
             { title: "Tên đợt", data: "tendotxettuyen" },
@@ -47,8 +48,8 @@ function bang_ds_dotxettuyen(){
                 data: 'id',
                 render: function (data, type, row) {
                     var icon_sua = '<i id="" class="fa-regular fa-pen-to-square" onclick = "edit_load_dotxettuyen('+row.id+')" >&nbsp&nbsp</i>';
-
-                    var icon_xoa = '<i style ="color: red;" id="" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_dxt('+row.id+')">&nbsp&nbsp</i>';
+                    tendot = "'" + row['tendotxettuyen'] + "'";
+                    var icon_xoa = '<i style ="color: red;" id="" class="fa-regular fa-solid fa-user-xmark" onclick = "delete_dxt('+row.id+','+ tendot + ')">&nbsp&nbsp</i>';
 
                     return html = icon_sua + icon_xoa
                 },
@@ -106,8 +107,6 @@ function load_selectbox_dotxettuyen(){
             $("#iddotts").select2({
                 data: res,
             });
-            $("#iddotts").val('3');
-            $("#iddotts").trigger('change'); 
         },
     });
     
@@ -115,7 +114,7 @@ function load_selectbox_dotxettuyen(){
 }
 
 function them_dotxettuyen(){
-    // $("#modal_event").show();
+    $("#modal_event").show();
     // $("#dkg_dangky").prop("disabled", true)
     $("#modal_event").show();
     $.ajax({
@@ -145,12 +144,8 @@ function them_dotxettuyen(){
             $("#modal_event").hide();
         }
     });
-    $("#iddotts").val("");
-    $("#iddotxt").val("");
-    $("#tendotxettuyen").val("");
-    $("#id_quytrinhcongbo").val("");
-    $("#ghichu_quytrinh").val("");
-    $("#khoadot").val("");
+    
+    refresh_dotxettuyen();
 
 }
 
@@ -166,7 +161,11 @@ function edit_load_dotxettuyen(id){
         success: function (res) {
                 console.log(res);
                 var dxt_data = res.edit_load_dotxettuyen[0];           
+                $("#edit_iddotts").select2({
+                    data: res.selectbox_dottuyensinh,
+                });;
                 $("#edit_iddotts").val(dxt_data.iddotts);
+                $("#edit_iddotts").trigger('change'); 
                 $("#edit_iddotxt").val(dxt_data.iddotxt);
                 $("#edit_tendotxettuyen").val(dxt_data.tendotxettuyen);
                 $("#edit_id_quytrinhcongbo").val(dxt_data.id_quytrinhcongbo);
@@ -195,88 +194,56 @@ function close_modal_sua_dxt(){
 
 
 function update_dotxettuyen(){
-        var id = $('#update_dottuyensinh_button').attr('data-id');
-        var iddotts = $("#edit_iddotts").val();
-        var iddotxt = $("#edit_iddotxt").val();
-        var tendotxettuyen = $("#edit_tendotxettuyen").val();
-        var id_quytrinhcongbo = $("#edit_id_quytrinhcongbo").val();
-        var ghichu_quytrinh = $("#edit_ghichu_quytrinh").val();
-        var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
+    $("#modal_event").show(); 
 
-        $.ajax({
-            type: 'post',
-            url: '/admin24/update_dotxettuyen',
-            data: {
-                id: id,
-                iddotts: iddotts,
-                iddotxt: iddotxt,
-                tendotxettuyen: tendotxettuyen,
-                id_quytrinhcongbo: id_quytrinhcongbo,
-                ghichu_quytrinh: ghichu_quytrinh,
-                khoadot: khoadot,
-            },
-            success: function (res) {
-                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dotxettuyen').load()
-                thongbao(res)
+    var id = $('#update_dotxettuyen_button').attr('data-id');
+    var iddotts = $("#edit_iddotts").val();
+    var iddotxt = $("#edit_iddotxt").val();
+    var tendotxettuyen = $("#edit_tendotxettuyen").val();
+    var id_quytrinhcongbo = $("#edit_id_quytrinhcongbo").val();
+    var ghichu_quytrinh = $("#edit_ghichu_quytrinh").val();
+    var khoadot = $('#edit_khoadot').prop('checked') == true ? khoadot = 1 : khoadot = 0;
+
+    $.ajax({
+        type: 'post',
+        url: '/admin24/update_dotxettuyen',
+        data: {
+            id: id,
+            iddotts: iddotts,
+            iddotxt: iddotxt,
+            tendotxettuyen: tendotxettuyen,
+            id_quytrinhcongbo: id_quytrinhcongbo,
+            ghichu_quytrinh: ghichu_quytrinh,
+            khoadot: khoadot,
+        },
+        success: function (res) {
+            bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load()
+            thongbao(res)
+            $("#modal_event").hide(); 
+        }
+    })
+
     
-            }
-        })
-        
-    }
+}
 
 
 function refresh_modal_sua_dxt(){
-    // $("#edit_iddotts").val(dxt_data_refresh.iddotts);
-    // $("#edit_iddotxt").val(dxt_data_refresh.iddotxt);
-    // $("#edit_tendotxettuyen").val(dxt_data_refresh.tendotxettuyen);
-    // $("#edit_id_quytrinhcongbo").val(dxt_data_refresh.id_quytrinhcongbo);
-    // $("#edit_ghichu_quytrinh").val(dxt_data_refresh.ghichu_quytrinh);
-    // if (dxt_data_refresh.khoadot == 1){
-    //     $("#edit_khoadot").prop("checked",true);
-    // } else{
-    //     $("#edit_khoadot").prop("checked",false);
-    // }
+    var id = $('#update_dotxettuyen_button').attr('data-id');
+    edit_load_dotxettuyen(id);
 }
 
 function refresh_dotxettuyen() {
-    $("#modal_event").show();
-    $.ajax({
-        type: "post",
-        url: "/admin24/refresh_dotxettuyen",
-        dataType: "json",
-        success: function(res) {
-            bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load();
-            if (res.status === 'success') {
-                document.getElementById("iddotts").value = "";
-                document.getElementById("iddotxt").value = "";
-                document.getElementById("tendotxettuyen").value = "";
-                document.getElementById("id_quytrinhcongbo").value = "";
-                document.getElementById("ghichu_quytrinh").value = "";
-                document.getElementById("khoadot").value = "";
-                
-                
-                
-                toastr.success("Làm mới thành công!");
-            } else {
-                toastr.error(res.message || "Có lỗi xảy ra!");
-            }
-            $("#modal_event").hide();
-        },
-        error: function() {
-            toastr.error("Có lỗi xảy ra khi kiểm tra dữ liệu!");
-        }
-    });
+    $("#iddotts").val("0");
+    $("#iddotts").trigger('change'); 
+    $("#iddotxt").val("");
+    $("#tendotxettuyen").val("");
+    $("#id_quytrinhcongbo").val("");
+    $("#ghichu_quytrinh").val("");
 }
-// function refresh_modal_sua_dxt() {
-
-//     $("#edit_madot").val("");
-//     $("#edit_tendot").val("");
-    
-// }
 
 
-function delete_dxt(id){
-    let choice = confirm("Xóa đợt xét tuyển mã đợt " + id + "! Đồng ý???");
+function delete_dxt(id, tendot){
+    let choice = confirm("Xóa \"" + tendot + "\"! Đồng ý???");
     if (choice){
         $.ajax({
             type: "post",
@@ -286,7 +253,7 @@ function delete_dxt(id){
                 id: id,
             },
             success: function (res) {
-                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dotxettuyen').load()
+                bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load()
                 toastr.success('Xóa thành công');
             },
         });

@@ -137,9 +137,9 @@ class DotXetTuyenController extends Controller
     function bang_ds_dotxettuyen()
     {
         $data = DB::table('24_dotxettuyen')
-            ->select("24_dotxettuyen.*", "24_dottuyensinh.tendot")
+            ->select("24_dotxettuyen.*", "24_dottuyensinh.tendot", DB::raw('ROW_NUMBER() OVER (ORDER BY id DESC) AS stt'))
             ->leftJoin('24_dottuyensinh', '24_dottuyensinh.id', '24_dotxettuyen.iddotts')
-
+            ->orderBy('id','DESC')
             ->get();
 
 
@@ -214,12 +214,12 @@ class DotXetTuyenController extends Controller
 
 
     function edit_load_dotxettuyen(Request $request){
-        $data = DB::table('24_dotxetsinh')->where('id',$request->input('id'))->get();
-        $json_data['data'] = $data;
-        $res = json_encode($json_data);
-        return  $data; 
+        $data = DB::table('24_dotxettuyen')->where('id',$request->input('id'))->get();
+        // $json_data['data'] = $data;
+        // $res = json_encode($json_data);
+        // return  $data; 
         
-        $edit_load_dotxettuyen = 0;
+        $edit_load_dotxettuyen = $data;
         $selectbox_dottuyensinh = $this->load_selectbox_dotxettuyen();
 
         return $res = array(
@@ -230,8 +230,8 @@ class DotXetTuyenController extends Controller
 
     function update_dotxettuyen(Request $request){
         $id = $request->input('id');
-        $tendot = $request->input('tendot');
-        $iddoxt = $request->input('iddoxt');
+        $iddotts = $request->input('iddotts');
+        $iddotxt = $request->input('iddotxt');
         $tendotxettuyen = $request->input('tendotxettuyen');
         $id_quytrinhcongbo = $request->input('id_quytrinhcongbo');
         $ghichu_quytrinh = $request->input('ghichu_quytrinh');
@@ -242,8 +242,8 @@ class DotXetTuyenController extends Controller
             $res = DB::table('24_dotxettuyen')
             ->where('id',$id)
             ->update([
-                'tendot' => $tendot,
-                'iddoxt' => $iddoxt,
+                'iddotts' => $iddotts,
+                'iddotxt' => $iddotxt,
                 'tendotxettuyen' => $tendotxettuyen,
                 'id_quytrinhcongbo' => $id_quytrinhcongbo,
                 'ghichu_quytrinh' => $ghichu_quytrinh,
@@ -265,16 +265,16 @@ class DotXetTuyenController extends Controller
             return 'upd_0';
         }
     }
-    public function refresh_dotxettuyen(Request $request)
-    {
-        $exists = DB::table('24_dotxettuyen')->exists();
+    // public function refresh_dotxettuyen(Request $request)
+    // {
+    //     $exists = DB::table('24_dotxettuyen')->exists();
 
-        if ($exists) {
-            return response()->json(['status' => 'success']);
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'Không có dữ liệu để làm mới'], 404);
-        }
-    }
+    //     if ($exists) {
+    //         return response()->json(['status' => 'success']);
+    //     } else {
+    //         return response()->json(['status' => 'error', 'message' => 'Không có dữ liệu để làm mới'], 404);
+    //     }
+    // }
 
     function delete_dotxettuyen(Request $request){
         DB::table('24_dotxettuyen')->where('id',$request->input('id'))->delete();
