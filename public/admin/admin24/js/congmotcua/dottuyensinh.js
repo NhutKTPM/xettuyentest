@@ -233,37 +233,37 @@ function refresh_modal_sua_dts(){
     }
 }
 
-    function refresh_dottuyensinh() {
-        $("#modal_event").show();
-        $.ajax({
-            type: "post",
-            url: "/admin24/refresh_dottuyensinh",
-            dataType: "json",
-            success: function(res) {
-                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load();
-                if (res.status === 'success') {
-                    document.getElementById("madot").value = "";
-                    document.getElementById("tendot").value = "";
-                    
-                    
-                    
-                    toastr.success("Làm mới thành công!");
-                } else {
-                    toastr.error(res.message || "Có lỗi xảy ra!");
-                }
-                $("#modal_event").hide();
-            },
-            // error: function() {
-            //     toastr.error("Có lỗi xảy ra khi kiểm tra dữ liệu!");
-            // }
-        });
-    }
-    function refresh_modal_sua_dts() {
+function refresh_dottuyensinh() {
+    $("#modal_event").show();
+    $.ajax({
+        type: "post",
+        url: "/admin24/refresh_dottuyensinh",
+        dataType: "json",
+        success: function(res) {
+            bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load();
+            if (res.status === 'success') {
+                document.getElementById("madot").value = "";
+                document.getElementById("tendot").value = "";
+                
+                
+                
+                toastr.success("Làm mới thành công!");
+            } else {
+                toastr.error(res.message || "Có lỗi xảy ra!");
+            }
+            $("#modal_event").hide();
+        },
+        // error: function() {
+        //     toastr.error("Có lỗi xảy ra khi kiểm tra dữ liệu!");
+        // }
+    });
+}
+// function refresh_modal_sua_dts() {
 
-        $("#edit_madot").val("");
-        $("#edit_tendot").val("");
-        
-    }
+//     $("#edit_madot").val("");
+//     $("#edit_tendot").val("");
+    
+// }
     
     
     
