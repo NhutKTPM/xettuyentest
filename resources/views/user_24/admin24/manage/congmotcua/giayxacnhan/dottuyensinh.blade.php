@@ -80,7 +80,7 @@
                                         <div class="card card-navy card-outline" style="min-height:600px">
                                             <div>
                                                 <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;">Thêm đợt tuyển sinh</div>
-                                                <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
+                                                <div class="card-body" style="padding-top: 3px; padding-bottom:0px" id="dottuyensinh">
                                                     
                                                     <div class="col-md-12 col-12">
                                                         <div class="form-group row" style="margin-bottom: 3px">
@@ -124,7 +124,7 @@
                                             <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
                                                 <div class="row">
                                                     <div class="col-md-6 col-6">
-                                                        <button style="background-color: #fff; color:#007bff;" type="button" id="" onclick="Clear_accounts()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
+                                                        <button style="background-color: #fff; color:#007bff;" type="button"  onclick="refresh_dottuyensinh()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
                                                     </div>
                                                     <div class="col-md-6 col-6">
                                                         <button type="button" id="btt_submit_account" btt_id_add="3" data-id="" onclick="them_dottuyensinh()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Thêm</button>
@@ -206,21 +206,23 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-12">
-                                        <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
-                                            <div class="col-sm-8">
-                                                <input id='edit_trangthai' type="checkbox" style="height:18px;background-color:inhert">
+                                        <div class="form-group row" style="margin-bottom: 3px; align-items: center;">
+                                            <label class="col-sm-2 col-form-label" style="padding-bottom: 0px;">Trạng thái:</label>
+                                            <div class="col-sm-10">
+                                                <input id="edit_trangthai" type="checkbox" style="height: 28px; vertical-align: middle;">
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-md-12 col-12">
-                                        <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
-                                            <div class="col-sm-8">
-                                                <input id='edit_khoadot' type="checkbox" style="height:18px;background-color:inhert">
+                                        <div class="form-group row" style="margin-bottom: 3px; align-items: center;">
+                                            <label class="col-sm-2 col-form-label" style="padding-bottom: 0px;">Khóa đợt:</label>
+                                            <div class="col-sm-10">
+                                                <input id="edit_khoadot" type="checkbox" style="height: 28px; vertical-align: middle;">
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <!--  -->
                                     <!--  -->
                                     <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_email" style="font-size: 13px; color : red;text-align: right;"></div>

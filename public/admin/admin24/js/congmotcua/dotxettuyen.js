@@ -113,7 +113,7 @@ function load_selectbox_dotxettuyen(){
 function them_dotxettuyen(){
     // $("#modal_event").show();
     // $("#dkg_dangky").prop("disabled", true)
-    
+    $("#modal_event").show();
     $.ajax({
         type: 'post',
         url: '/admin24/them_dotxettuyen',
@@ -128,7 +128,7 @@ function them_dotxettuyen(){
         success: function (res) {
             if(res == 1){
                 toastr.success('Đã thêm thành công! abc'); //Xu ly ngoai le
-                bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load()
+                bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load();
             }else{
                 toastr.error("Thêm thất bại");
                 if(res == 0){
@@ -138,9 +138,15 @@ function them_dotxettuyen(){
                 }
             }
             // $("#dkg_dangky").prop("disabled", false)
-            // $("#modal_event").hide();
+            $("#modal_event").hide();
         }
-    })
+    });
+    $("#iddotts").val("");
+    $("#iddotxt").val("");
+    $("#tendotxettuyen").val("");
+    $("#id_quytrinhcongbo").val("");
+    $("#ghichu_quytrinh").val("");
+    $("#khoadot").val("");
 
 }
 
@@ -217,6 +223,7 @@ function update_dotxettuyen(){
         
     }
 
+
 function refresh_modal_sua_dxt(){
     $("#edit_iddotts").val(dxt_data_refresh.iddotts);
     $("#edit_iddotxt").val(dxt_data_refresh.iddotxt);
@@ -229,6 +236,43 @@ function refresh_modal_sua_dxt(){
         $("#edit_khoadot").prop("checked",false);
     }
 }
+
+    function refresh_dotxettuyen() {
+        $("#modal_event").show();
+        $.ajax({
+            type: "post",
+            url: "/admin24/refresh_dotxettuyen",
+            dataType: "json",
+            success: function(res) {
+                bang_ds_dotxettuyen().ajax.url('/admin24/bang_ds_dotxettuyen').load();
+                if (res.status === 'success') {
+                    document.getElementById("iddotts").value = "";
+                    document.getElementById("iddotxt").value = "";
+                    document.getElementById("tendotxettuyen").value = "";
+                    document.getElementById("id_quytrinhcongbo").value = "";
+                    document.getElementById("ghichu_quytrinh").value = "";
+                    document.getElementById("khoadot").value = "";
+                    
+                    
+                    
+                    toastr.success("Làm mới thành công!");
+                } else {
+                    toastr.error(res.message || "Có lỗi xảy ra!");
+                }
+                $("#modal_event").hide();
+            },
+            error: function() {
+                toastr.error("Có lỗi xảy ra khi kiểm tra dữ liệu!");
+            }
+        });
+    }
+    function refresh_modal_sua_dxt() {
+
+        $("#edit_madot").val("");
+        $("#edit_tendot").val("");
+        
+    }
+
 
 function delete_dxt(id){
     let choice = confirm("Xóa đợt xét tuyển mã đợt " + id + "! Đồng ý???");

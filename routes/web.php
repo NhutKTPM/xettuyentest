@@ -641,6 +641,10 @@ Route::middleware(['loginadmin::class'])->group(function () {
         Route::get('/edit_load_dottuyensinh', [DotTuyenSinhController::class, 'edit_load_dottuyensinh']);
         Route::post('/update_dottuyensinh', [DotTuyenSinhController::class, 'update_dottuyensinh']);
         Route::post('/delete_dottuyensinh', [DotTuyenSinhController::class, 'delete_dottuyensinh']);
+        Route::post('/refresh_modal_sua_dts', [DotTuyenSinhController::class, 'refresh_modal_sua_dts']);
+        Route::post('/refresh_dottuyensinh', [DotTuyenSinhController::class, 'refresh_dottuyensinh']);    
+        
+
 
         Route::get('/dotxettuyen',[DotXetTuyenController::class,'dotxettuyen']);
         Route::get('/bang_ds_dotxettuyen',[DotXetTuyenController::class,'bang_ds_dotxettuyen']);
@@ -648,7 +652,13 @@ Route::middleware(['loginadmin::class'])->group(function () {
         Route::get('/edit_load_dotxettuyen', [DotXetTuyenController::class, 'edit_load_dotxettuyen']);
         Route::post('/update_dotxettuyen', [DotXetTuyenController::class, 'update_dotxettuyen']);
         Route::post('/delete_dotxettuyen', [DotXetTuyenController::class, 'delete_dotxettuyen']);
+
         Route::get('/load_selectbox_dotxettuyen', [DotXetTuyenController::class, 'load_selectbox_dotxettuyen']);
+
+        Route::post('/refresh_modal_sua_dxt', [DotXetTuyenController::class, 'refresh_modal_sua_dxt']);
+        Route::post('/refresh_dotxettuyen', [DotXetTuyenController::class, 'refresh_dotxettuyen']);  
+ 
+
 
         
     });

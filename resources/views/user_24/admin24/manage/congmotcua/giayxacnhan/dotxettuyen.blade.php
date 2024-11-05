@@ -105,7 +105,7 @@
                                                     <div class="col-md-12 col-12 validate_themtaikhoan " id="error_email" style="font-size: 13px; color : red;text-align: right;"></div>
                                                     <div class="col-md-12 col-12">
                                                         <div class="form-group row" style="margin-bottom: 3px">
-                                                            <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">id đợt xét tuyển:</label>
+                                                            <label for="id_user_check" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Id đợt xét tuyển:</label>
                                                             <div class="col-sm-8">
                                                                 <input type="text" class="form-control" id='iddotxt' style="height:28px;">
                                                             </div>
@@ -154,7 +154,7 @@
                                             <div class="card-body" style="padding-top: 3px; padding-bottom:0px">
                                                 <div class="row">
                                                     <div class="col-md-6 col-6">
-                                                        <button style="background-color: #fff; color:#007bff;" type="button" id="" onclick="Clear_accounts()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
+                                                        <button style="background-color: #fff; color:#007bff;" type="button" id="" onclick="refresh_dotxettuyen()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
                                                     </div>
                                                     <div class="col-md-6 col-6">
                                                         <button type="button" id="btt_submit_account" btt_id_add="3" data-id="" onclick="them_dotxettuyen()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Thêm</button>
@@ -186,6 +186,7 @@
                     </div>
                 </div>
             </section>
+            @include('user_24.modalevent')
         </div>
         
         @include('user_24.admin24.include.footer')
@@ -218,7 +219,31 @@
                                 <div class="row">
                                     <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Mã đợt:</label>
+                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">ID đợt tuyển sinh:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Id đợt xét tuyển:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Tên đợt xét tuyển:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12">
+                                        <div class="form-group row" style="margin-bottom: 3px">
+                                            <label for="name" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Id quy trình công bố:</label>
                                             <div class="col-sm-10">
                                                 <input type="text" name="update_accounts_name" id='edit_madot' value="" class="validate form-control" style="height:28px">
                                             </div>
@@ -227,30 +252,33 @@
                                     <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_name" style="font-size: 13px; color : red;text-align: right;"></div>
                                     <div class="col-md-12 col-12">
                                         <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Tên đợt:</label>
+                                            <label for="link" class="col-sm-2 col-form-label" style="padding-bottom: 0px">Ghí chú quy trình:</label>
                                             <div class="col-sm-10">
                                                 <input type="text" name="update_accounts_email" id='edit_tendot' value="" class="form-control validate" style="height:28px">
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Checkbox Trạng thái và Khóa đợt nằm ngang nhau -->
                                     <div class="col-md-12 col-12">
-                                        <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Trạng thái:</label>
-                                            <div class="col-sm-8">
-                                                <input id='edit_trangthai' type="checkbox" style="height:18px;background-color:inhert">
+                                        <div class="form-group row" style="margin-bottom: 3px; align-items: center;">
+                                            <label class="col-sm-2 col-form-label" style="padding-bottom: 0px;">Trạng thái:</label>
+                                            <div class="col-sm-10">
+                                                <input id="edit_trangthai" type="checkbox" style="height: 28px; vertical-align: middle;">
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-md-12 col-12">
-                                        <div class="form-group row" style="margin-bottom: 3px">
-                                            <label for="nsx_chucoso" class="col-sm-4 col-form-label" style="padding-bottom: 0px">Khóa đợt:</label>
-                                            <div class="col-sm-8">
-                                                <input id='edit_khoadot' type="checkbox" style="height:18px;background-color:inhert">
+                                        <div class="form-group row" style="margin-bottom: 3px; align-items: center;">
+                                            <label class="col-sm-2 col-form-label" style="padding-bottom: 0px;">Khóa đợt:</label>
+                                            <div class="col-sm-10">
+                                                <input id="edit_khoadot" type="checkbox" style="height: 28px; vertical-align: middle;">
                                             </div>
                                         </div>
                                     </div>
-                                    <!--  -->
-                                    <!--  -->
+                                    
+                                    
                                     <div class="col-md-12 col-12 validate_taikhoan" id="error_update_accounts_email" style="font-size: 13px; color : red;text-align: right;"></div>
                                     <div class="col-md-12 col-12">
                                         <div class="card-header" style="padding: 0;margin-left: 10px;font-weight: bold;"></div>
@@ -262,7 +290,7 @@
                                                     <button type="button"  id="update_dottuyensinh_button" data-id="" onclick="update_dottuyensinh()" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;&nbsp;Cập nhật</button>
                                                 </div>
                                                 <div class="col-md-2 col-6">
-                                                    <button style="background-color: #fff; color:#007bff" type="button" onclick="refresh_modal_sua_dts()" id='Refresh_update_button' data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
+                                                    <button style="background-color: #fff; color:#007bff" type="button" onclick="refresh_modal_sua_dxt()" id='Refresh_update_button' data-id="" class="btn btn-block btn-primary btn-xs"><i class="fa-solid fa-rotate"></i>&nbsp;&nbsp;&nbsp;Làm mới</button>
                                                 </div>
                                                 <div class="col-md-2 col-6">
                                                     <button style="background-color: #fff; color:#007bff" type="button" id='destroyEditMenu' onclick="close_modal_sua_dxt()" class="btn btn-block btn-primary btn-xs"><i class="fa-regular fa-circle-xmark"></i>&nbsp;&nbsp;&nbsp;Hủy</button>
@@ -271,6 +299,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                
                             </form>
                         </div>
                     </div>

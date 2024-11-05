@@ -217,6 +217,7 @@ function update_dottuyensinh(){
         
     }
 
+
 function refresh_modal_sua_dts(){
     $("#edit_madot").val(dts_data_refresh.madot);
     $("#edit_tendot").val(dts_data_refresh.tendot);
@@ -231,6 +232,44 @@ function refresh_modal_sua_dts(){
         $("#edit_khoadot").prop("checked",false);
     }
 }
+
+    function refresh_dottuyensinh() {
+        $("#modal_event").show();
+        $.ajax({
+            type: "post",
+            url: "/admin24/refresh_dottuyensinh",
+            dataType: "json",
+            success: function(res) {
+                bang_ds_dottuyensinh().ajax.url('/admin24/bang_ds_dottuyensinh').load();
+                if (res.status === 'success') {
+                    document.getElementById("madot").value = "";
+                    document.getElementById("tendot").value = "";
+                    
+                    
+                    
+                    toastr.success("Làm mới thành công!");
+                } else {
+                    toastr.error(res.message || "Có lỗi xảy ra!");
+                }
+                $("#modal_event").hide();
+            },
+            // error: function() {
+            //     toastr.error("Có lỗi xảy ra khi kiểm tra dữ liệu!");
+            // }
+        });
+    }
+    function refresh_modal_sua_dts() {
+
+        $("#edit_madot").val("");
+        $("#edit_tendot").val("");
+        
+    }
+    
+    
+    
+    
+
+    
 
 function delete_dts(id){
     let choice = confirm("Xóa đợt tuyển sinh mã đợt " + id + "! Đồng ý???");

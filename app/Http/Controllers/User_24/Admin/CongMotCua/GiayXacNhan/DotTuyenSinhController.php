@@ -234,6 +234,21 @@ class DotTuyenSinhController extends Controller
         
     }
 
+    public function refresh_dottuyensinh(Request $request)
+    {
+        $exists = DB::table('24_dottuyensinh')->exists();
+
+        if ($exists) {
+            return response()->json(['status' => 'success']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Không có dữ liệu để làm mới'], 404);
+        }
+    }
+
+
+    
+
+
     function delete_dottuyensinh(Request $request){
         DB::table('24_dottuyensinh')->where('id',$request->input('id'))->delete();
         return 1;
