@@ -631,6 +631,19 @@ Route::middleware(['loginadmin::class'])->group(function () {
             Route::get('/excel_hsnh_thongtinsinhvien_bhyt_thongke/{major}',[Admin_24Controller::class,'excel_hsnh_thongtinsinhvien_bhyt_thongke']);//bhyt
 
         });
+        Route::get('/danhmuchososinhvien',[Admin_24Controller::class,'danhmuchososinhvien']);
+        Route::get('/rasoathososinhvien',[Admin_24Controller::class,'rasoathososinhvien']); 
+        Route::get('/thongkehososinhvien',[Admin_24Controller::class,'thongkehososinhvien']);
+
+        
+        Route::get('/dmhs_danhsach',[Admin_24Controller::class,'dmhs_danhsach']);
+
+        Route::get('/thongkehs_danhsach/{24_khoas.id}/{24_khoa.id}/{l_major.id}/{id_lop}',[Admin_24Controller::class,'thongkehs_danhsach']);
+        Route::get('/thongkehs_khoa',[Admin_24Controller::class,'thongkehs_khoa']);
+        Route::get('/thongkehs_nganh',[Admin_24Controller::class,'thongkehs_nganh']);
+        Route::get('/thongkehs_lop',[Admin_24Controller::class,'thongkehs_lop']);
+        Route::get('/thongkehs_khoas',[Admin_24Controller::class,'thongkehs_khoas']);
+        Route::get('/thongkehs_trangthai',[Admin_24Controller::class,'thongkehs_trangthai']);
 
 
 

@@ -43,7 +43,14 @@ use App\Exports\Admin24_Excel_Hsnh_Thongtinsinhvien;
 use App\Exports\Admin24_Excel_Hsnh_ThongkeXuatfile;
 use App\Exports\Admin24_DanhSachHoaDon;
 use App\Exports\Admin24_DanhSachHoaDonThongKe;
+use App\Exports\Admin24_DanhSachKho;
 
+use App\Exports\Admin24_Excel_Hsnh_Thongtinsinhvien_bhyt;
+use App\Exports\Admin24_ExportDanhSachSanPhamNhapDotNhap;
+use App\Exports\Admin24_ExportDanhSachQuanLySanPhamNhapDotNhap;
+
+//Tra cứu sinh viên
+use App\Exports\Admin24_XuatDSNhaphoc;
 
 
 
@@ -57,7 +64,7 @@ use App\Imports\Admin24_ImportNguyenVongXetTuyen;
 use App\Imports\Admin24_ImportKetQuaNhom;
 use App\Imports\Admin24_ImportMSSV;
 use App\Imports\Admin24_ImportXacnhanBo;
-
+use App\Imports\Import_bhyt;
 
 use Svg\Tag\Rect;
 
@@ -91,6 +98,8 @@ use Tymon\JWTAuth\Payload;
 use Illuminate\Support\Str;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 use Jenssegers\Agent\Agent;
+// HTMLPurifier
+use Mews\Purifier\Facades\Purifier;
 
 
 class Admin_24Controller  extends Controller
@@ -150,7 +159,6 @@ class Admin_24Controller  extends Controller
             'noidung' => $noidung,
         );
     }
-
     // login
     function loginadmin()
     {
@@ -243,7 +251,6 @@ class Admin_24Controller  extends Controller
             $html_child .= '</div>';
         }
     }
-
     public function menu()
     {
 
@@ -259,7 +266,6 @@ class Admin_24Controller  extends Controller
         );
         return $menu;
     }
-
     //Lưu số ip truy cập
     public function truycap()
     {
@@ -362,7 +368,21 @@ class Admin_24Controller  extends Controller
             ->sum('chitieu');
         return $chitieu;
     }
-
+    //Load Img
+    function data_img($id,$id_img)
+    {
+        if($id_img == 0){
+            $data = DB::table('24_image_chuan')
+            ->select('24_image.id_taikhoan as id_taikhoan','24_image_chuan.id as id',DB::raw('if(24_image.id_image_chuan is null,1,0) as trangthai'),DB::raw('if(24_image.path_img is null,"/img/test.png",24_image.path_img) as path_img'),'24_image_chuan.ghichu','24_image_chuan.loaianh','24_image_chuan.thutu','24_image_chuan.ghichu')
+            ->leftJoin('24_image','24_image.id_image_chuan','24_image_chuan.id')
+            ->where('24_image.id_taikhoan',$id)
+            ->get();
+            if($data){
+                return $data;
+            }
+        }
+        return false;
+    }
     //Tạo chuỗi ngẫu nhiên
     function rand_string($length)
     {
@@ -404,9 +424,7 @@ class Admin_24Controller  extends Controller
         }
         return $quyen;
     }
-
     //Kiểm tra trúng tuyển theo đợt
-
     function kiemtrakhoadottuyensinh($dottuyensinh){
         $trangthai = DB::table('24_dottuyensinh')
         ->where('id',$dottuyensinh)
@@ -431,8 +449,37 @@ class Admin_24Controller  extends Controller
         return 3;
     }
 
-
-
+    function load_seclectbox($table,$feild_id,$feild_text,$seclected_id,$text_0){
+        $data0 = new Collection([
+            'id' => 0,
+            'text' => $text_0,
+            'selected' =>'selected'
+        ]);
+        $data = DB::table($table)->select($feild_id." as id",$feild_text." as text")->get();
+        $i = 0;
+        foreach ($data as $value) {
+            if($value->$feild_id == $seclected_id){
+                $value->selected =  'selected';
+                $i++;
+            }else{
+                $value->selected =  '';
+            }
+        }
+        if( $i == 1){
+            $data[] = new Collection([
+                'id' => 0,
+                'text' => $text_0,
+                'selected' =>''
+            ]);
+        }else{
+            $data[] = new Collection([
+                'id' => 0,
+                'text' => $text_0,
+                'selected' =>'selected'
+            ]);
+        }
+        return $data;
+    }
     //Kiểm tra quyền url
     function kiemtraquyen_url($url)
     {
@@ -535,44 +582,80 @@ class Admin_24Controller  extends Controller
     }
 
     //Menu
+    // function datasidebar($menus, $parent_id = 0, $level = 0, &$html)
+    // {
+    //     foreach ($menus as $key => $menu) {
+    //         if ($menu->parent_id === $parent_id) {
+    //             $menu->level = $level;
+    //             if ($menu->level == 0) {
+    //                 $html .= '<li class = "nav-item">';
+    //                 if ($menu->link == 'main') {
+    //                     $html .= '<a href="' . $menu->link . '" style="background-color: rgba(255, 255, 255, .1);" class="nav-link">';
+    //                 } else {
+    //                     $html .= '<a style="background-color: rgba(255, 255, 255, .1);" class="nav-link">';
+    //                 }
+
+    //                 $html .= '<i class="nav-icon ' . $menu->icon . '" style="font-size: 14px;color:white"></i>';
+    //                 $html .=  '<p id = levelpr' . $menu->IDMN . '>' . $menu->name;
+    //                 if ($menu->link != 'main') {
+    //                     $html .= '<i class="fas fa-angle-left right"></i>';
+    //                 }
+    //                 $html .= '</p>';
+    //                 $html .= '</a>';
+    //             } else {
+    //                 $html .= "<ul id = level" . $menu->IDMN . " class='nav nav-treeview'>";
+    //                 $html .= '<li class="nav-item">';
+    //                 $html .= "<a href=" . $menu->link . " class='nav-link'>";
+    //                 $html .= '&nbsp;&nbsp&nbsp;<i class="nav-icon ' . $menu->icon . '" style="font-size: 14px;color:white"></i>';
+    //                 $html .= '<p>' . $menu->name . '</p>';
+    //                 $html .= '</a>';
+    //                 $html .= '</li>';
+    //             }
+
+    //             unset($menus[$key]);
+    //             self::datasidebar($menus, $menu->IDMN, $level + 1, $html);
+    //             $html .= '</li>';
+    //             $html .= '</ul>';
+    //         }
+    //     }
+    // }
+
+    function exit_children_menu($menus, $id) {
+        foreach ($menus as $menu) {
+            if ($id == $menu->parent_id) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     function datasidebar($menus, $parent_id = 0, $level = 0, &$html)
     {
         foreach ($menus as $key => $menu) {
             if ($menu->parent_id === $parent_id) {
                 $menu->level = $level;
                 if ($menu->level == 0) {
-                    $html .= '<li class = "nav-item">';
-                    if ($menu->link == 'main') {
-                        $html .= '<a href="' . $menu->link . '" style="background-color: rgba(255, 255, 255, .1);" class="nav-link">';
-                    } else {
-                        $html .= '<a style="background-color: rgba(255, 255, 255, .1);" class="nav-link">';
-                    }
-
-                    $html .= '<i class="nav-icon ' . $menu->icon . '" style="font-size: 14px;color:white"></i>';
-                    $html .=  '<p id = levelpr' . $menu->IDMN . '>' . $menu->name;
-                    if ($menu->link != 'main') {
-                        $html .= '<i class="fas fa-angle-left right"></i>';
-                    }
-                    $html .= '</p>';
-                    $html .= '</a>';
-                } else {
-                    $html .= "<ul id = level" . $menu->IDMN . " class='nav nav-treeview'>";
-                    $html .= '<li class="nav-item">';
-                    $html .= "<a href=" . $menu->link . " class='nav-link'>";
-                    $html .= '&nbsp;&nbsp&nbsp;<i class="nav-icon ' . $menu->icon . '" style="font-size: 14px;color:white"></i>';
-                    $html .= '<p>' . $menu->name . '</p>';
-                    $html .= '</a>';
-                    $html .= '</li>';
+                    $html .=   '<li class="nav-item" style="">';
+                    $html .=        '<a class="nav-link lev'.$menu->level.'" style="margin-bottom: 1px;">';
+                    $html .=            '<i class="nav-icon ' . $menu->icon . '" style="font-size: 14px;color:white"></i>';
+                    $html .=            '<p id="levelpr2" >'.$menu->name.'<i class="fas fa-angle-left right"></i></p>';
+                    $html .=        '</a>' ;
+                }else{
+                    $this->exit_children_menu($menus,$menu->IDMN) == 1 ? $muiten = '<i class="fas fa-angle-left right"></i>' :  $muiten = '';
+                    $html .=     '<ul id = level' . $menu->IDMN . ' class="nav nav-treeview">';
+                    $html .=        '<li class="nav-item" style="display: block">';
+                    $html .=            '<a href=' . $menu->link . '   class="nav-link lev'.$menu->level.'" style="margin-bottom: 1px;">';
+                    $html .=                '<i class="nav-icon  ' . $menu->icon . '" style="font-size: 14px;color:white"></i>';
+                    $html .=                '<p id="levelpr' . $menu->IDMN . '">'.$menu->name.' '. $muiten.'</p>';
+                    $html .=            '</a>';
                 }
-
                 unset($menus[$key]);
                 self::datasidebar($menus, $menu->IDMN, $level + 1, $html);
-                $html .= '</li>';
-                $html .= '</ul>';
+                $html .=                    '</li>';
+                $html .=                '</ul>';
             }
         }
     }
-
     public function sidebar()
     {
         $admin = Auth::guard('loginadmin')->user()->admin;
@@ -599,7 +682,6 @@ class Admin_24Controller  extends Controller
         $this->datasidebar($menus, 0, 0, $result);
         return $result;
     }
-
     public function index()
     {
         $url = URL::current();
@@ -715,8 +797,6 @@ class Admin_24Controller  extends Controller
         );
         return $res;
     }
-
-
     //Load chuyên ngành
     public function loadchuyennganh()
     {
@@ -744,7 +824,6 @@ class Admin_24Controller  extends Controller
         $major[] = $major0;
         return $major;
     }
-
     //Quản lý thí sinh
     public function quanlyhoso()
     {
@@ -2990,6 +3069,7 @@ class Admin_24Controller  extends Controller
         $trangthai = DB::table('24_trangthaihoso')->get();
         return $trangthai;
     }
+
     // Phân công kiểm tra hồ sơ new
     function phancongkiemtrahoso()
     {
@@ -3267,7 +3347,6 @@ class Admin_24Controller  extends Controller
         }
     }
 
-
     //Hồ sơ thí sinh
     public function tracuuthisinh()
     {
@@ -3283,15 +3362,12 @@ class Admin_24Controller  extends Controller
             return view('user_24.admin24.include.404');
         }
     }
-
     function loaikiemtrahoso($dotts){
-
         return array(
             'loaikiemtrahoso' => 2,
             // 'dotts' => 2
         );
     }
-
     public function kiemtra_danhsachhoso($iddotts)
     {
         $id_admin = (int)Auth::guard('loginadmin')->user()->id;
@@ -3995,7 +4071,6 @@ class Admin_24Controller  extends Controller
         $truongthpt12[] = $truong;
         return  $truongthpt12;
     }
-
     function kiemtraphanconghoso($dotts,$id_admin,$id_taikhoan){
         $loadkiemtra = $this->loaikiemtrahoso($dotts)['loaikiemtrahoso'];
         switch ($loadkiemtra) {
@@ -4012,7 +4087,6 @@ class Admin_24Controller  extends Controller
         }
         return $check;
     }
-
     function capnhatthongtincanhan(Request $request)
     {
         $time = $request->input('time');
@@ -4293,7 +4367,6 @@ class Admin_24Controller  extends Controller
             'thongbao' => $thongbao,
         );
     }
-
     function capnhatnamtn(Request $request)
     {
         $id_taikhoan = $request->input('id_taikhoan');
@@ -4394,7 +4467,6 @@ class Admin_24Controller  extends Controller
             'thongbao' => $thongbao,
         );
     }
-
     function capnhattruonglop1(Request $request)
     {
         $time = $request->input('time');
@@ -5610,24 +5682,27 @@ class Admin_24Controller  extends Controller
             return 'err_0';
         }
     }
-
-
     function ghep_2truyvan($data_goc,$data_ghep,$ten){
-        foreach ($data_goc as $key => $goc) {
-            $dem = 0;
-            foreach ($data_ghep as $key => $ghep) {
-                if($goc->id == $ghep->id){
-                    $goc->$ten = $ghep->value;
-                    break;
+        if(count($data_ghep)>0){
+            foreach ($data_goc as $key => $goc) {
+                $dem = 0;
+                foreach ($data_ghep as $key => $ghep) {
+                    if($goc->id == $ghep->id){
+                        $goc->$ten = $ghep->value;
+                        break;
+                    }
+                    if($dem == 0){
+                        $goc->$ten = "x";
+                    }
                 }
-                if($dem == 0){
-                    $goc->$ten = "x";
-                }
+            }
+        }else{
+            foreach ($data_goc as $key => $goc) {
+                $goc->$ten = "x";
             }
         }
         return $data_goc;
     }
-
     function inphieurasoat($id_taikhoan,$dotts){
 
         // $dotts = $this->motdottuyensinh();
@@ -5781,7 +5856,6 @@ class Admin_24Controller  extends Controller
         return $pdf->stream('PhieuThuHoSoTuyenSinh.pdf');
 
     }
-
     function kiemtraphieutrungtuyen($id_taikhoan,$dotts){
         // $dotts = $this->motdottuyensinh();
         if($dotts){
@@ -5798,6 +5872,76 @@ class Admin_24Controller  extends Controller
             return 'dot_0';
         }
     }
+    //Danh sách thu hồ sơ thí sinh
+    function danhsachthuhoso(){
+        return view('user_24.admin24.manage.quanlyhoso.danhsachthuhoso',
+            [
+
+                'menu' =>  $this->sidebar()
+            ]
+        );
+    }
+
+
+    function thuhoso_id_table(){
+        return (object)[
+            'id' => 0,
+            'loaihoso' => "MSSV"
+        ];
+    }
+
+
+
+
+    function data_tb($header,$header_text) {
+        $data = [];
+        foreach ($header as $row_h) {
+            // foreach ($body as $row_b) {
+            //     if($row_h->id == )
+                $data[$row_h->$header_text] = '1111111';
+            // }
+        }
+
+
+        return response()->json($data);
+    }
+
+    function thuhoso_load_tb(){
+        $header = DB::select(
+            'SELECT id, loaihoso FROM 24_danhmuc_hsts
+                WHERE trangthai = 1
+                UNION ALL
+                SELECT 0 AS id, "MSSV" AS loaihoso
+                UNION ALL
+                SELECT -1 AS id, "Ten" AS loaihoso;'
+            );
+        return $this->data_tb($header,'loaihoso');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //Quản lý thí sinh
     //Thống kê đăng ký
@@ -6012,7 +6156,6 @@ class Admin_24Controller  extends Controller
             return view('user_24.admin24.include.404');
         }
     }
-
     function sql_danhsachtrungtuyen($iddot){
         // $iddot = 1;
         // $major = DB::table('24_chuyennganh_xettuyen')->where('iddot',$iddot)->get();
@@ -6063,13 +6206,11 @@ class Admin_24Controller  extends Controller
         $sql .= " ORDER BY nv.id_chuyennganh ASC, diemxettuyen DESC";
         return $sql;
     }
-
     function danhsachtrungtuyentheodotts($iddot){
         $json_data['data'] = DB::select($this->sql_danhsachtrungtuyen($iddot));
         $data = json_encode($json_data);
         return $data;
     }
-
     function sql_loadthongketrungtuyen($iddot){
 
         $id_admin = Auth::guard('loginadmin')->user()->id;
@@ -6231,20 +6372,17 @@ class Admin_24Controller  extends Controller
             cnxt.iddot = ".$iddot." AND cnxt.id_chuyennganh IN (".$chuyennganh."))";
         return $sql;
     }
-
     function thongketrungtuyentheodotts($iddot){
         $json_data['data'] = DB::select($this->sql_loadthongketrungtuyen($iddot));
         $data = json_encode($json_data);
         return $data;
     }
-
     function xuatexcelthongketrungtuyentheodotts($iddot){
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'DanhSachTrungTuyenTheoDotTS' . date("d-m-Y H:i:s") . '.xlsx';
         $nguyenvong = DB::select($this->sql_loadthongketrungtuyen($iddot));
         return Excel::download(new Admin24_ExportDanhSachTrungTuyenTheoDotTS($nguyenvong), $title);
     }
-
     //Select
     function load_phodiem_nganh($iddot){
         $data = DB::table('24_chuyennganh_xettuyen')
@@ -6297,7 +6435,6 @@ class Admin_24Controller  extends Controller
         }
         return $data;
     }
-
     function laydulieutheodot($iddotts, $iddotxt){
         $iddotts = $this->dotchayxettuyen();
         DB::beginTransaction();
@@ -6374,32 +6511,27 @@ class Admin_24Controller  extends Controller
             ) ;
         }
     }
-
     function khoadotxettuyen($iddotxt){
         $dotts = $this->dotchayxettuyen();
     }
-
     function xuatdanhsachlocao($iddotxt){
         $dotts = $this->dotchayxettuyen();
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'DanhSachTrungTuyenLocAo' . date("d-m-Y H:i:s") . '.xlsx';
         return Excel::download(new Admin24_ExportDanhSachLocAo($iddotxt, $dotts), $title);
     }
-
     function danhsach_thisinh_locao($iddotxt){
         $dotts = $this->dotchayxettuyen();
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'DanhSachChiTietTheoDot' . date("d-m-Y H:i:s") . '.xlsx';
         return Excel::download(new Admin24_DanhSachChiTietTheoDot($iddotxt, $dotts), $title);
     }
-
     function thongkeketqualocao($iddotxt){
         $dotts = $this->dotchayxettuyen();
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'ThongKeSoLuongTrungTuyenTaiTruongTheoNganh' . date("d-m-Y H:i:s") . '.xlsx';
         return Excel::download(new Admin24_ExportThongKeSoLuongTrungTuyen($iddotxt, $dotts), $title);
     }
-
     function xoaketqualocaonhom($dotts,$iddotxt){
         DB::table('24_danhsachxettuyentheodotxt')
         ->where('iddot',$dotts)
@@ -6408,7 +6540,6 @@ class Admin_24Controller  extends Controller
             'trungtuyennhom' => 0,
         ]);
     }
-
     function submit_importketquanhom(Request $request)//Update hoặc tạo mới từ Dữ liệu Bộ, theo đợt tuyển sinh
     {
         $dotts = $this->dotchayxettuyen();
@@ -6466,7 +6597,6 @@ class Admin_24Controller  extends Controller
             return 'imp_0';
         }
     }
-
     function xoaketqualocaobo($dotts,$iddotxt){
         DB::table('24_danhsachxettuyentheodotxt')
         ->where('iddot',$dotts)
@@ -6475,7 +6605,6 @@ class Admin_24Controller  extends Controller
             'trungtuyenbo' => 0,
         ]);
     }
-
     function submit_importketquabo(Request $request)//Update hoặc tạo mới từ Dữ liệu Bộ, theo đợt tuyển sinh
     {
         $dotts = $this->dotchayxettuyen();
@@ -6533,7 +6662,6 @@ class Admin_24Controller  extends Controller
             return 'imp_0';
         }
     }
-
     function sql_thongketheodotxettuyen(){
         $sql = "SELECT
             24_chuyennganh_dotxettuyen.id as id,
@@ -6616,13 +6744,11 @@ class Admin_24Controller  extends Controller
             )";
         return $sql;
     }
-
     function thongketheodotxettuyen($iddotts,$iddotxt){
         $json_data['data'] = DB::select($this->sql_thongketheodotxettuyen($iddotts,$iddotxt),[$iddotts,$iddotxt,$iddotts,$iddotxt,$iddotts,$iddotxt,$iddotts,$iddotxt,$iddotts,$iddotxt,$iddotts,$iddotxt,$iddotts,$iddotxt,$iddotts,$iddotxt]);
         $data = json_encode($json_data);
         return $data;
     }
-
     function capnhatsoluongtheonganh(Request $requets){
         $id = $requets->input('id');
         $soluong = $requets->input('soluong');
@@ -6637,7 +6763,6 @@ class Admin_24Controller  extends Controller
             'noidung' => DB::table('24_chuyennganh_dotxettuyen')->where('id', $id)->first()->soluong_chuyennganh
         );
     }
-
     function sql_danhsachtrungtuyentamtheodotxt($iddotts,$iddotxt,$ngvong){
         // $ngvong = 1;
         $major = DB::table('24_chuyennganh_dotxettuyen')
@@ -6683,7 +6808,6 @@ class Admin_24Controller  extends Controller
         $sql .= " ) ORDER BY nv.id_chuyennganh ASC, diemxettuyen DESC";
         return $sql;
     }
-
     function sql_thongkedanhsachtrungtuyentamtheodotxt($iddotts,$iddotxt,$ngvong){
         $sql = $this->sql_danhsachtrungtuyentamtheodotxt($iddotts,$iddotxt,$ngvong);
         $new_sql = 'SELECT
@@ -6696,7 +6820,6 @@ class Admin_24Controller  extends Controller
             return $new_sql;
 
     }
-
     function thongkedanhsachtrungtuyentamtheodotxt($iddotts,$iddotxt,$ngvong){
         // $json_data['data'] = DB::select($this->sql_thongkedanhsachtrungtuyentamtheodotxt($iddotts,$iddotxt,$ngvong));
         // $data = json_encode($json_data);
@@ -6707,7 +6830,6 @@ class Admin_24Controller  extends Controller
         //     return 'dulieuxettuyen';
         // }
     }
-
     function luudanhsachtrungtuyentam($iddotts,$iddotxt,$ngvong){
         $trungtuyentam = DB::select($this->sql_danhsachtrungtuyentamtheodotxt($iddotts,$iddotxt,$ngvong));
         DB::table('24_danhsachxettuyentheodotxt')->where('iddot', $iddotts)->where('iddotxt', $iddotxt)->update(['trungtuyentam'=>0]);
@@ -6720,7 +6842,6 @@ class Admin_24Controller  extends Controller
         }
         return $trangthai;
     }
-
     function trungtuyenchinhthucdotts($iddotxt){
         $iddotts = $this->dotchayxettuyen();
         $khoa = $this->kiemtrakhoadottuyensinh($iddotts);
@@ -6800,7 +6921,6 @@ class Admin_24Controller  extends Controller
                 break;
         }
     }
-
     function khoaxettuyendotts(){
         $iddotts = $this->dotchayxettuyen();
         $khoa = $this->kiemtrakhoadottuyensinh($iddotts);
@@ -6821,7 +6941,6 @@ class Admin_24Controller  extends Controller
                 break;
         }
     }
-
     function congboketquatheodotxt(){
         $iddotts = $this->dotchayxettuyen();
         $khoa = $this->kiemtrakhoadottuyensinh($iddotts);
@@ -6842,7 +6961,6 @@ class Admin_24Controller  extends Controller
                 break;
         }
     }//Bổ sung chức năng hủy công bố
-
     function dieutraketquatheodotxt(){
         $iddotts = $this->dotchayxettuyen();
         $khoa = $this->kiemtrakhoadottuyensinh($iddotts);
@@ -6863,7 +6981,6 @@ class Admin_24Controller  extends Controller
                 break;
         }
     }//Bổ sung chức năng hủy điều tra
-
     function data_danhsachtrungtuyenchinhthuc($iddotts, $iddotxt, $id_chuyennganh){
         $iddotxt == 0 ? $dotxt = "AND tt.iddotxt is not null" :  $dotxt = "AND tt.iddotxt = ?";
         $id_chuyennganh == 0 ? $chuyennganh = "AND tt.id_chuyennganh is null" :  $chuyennganh = "AND tt.id_chuyennganh = ?";
@@ -6922,7 +7039,6 @@ class Admin_24Controller  extends Controller
         }
         return $data;
     }
-
     function danhsachtrungtuyenchinhthuc($iddotts, $iddotxt, $id_chuyennganh){
         $json_data['data'] = $this->data_danhsachtrungtuyenchinhthuc($iddotts, $iddotxt, $id_chuyennganh);
         $data = json_encode($json_data);
@@ -8697,7 +8813,6 @@ function capnhatthongtincannhan(Request $request)
     $id = $request->input('id');
     $table = $request->input('table');
         // Tạo một mảng giả lập để chứa dữ liệu xác thực
-
     switch($id){
         case 'dienthoai':
             $validator = Validator::make($request->all(),
@@ -9187,8 +9302,9 @@ function capnhatthongtincannhan(Request $request)
             return 'err_0';
         }
     }
-
 }
+
+
 function capnhatdiachi_tinh(Request $request)
 {
     $id_cap2 = $request->input('id_cap2');
@@ -9775,7 +9891,14 @@ function xoahinhhhsnh(Request $request){
     }
 }
 
-//
+
+
+
+
+
+
+//  load loai giay
+
     public function xuatfile_index()
     {
 
@@ -9831,31 +9954,38 @@ function xoahinhhhsnh(Request $request){
     public function loadthongtin($major,$cccd,$mssv)
     {
         // Khởi tạo điều kiện truy vấn
-        $major == 0 ? $major_fix = 'tt.idnganh IS NOT NULL' : $major_fix = 'tt.idnganh ='.$major;
+        $major == 0 ? $major_fix = 'lop.idnganh IS NOT NULL' : $major_fix = 'lop.idnganh ='.$major;
         $cccd == 0 ? $cccd_fix = 'cccd IS NOT NULL' : $cccd_fix = 'cccd = "'.$cccd.'"';
         $mssv == 0 ? $mssv_fix = '24_mssv.mssv IS NOT NULL' : $mssv_fix = '24_mssv.mssv = "'.$mssv.'"';
         $sql = 'SELECT
             ROW_NUMBER() OVER (ORDER BY 24_mssv.id_taikhoan) AS stt,
             hoten,
             24_thongtincanhan.id_taikhoan,
+            24_thongtincanhan.dienthoai,
             24_thongtincanhan.cccd,
             24_mssv.mssv,
             24_thongtincanhan.gioitinh as gioitinh,
-            ngaysinh, CONCAT( thuongthu.duoi_xa_ttru, ", ",thuongthu.name_province3, ", ", thuongthu.name_province2, ", ", thuongthu.name_province) AS diachi
+            thuongthu.name_province3,
+            thuongthu.name_province2,
+            thuongthu.name_province,
+            thuongthu.duoi_xa_ttru,
+            ngaysinh
         FROM 24_mssv
-        INNER JOIN (SELECT id_taikhoan, idnganh FROM 24_trungtuyen  WHERE iddot = 2) as tt ON tt.id_taikhoan = 24_mssv.id_taikhoan
-        INNER JOIN
+        INNER JOIN (SELECT id, idnganh FROM 24_lop) as lop ON lop.id = 24_mssv.id_lop
+        LEFT JOIN
             (
                 SELECT 24_hosonhaphoc.id_taikhoan as id_taikhoan, duoi_xa_ttru, name_province3, name_province2, name_province
                 FROM  24_hosonhaphoc
-                INNER JOIN l_province ON l_province.id = 24_hosonhaphoc.id_tinh_ttru
-                INNER JOIN l_province2 ON l_province2.id = 24_hosonhaphoc.id_huyen_ttru
-                INNER JOIN l_province3 ON l_province3.id = 24_hosonhaphoc.id_xa_ttru
+                LEFT JOIN l_province ON l_province.id = 24_hosonhaphoc.id_tinh_ttru
+                LEFT JOIN l_province2 ON l_province2.id = 24_hosonhaphoc.id_huyen_ttru
+                LEFT JOIN l_province3 ON l_province3.id = 24_hosonhaphoc.id_xa_ttru
             ) as thuongthu ON thuongthu.id_taikhoan = 24_mssv.id_taikhoan
         INNER JOIN 24_thongtincanhan ON 24_thongtincanhan.id_taikhoan = 24_mssv.id_taikhoan
         WHERE '.$major_fix.'
         AND '.$cccd_fix.'
-        AND '.$mssv_fix;
+        AND '.$mssv_fix.'
+        ORDER BY 24_mssv.mssv';
+
         $query = DB::select($sql);
         $json_data['data'] = $query;
         $data = json_encode($json_data);
@@ -9872,14 +10002,22 @@ function xoahinhhhsnh(Request $request){
 
     }
 
-    function pdf_hsnh_thongtinsinhvien($id_sinhvien, $loaigiay, $admin_sig)
+    function pdf_hsnh_thongtinsinhvien($code)
     {
+        $decodedString = base64_decode($code);
+        $parts = explode('/', $decodedString);
+        $id_sinhvien = $parts[0];
+        $loaigiay = $parts[1];
+        $admin_sig = $parts[2];
         $arr_sinhvien = explode(',', $id_sinhvien);
         //tẠO MÃ PHIẾU
         $nam = Carbon::now()->year;
+        $nam_fix = $nam;
         $thang = Carbon::now()->month;
         $ngay = Carbon::now()->day;
         $ngayin = $nam.$thang.$ngay;
+        $khoas = DB::select('SELECT namnhaphoc FROM 24_lop, 24_khoas, 24_mssv WHERE 24_mssv.id_lop = 24_lop.id AND 24_lop.idkhoas = 24_khoas.id AND 24_mssv.id_taikhoan IN ( '.$id_sinhvien.')');
+        $nam_fix = $khoas[0]->namnhaphoc;
         if($loaigiay == 1){
             $table = 'l_file_qlsv_nvqs';
             $magiay = 'NVQS';
@@ -9890,30 +10028,28 @@ function xoahinhhhsnh(Request $request){
             $gioitinh = 'gioitinh is not null';
 
         }
+
+        $id_nam = DB::select('SELECT id FROM 24_khoas WHERE namnhaphoc = "'.$nam_fix.'"');
+        $id_nam = $id_nam[0]->id;
         $s = 'SELECT Max(thutu) as count FROM '.$table;
         $thutu =  DB::select($s)[0]->count;
+
+        // return $thutu;
         //LƯU THÔNG TIN PHIÉU (....) VÀ LUU MA PHIEU
             $data = [];
             $arr_thutu = '';
-            $lastRecord = DB::table($table)->latest('create_at')->first();
-            if ($lastRecord) {
-                $lastRecordYear = Carbon::parse($lastRecord->create_at)->year;
-                if ($lastRecordYear < $nam) {
-                    $thutu = 0; // Reset thutu to 0 if it's a new year
-                }
-            }else {
-                $thutu = 0; // If no records found, start with 0
-            }
+
             for($i = 0; $i<count($arr_sinhvien);$i++){
                 $sqli = 'SELECT count(*) as lan FROM '. $table .' WHERE id_user = '. $arr_sinhvien[$i];
                 $lan = DB::select($sqli)[0]->lan;
                 $thutu_tam = ++$thutu;
+                $maphieu = 'L'.($lan+1).$ngayin.$magiay.$thutu_tam;
                 $arr_tam = array(
                     'thutu' =>      $thutu_tam,
-                    'maphieu' =>    'L'.($lan+1).$ngayin.$magiay.$thutu,
-                    'id_year'   =>  $nam,
+                    'maphieu' =>    $maphieu,
+                    'id_year'   =>  $id_nam,
                     'id_user'   =>  $arr_sinhvien[$i],
-                    'id_admin'  =>  $id_admin = Auth::guard('loginadmin')->user()->id,
+                    'id_admin'  =>  Auth::guard('loginadmin')->user()->id,
                     'admin_sig' =>  $admin_sig,
                 );
                 $data[] =  $arr_tam;
@@ -9923,9 +10059,11 @@ function xoahinhhhsnh(Request $request){
 
             DB::table($table)
             ->insert($data);
+
         //lAY DŨ LIEU XUÁT PDF
-        $sql = "SELECT tt.hoten,
-                DATE_FORMAT(tt.ngaysinh, '%d/%m/%Y') as ngaysinh,
+        $sql = "SELECT
+                tt.hoten,
+                DATE_FORMAT(tt.ngaysinh, '%d/%m/%Y') AS ngaysinh,
                 tt.noisinh,
                 24_mssv.mssv,
                 CASE
@@ -9942,36 +10080,45 @@ function xoahinhhhsnh(Request $request){
                 l_province2.name_province2 AS huyen,
                 l_province3.name_province3 AS xa,
                 nh.duoi_xa_ttru,
-                l_major.name_major,
-                l_major.khoa,
-                $table.maphieu as mp,
-                l_major.lop,
-                l_major.tgnhaphoc,
-                l_major.tgratruong,
-                l_major.chuyennganh,
-                l_major.thoigian,
+                lop.name_major,
+                lop.tenkhoa as khoa,
+                lop.khoas as khoas,
+                $table.maphieu AS mp,
+                lop.tenlop as lop,
+                lop.tgnhaphoc,
+                lop.tgratruong,
+                lop.tenchuyennganh,
+                lop.thoigianhoc as thoigian,
                 DAY(CURDATE()) AS day,
                 MONTH(CURDATE()) AS month,
                 YEAR(CURDATE()) AS year,
-                mps.name as admin_sig
+                mps.name AS admin_sig
             FROM
-                24_thongtincanhan tt
+                24_mssv
             JOIN
-                24_mssv ON tt.id_taikhoan = 24_mssv.id_taikhoan
+                24_thongtincanhan tt ON 24_mssv.id_taikhoan = tt.id_taikhoan
             JOIN
-                24_hosonhaphoc nh ON tt.id_taikhoan = nh.id_taikhoan
+                24_hosonhaphoc nh ON 24_mssv.id_taikhoan = nh.id_taikhoan
             JOIN
-                (SELECT id_taikhoan,idnganh FROM  24_trungtuyen WHERE iddot = 2) as trungtuyen ON trungtuyen.id_taikhoan = 24_mssv.id_taikhoan
-            JOIN
-                l_major ON trungtuyen.idnganh = l_major.id
-            JOIN
+                (SELECT 24_khoa.tenkhoa as tenkhoa, 24_khoas.namnhaphoc as khoas, l_major.name_major as name_major,
+                    24_chuyennganh.tenchuyennganh as tenchuyennganh, 24_lop.id as idlop, 24_lop.tenlop as tenlop,
+                     24_lop.thoigianhoc as thoigianhoc,
+                    DATE_FORMAT(24_khoas.ngaynhaphoc, '%m/%Y') AS tgnhaphoc,
+                    DATE_FORMAT(24_lop.thoigianratruong, '%m/%Y') AS tgratruong
+                    FROM  24_lop
+                    JOIN 24_chuyennganh ON 24_lop.idchuyennganh = 24_chuyennganh.id
+                    JOIN l_major ON 24_lop.idnganh = l_major.id
+                    JOIN 24_khoa ON 24_lop.idkhoa = 24_khoa.id
+                    JOIN 24_khoas ON 24_lop.idkhoas = 24_khoas.id) AS lop
+                    ON lop.idlop = 24_mssv.id_lop
+            LEFT JOIN
                 l_province ON nh.id_tinh_ttru = l_province.id
-            JOIN
+            LEFT JOIN
                 l_province2 ON nh.id_huyen_ttru = l_province2.id
-            JOIN
+            LEFT JOIN
                 l_province3 ON nh.id_xa_ttru = l_province3.id
-            JOIN
-                l_province prov ON nh.id_quoctich = prov.id
+            LEFT JOIN
+                l_province prov ON nh.noicapcccd = prov.id
             JOIN
                 $table ON $table.id_user = tt.id_taikhoan
             JOIN
@@ -10172,46 +10319,245 @@ function xoahinhhhsnh(Request $request){
         return $res;
 
     }
-    public function thongke_xuatfile($major,$nam)
+    public function loadkhoa(){
+        $loadkhoa = DB::select("SELECT id as id,  tenkhoa as text, '' as selected FROM 24_khoa");
+        if($loadkhoa){
+           $loadkhoa0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Khoa',
+               'selected' =>'selected'
+           ]);
+
+        }else{
+           $loadkhoa0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Khoa',
+               'selected' =>''
+           ]);
+        }
+
+        $loadkhoa[] = $loadkhoa0;
+        $res = new Collection([
+           'loadkhoa' =>$loadkhoa
+        ]);
+
+        return $res;
+    }
+
+    public function loadlop($idkhoa){
+        $lop = DB::select("SELECT id as id,  tenlop as text, '' as selected FROM 24_lop WHERE idkhoa = ".$idkhoa);
+        if($lop){
+           $lop0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Lớp',
+               'selected' =>'selected'
+           ]);
+
+        }else{
+           $lop0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Lớp',
+               'selected' =>''
+           ]);
+        }
+
+        $lop[] = $lop0;
+        $res = new Collection([
+           'loadlop' =>$lop
+        ]);
+
+        return $res;
+    }
+
+    public function loadkhoas(){
+        $loadkhoas = DB::select("SELECT id as id,  namnhaphoc as text, '' as selected FROM 24_khoas");
+        if($loadkhoas){
+           $loadkhoas0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Năm học',
+               'selected' =>'selected'
+           ]);
+
+        }else{
+           $loadkhoas0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Năm học',
+               'selected' =>''
+           ]);
+        }
+
+        $loadkhoas[] = $loadkhoas0;
+        $res = new Collection([
+           'loadkhoas' =>$loadkhoas
+        ]);
+
+        return $res;
+    }
+
+    public function thongke_xuatfile($nam,$id_lop,$khoa)
     {
-
-        // Khởi tạo điều kiện truy vấn
-        $major == 0 ? $major_fix = 'l_major.id IS NOT NULL' : $major_fix = 'l_major.id ='.$major;
-        $nam_ht = Carbon::now()->year;
-        $nam == 0 ? $nam_fix = 'is not null' : $nam_fix = '='.$nam;
-        // $bhyt == 0 ? $bhyt_fix = 'bhyt IS NOT NULL' : $bhyt_fix = 'bhyt ='.$bhyt;
-
-        $sql = 'SELECT
-                    ROW_NUMBER() OVER (ORDER BY l_major.id) AS stt,
-                    l_major.id_major, l_major.name_major, if(nvqs.slnvqs is null, "0" ,nvqs.slnvqs) as nvqs ,if(vv.slvv is null, "0" ,vv.slvv) as vayvon
-                FROM
-                    l_major
-                JOIN
-                    (SELECT idnganh,COUNT(*) as slnvqs, Year(l_file_qlsv_nvqs.create_at)
-                    FROM l_file_qlsv_nvqs JOIN 24_trungtuyen ON l_file_qlsv_nvqs.id_user = 24_trungtuyen.id_taikhoan
-                    WHERE Year(l_file_qlsv_nvqs.create_at) ' .$nam_fix.'
-                    GROUP BY 24_trungtuyen.idnganh, Year(l_file_qlsv_nvqs.create_at)) as nvqs ON nvqs.idnganh = l_major.id
-                JOIN
-                    (SELECT idnganh,COUNT(*) as slvv,Year(l_file_qlsv_vv.create_at)
-                    FROM l_file_qlsv_vv JOIN 24_trungtuyen ON l_file_qlsv_vv.id_user = 24_trungtuyen.id_taikhoan
-                    WHERE Year(l_file_qlsv_vv.create_at) ' .$nam_fix.'
-                    GROUP BY 24_trungtuyen.idnganh, Year(l_file_qlsv_vv.create_at)) as vv ON vv.idnganh = l_major.id
-                WHERE '.$major_fix;
-        $query = DB::select($sql);
-
-
-        $json_data['data'] = $query;
+        $data = DB::table('24_lop')
+        ->select('24_lop.id','tenlop','tenkhoa', DB::raw('ROW_NUMBER() OVER (ORDER BY `24_lop`.`id`) AS stt'))
+        ->join('24_khoas','24_khoas.id','24_lop.idkhoas')
+        ->join('24_khoa','24_khoa.id','24_lop.idkhoa')
+        ->where('idkhoas',$nam)
+        ->where(function($query) use ($id_lop) {
+            if ($id_lop == 0) {
+                $query->whereNotNull('24_lop.id'); // Thay 'column_name' bằng tên cột thực tế
+            } else {
+                $query->where('24_lop.id',$id_lop);
+            }
+        })
+        ->where(function($query) use ($khoa) {
+            if ($khoa == 0) {
+                $query->whereNotNull('24_lop.id'); // Thay 'column_name' bằng tên cột thực tế
+            } else {
+                $query->where('idkhoa',$khoa);
+            }
+        })
+        ->get();
+        $nvqs = DB::table('l_file_qlsv_nvqs')
+        ->select('id_lop as id',DB::raw('COUNT(*) as value'))
+        ->join('24_mssv','24_mssv.id_taikhoan','l_file_qlsv_nvqs.id_user')
+        ->join('24_lop','24_lop.id','24_mssv.id_lop')
+        ->where('id_year',$nam)
+        ->where(function($query) use ($id_lop) {
+            if ($id_lop == 0) {
+                $query->whereNotNull('l_file_qlsv_nvqs.id'); // Thay 'column_name' bằng tên cột thực tế
+            } else {
+                $query->where('24_mssv.id_lop',$id_lop);
+            }
+        })
+        ->where(function($query) use ($khoa) {
+            if ($khoa == 0) {
+                $query->whereNotNull('l_file_qlsv_nvqs.id'); // Thay 'column_name' bằng tên cột thực tế
+            } else {
+                $query->where('24_lop.idkhoa',$khoa);
+            }
+        })
+        ->groupBy('id_lop')
+        ->get();
+        $vv = DB::table('l_file_qlsv_vv')
+        ->select('id_lop as id',DB::raw('COUNT(*) as value'))
+        ->join('24_mssv','24_mssv.id_taikhoan','l_file_qlsv_vv.id_user')
+        ->join('24_lop','24_lop.id','24_mssv.id_lop')
+        ->where('id_year',$nam)
+        ->where(function($query) use ($khoa) {
+            if ($khoa == 0) {
+                $query->whereNotNull('l_file_qlsv_vv.id'); // Thay 'column_name' bằng tên cột thực tế
+            } else {
+                $query->where('24_lop.idkhoa',$khoa);
+            }
+        })
+        ->where(function($query) use ($id_lop) {
+            if ($id_lop == 0) {
+                $query->whereNotNull('l_file_qlsv_vv.id'); // Thay 'column_name' bằng tên cột thực tế
+            } else {
+                $query->where('24_mssv.id_lop',$id_lop);
+            }
+        })
+        ->groupBy('id_lop')
+        ->get();
+        $this->ghep_2truyvan($data,$vv,'slvv');
+        $this->ghep_2truyvan($data,$nvqs,'slnvqs');
+        $json_data['data'] = $data;
             $data = json_encode($json_data);
         return $data;
     }
-    function excel_hsnh_thongke_xuatfile($major,$nam)
+    function excel_hsnh_thongke_xuatfile($nam,$id_lop, $idkhoa)
     {
         //Xuất excel
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'DanhSachThongkeSinhVienInGXN'. date("d-m-Y H:i:s") .'.xlsx'; // Tên file
-        return Excel::download(new Admin24_Excel_Hsnh_ThongkeXuatfile($major,$nam), $title);
+        return Excel::download(new Admin24_Excel_Hsnh_ThongkeXuatfile($nam,$id_lop, $idkhoa), $title);
     }
+
+
+
+
+
      // bhyt
+     public function loadlop_bhyt()
+    {
+        $lop = DB::select("SELECT id as id, tenlop as text, '' as selected FROM 24_lop
+        ");
+        if($lop){
+           $lop0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn lớp',
+               'selected' =>'selected'
+           ]);
+
+        }else{
+           $lop0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn lớp',
+               'selected' =>''
+           ]);
+        }
+
+        $lop[] = $lop0;
+        $res = new Collection([
+           'lop' =>$lop
+        ]);
+
+        return $res;
+
+    }
+    public function loadkhoa_bhyt()
+    {
+        $khoa = DB::select("SELECT id as id, tenkhoa as text, '' as selected FROM 24_khoa
+        ");
+        if($khoa){
+           $khoa0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn khoa',
+               'selected' =>'selected'
+           ]);
+
+        }else{
+           $khoa0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn khoa',
+               'selected' =>''
+           ]);
+        }
+
+        $khoa[] = $khoa0;
+        $res = new Collection([
+           'khoa' =>$khoa
+        ]);
+
+        return $res;
+
+    }
+    public function loadnam_bhyt()
+    {
+        $loadnam = DB::select("SELECT id as id, namnhaphoc as text, '' as selected FROM 24_khoas
+        ");
+        if($loadnam){
+           $loadnam0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Năm học',
+               'selected' =>'selected'
+           ]);
+
+        }else{
+           $loadnam0 = new Collection([
+               'id' => 0,
+               'text' => 'Chọn Năm học',
+               'selected' =>''
+           ]);
+        }
+
+        $loadnam[] = $loadnam0;
+        $res = new Collection([
+           'nam' =>$loadnam
+        ]);
+
+        return $res;
+
+    }
     public function bhyt()
     {
 
@@ -10228,43 +10574,74 @@ function xoahinhhhsnh(Request $request){
      public function loadthongtin_bhyt($major,$cccd,$mssv,$bhyt)
     {
 
-        $major == 0 ? $major_fix = 'major IS NOT NULL' : $major_fix = 'major ='.$major;
-        $cccd == 0 ? $cccd_fix = 'cccd IS NOT NULL' : $cccd_fix = 'cccd = "'.$cccd.'"';
-        $mssv == 0 ? $mssv_fix = 'mssv.mssv IS NOT NULL' : $mssv_fix = 'mssv.mssv = "'.$mssv.'"';
-        $bhyt == 0 ? $bhyt_fix = '(b.bhyt IS NOT NULL OR b.bhyt IS NULL)' : $bhyt_fix = 'b.bhyt ="'.$bhyt.'"';
-
-        $sql = 'SELECT tt.id_taikhoan, tt.noisinh, tt.hoten, tt.dienthoai, tt.ngaysinh, mssv.mssv, tt.gioitinh, tt.cccd,
-                CONCAT( hs.duoi_xa_ttru, ", ",xa.name_province3, ", ", huyen.name_province2, ", ", tinh.name_province) AS diachi,
-                b.bhyt, c.tenchuyennganh
-                FROM 24_thongtincanhan tt
-                JOIN
-                    24_hosonhaphoc hs ON tt.id_taikhoan = hs.id_taikhoan
-                JOIN
-                    24_mssv mssv ON tt.id_taikhoan = mssv.id_taikhoan
-                JOIN
-                    24_chuyennganh c ON tt.major = c.machuyennganh
-                LEFT JOIN
-                    24_bhyt b ON tt.id_taikhoan = b.id_taikhoan
-                JOIN
-                    l_province tinh ON hs.id_tinh_ttru = tinh.id
-                JOIN
-                    l_province2 huyen ON hs.id_huyen_ttru = huyen.id
-                JOIN
-                    l_province3 xa ON hs.id_xa_ttru = xa.id
-                WHERE '.$major_fix.'
-                AND '.$cccd_fix.'
-                AND '.$bhyt_fix.'
-                AND '.$mssv_fix;
+        $major == 0 ? $major_fix = 'sv.mssv IS NOT NULL' : $major_fix = 'sv.id_lop ='.$major;
+        if($cccd == '254514dfdf41214mkli'){
+            $cccd_fix = 'sv.mssv IS NOT NULL';
+        }else{
+            $cccd_fix = 'tt.cccd = "'.$cccd.'"';
+        }
 
 
-        $query = DB::select($sql);
-        $json_data['data'] = $query;
-            $data = json_encode($json_data);
+        if($mssv == '254514dfdf41214mkli'){
+            $mssv_fix = 'sv.mssv IS NOT NULL';
+        }else{
+            $mssv_fix = 'sv.mssv = "'.$mssv.'"';
+        }
+        // return ($mssv_fix);
+
+
+        if($bhyt == '254514dfdf41214mkli'){
+            $bhyt_fix = 'sv.mssv IS NOT NULL';
+        }else{
+            $bhyt_fix = 'hs.bhyt = "'.$bhyt.'"';
+        }
+
+        $sql = 'SELECT
+            ROW_NUMBER() OVER (ORDER BY sv.id) AS stt,
+            tt.hoten,
+            sv.id_taikhoan,
+            tt.cccd as cccd,
+            sv.mssv,
+            lp.tenlop as lop,
+            tt.ngaysinh,
+            if(tt.gioitinh = 1, "Nữ","Nam") as gioitinh,
+            hs.bhyt,
+            thuongthu.name_province3,
+            thuongthu.name_province2,
+            thuongthu.name_province,
+            thuongthu.duoi_xa_ttru,
+            tt.dienthoai,
+            sv.ghichu,
+            sv.trangthai
+            FROM 24_mssv sv
+            LEFT JOIN
+                24_hosonhaphoc hs ON  hs.id_taikhoan = sv.id_taikhoan
+            LEFT JOIN
+                24_thongtincanhan tt ON  tt.id_taikhoan = sv.id_taikhoan
+            LEFT JOIN
+                (
+                    SELECT 24_hosonhaphoc.id_taikhoan as id_taikhoan, duoi_xa_ttru, name_province3, name_province2, name_province
+                    FROM  24_hosonhaphoc
+                    LEFT JOIN l_province ON l_province.id = 24_hosonhaphoc.id_tinh_ttru
+                    LEFT JOIN l_province2 ON l_province2.id = 24_hosonhaphoc.id_huyen_ttru
+                    LEFT JOIN l_province3 ON l_province3.id = 24_hosonhaphoc.id_xa_ttru
+                ) as thuongthu ON thuongthu.id_taikhoan = sv.id_taikhoan
+            INNER JOIN
+                24_lop lp ON  lp.id = sv.id_lop
+
+            WHERE '.$major_fix.' AND '.$mssv_fix.' AND '.$cccd_fix.' AND '.$bhyt_fix;
+    // return $sql;
+        $data = DB::select($sql);
+        $json_data['data'] = $data;
+        $data = json_encode($json_data);
         return $data;
+
+
+
+
     }
     public function bhyt_thongke()
     {
-
         $res =  DB::table('24_thongtincanhan')
          ->select('hoten as text','id_taikhoan as id','gioitinh as check')
          ->get();
@@ -10274,60 +10651,92 @@ function xoahinhhhsnh(Request $request){
              'menu' =>  $this->sidebar(),
              'res' => $res,
          ]
-     );
-     }
-     public function loadthongtin_bhyt_thongke($major){
-        $major_fix = $major == 0 ? 'c.id_major IS NOT NULL' : 'c.id_major = ' . $major;
+        );
+    }
 
+    public function loadthongtin_bhyt_thongke($lop,$nam,$khoa)
+    {
+        $khoa == 0 ? $khoa_fix = 'ms.id IS NOT NULL' : $khoa_fix = 'l.idkhoa ='.$khoa;
+        $lop == 0 ? $lop_fix = 'ms.id IS NOT NULL' : $lop_fix = 'l.id ='.$lop;
         $sql = 'SELECT
-            ROW_NUMBER() OVER (ORDER BY c.id_major) AS thutu,
-                    c.id_major as major,
-                    c.name_major as tenchuyennganh,
-                    COUNT(t.id_taikhoan) AS "Tổng số thẻ BHYT",
-                    SUM(CASE WHEN bh.bhyt IS NOT NULL AND bh.bhyt != "" THEN 1 ELSE 0 END) AS "Có BHYT",
-                    SUM(CASE WHEN t.id_taikhoan IS NOT NULL OR bh.bhyt = "" THEN 1 ELSE 0 END) AS "Chưa có BHYT"
-                FROM
-                    l_major c
-                LEFT JOIN
-                    24_thongtincanhan t ON t.major = c.id_major
-                LEFT JOIN
-                    24_bhyt bh ON t.id_taikhoan = bh.id_taikhoan
-                WHERE ' . $major_fix . '
-                GROUP BY
-                    c.id_major, c.name_major';
+                ROW_NUMBER() OVER (ORDER BY l.tenlop) AS stt,
+                ms.id_lop,
+                l.tenlop,
+                lop.namnhaphoc,
+                COUNT(ms.id_lop) AS "Sỉ số",
+                COUNT(CASE WHEN hs.bhyt IS NOT NULL AND hs.bhyt != "" THEN 1 END) AS "Có BHYT",
+                COUNT(CASE WHEN hs.bhyt IS NULL OR hs.bhyt = "" THEN 1 END) AS "Chưa có BHYT"
+            FROM
+                24_mssv ms
+            INNER JOIN 24_lop l ON ms.id_lop = l.id
+            LEFT JOIN 24_hosonhaphoc hs ON hs.id_taikhoan = ms.id_taikhoan
+            LEFT JOIN (
+                SELECT k.namnhaphoc, l.id
+                FROM 24_lop l
+                INNER JOIN 24_khoas k ON k.id = l.idkhoas
+            ) AS lop ON lop.id = ms.id_lop
+            WHERE
+                l.idkhoas ='.$nam.'
+                AND '.$khoa_fix.'
+                AND '.$lop_fix.'
+            GROUP BY
+                ms.id_lop';
         $query = DB::select($sql);
         $json_data['data'] = $query;
-            $data = json_encode($json_data);
+        $data = json_encode($json_data);
         return $data;
     }
-    public function excel_hsnh_thongtinsinhvien_bhyt($major, $cccd, $mssv, $id_sinhvien)
+
+    public function excel_hsnh_thongtinsinhvien_bhyt($id_sinhvien)
     {
-        // Xuất excel
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'DanhSachBHYTSinhVien' . date("d-m-Y H:i:s") . '.xlsx'; // Tên file
-        return Excel::download(new Admin24_Excel_Hsnh_Thongtinsinhvien_bhyt($major, $cccd, $mssv, $id_sinhvien), $title);
+        return Excel::download(new Admin24_Excel_Hsnh_Thongtinsinhvien_bhyt($id_sinhvien), $title);
     }
-    function excel_hsnh_thongtinsinhvien_bhyt_thongke($major)
+
+    public function onchange($id)
+    {
+        $lop = DB::select("SELECT 24_lop.id as id, 24_lop.tenlop as text FROM 24_lop WHERE 24_lop.idkhoa = $id");
+        if($lop){
+            $lop0 = new Collection([
+                'id' => 0,
+                'text' => 'Chọn Lớp',
+                'selected' =>'selected'
+            ]);
+
+         }else{
+            $lop0 = new Collection([
+                'id' => 0,
+                'text' => 'Chọn Lớp',
+                'selected' =>''
+            ]);
+         }
+
+         $lop[] = $lop0;
+         $res = new Collection([
+            'lop' =>$lop
+         ]);
+         return $res;
+    }
+
+    function excel_hsnh_thongtinsinhvien_bhyt_thongke($lop,$nam,$khoa)
     {
         //Xuất excel
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $title = 'DanhSachThongKeBHYTSinhVien' . date("d-m-Y H:i:s") . '.xlsx'; // Tên file
-        return Excel::download(new Admin24_Excel_Hsnh_Thongtinsinhvien_bhyt_thongke($major), $title);
+        return Excel::download(new Admin24_Excel_Hsnh_Thongtinsinhvien_bhyt_thongke($lop,$nam,$khoa), $title);
     }
     public function import_bhyt(Request $request)
     {
-          try {
-            Excel::import(new Import_bhyt, $request->file('fileInput'));
-            return 1;
-          }catch(Exception $e){
-            return 0;
-          }
+        Excel::import(new Import_bhyt, $request->file('fileInput'));
+        return 1;
+
     }
     function img_bhyt($id)
     {
         $data = DB::table('24_image')
         ->where('id_taikhoan',$id)
-        ->where('loaianh',11)
+        ->where('loaianh',13)
         ->first();
         if($data){
             return  $data->path_img;
@@ -10335,8 +10744,383 @@ function xoahinhhhsnh(Request $request){
             return  '/img/test.png';
 
         }
-
     }
+    function capnhat_bhyt(Request $request)
+    {
+        try{
+            $id_taikhoan = $request->input('id_taikhoan');
+            $value = $request->input('value');
+            $data = DB::table('24_hosonhaphoc')
+            ->where('id_taikhoan',$id_taikhoan)
+            ->update(
+                [
+                    'bhyt' => $value
+                ]
+            );
+            $noidung =  DB::table('24_hosonhaphoc')
+            ->where('id_taikhoan',$id_taikhoan)
+            ->first()->bhyt;
+            if($data == 1){
+                $trangthai =  'upd_1';
+                $id_admin = Auth::guard('loginadmin')->user()->id;
+                $user_agent = $_SERVER['HTTP_USER_AGENT'];
+                DB::table('24_lichsu')
+                ->insert([
+                    'id_taikhoan' => $id_taikhoan,
+                    'noidung'   => "Cập nhật Số BHYT: ".$noidung,
+                    'hienthi'   => 1,
+                    'id_nhansu' => $id_admin,
+                    'thietbi'   => $user_agent,
+                    'ip'        => request()->ip()
+                ]);
+            }else{
+                $trangthai =  'upd_0';
+            }
+        }catch(Exception $e){
+            $trangthai = 'err_0';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+    }
+    //Tra cứu sinh viên
+    function tracuusinhvien(){
+        return view('user_24.admin24.manage.quanlynhaphoc.tracuusinhvien',
+            [
+                'menu' =>  $this->sidebar()
+            ]
+        );
+    }
+    function tcsv_loadtimkiem(){
+        $gioitinh = array(
+            [
+                'id' => -1,
+                'text' => "Chọn Giới tính"
+            ],
+            [
+                'id' => 0,
+                'text' => "Nam"
+            ],
+            [
+                'id' => 1,
+                'text' => "Nữ"
+            ]
+        );
+        $trangthai = array(
+            [
+                'id' => -1,
+                'text' => "Chọn Trạng thái"
+            ],
+            [
+                'id' => 0,
+                'text' => "Đang học"
+            ],
+            [
+                'id' => 1,
+                'text' => "Rút hồ sơ"
+            ]
+        );
+        return array(
+            'tcsv_khoahoc' => $this->load_seclectbox('24_khoas','id','namnhaphoc',0,'Chọn Khóa học'),
+            'tcsv_nganh' => $this->load_seclectbox('l_major','id','name_major',0,'Chọn Ngành đào tạo'),
+            'tcsv_khoa' => $this->load_seclectbox('24_khoa','id','tenkhoa',0,'Chọn Khoa chuyên ngành'),
+            'tcsv_chuyennganh' => $this->load_seclectbox('24_chuyennganh','id','tenchuyennganh',0,'Chọn Chuyên ngành'),
+            'tcsv_lop' => $this->load_seclectbox('24_lop','id','tenlop',0,'Chọn Lớp học'),
+            'tcsv_dantoc' => $this->load_seclectbox('l_nation','id','name_nation',0,'Chọn Dân tộc'),
+            'tcsv_tongiao' => $this->load_seclectbox('l_religion','id','tentongiao',0,'Chọn Tôn giáo'),
+            'tcsv_noisinh' => $this->load_seclectbox('l_province','id','name_province',0,'Chọn Nơi sinh'),
+            'tcsv_hktt' => $this->load_seclectbox('l_province','id','name_province',0,'Chọn Hộ khẩu thường trú'),
+            'tcsv_quequan' => $this->load_seclectbox('l_province','id','name_province',0,'Chọn Quê quán'),
+            'tcsv_hoatdong' => $trangthai,
+            'tcsv_gioitinh' => $gioitinh
+        );
+    }
+    function data_tcsv_timkiem($search){
+        $search = json_decode($search, true);
+        $id_khoas =  $search['tcsv_khoahoc'];
+        $id_khoa =  $search['tcsv_khoa'];
+        $id_nganh =  $search['tcsv_nganh'];
+        $id_chuyennganh =  $search['tcsv_chuyennganh'];
+        $id_lop =  $search['tcsv_lop'];
+        $id_dantoc =  $search['tcsv_dantoc'];
+        $id_tongiao =  $search['tcsv_tongiao'];
+        $id_giotinh =  $search['tcsv_gioitinh'];
+        $id_noisinh =  $search['tcsv_noisinh'];
+        $id_hktt =  $search['tcsv_hktt'];
+        $id_quequan =  $search['tcsv_quequan'];
+        $hoten = trim($search['tcsv_hoten']);
+        $cccd = trim($search['tcsv_cccd']);
+        $mssv = trim($search['tcsv_mssv']);
+        $hoatdong = $search['tcsv_hoatdong'];
+        $trangthai = $search['trangthai'];
+        $data = DB::table('24_mssv')
+        ->select(
+            DB::raw('ROW_NUMBER() OVER (ORDER BY 24_mssv.mssv) AS stt'),
+            '24_thongtincanhan.id_taikhoan',
+            '24_mssv.mssv','24_thongtincanhan.hoten','24_thongtincanhan.gioitinh',
+            '24_thongtincanhan.ngaysinh','24_thongtincanhan.dienthoai','24_thongtincanhan.dienthoai_phu','24_thongtincanhan.diachi',
+            'l_major.id_major as manganh','l_major.name_major as nganh','24_chuyennganh.tenchuyennganh','24_lop.malop','24_lop.tenlop',
+            'noisinh.tinh as ns_tinh','noisinh.huyen as ns_huyen','noisinh.xa as ns_xa','noisinh.ns_gks as ns_gks',
+            'hktt.tinh as hktt_tinh','hktt.huyen as hktt_huyen','hktt.xa as hktt_xa','hktt.duoi_xa_ttru as hktt_duoixa',
+            'qq.tinh as qq_tinh','qq.huyen as qq_huyen','qq.xa as qq_xa','qq.duoi_xa_quequan as qq_duoi',
+            '24_hosonhaphoc.hotencha','24_hosonhaphoc.dienthoaicha','24_hosonhaphoc.nghenghiepcha',
+            '24_hosonhaphoc.hotenme','24_hosonhaphoc.dienthoaime','24_hosonhaphoc.nghenghiepme',
+            '24_hosonhaphoc.nguoidodau','24_hosonhaphoc.dienthoainguoidodau','24_hosonhaphoc.nghenghiepnguoidodau',
+            '24_hosonhaphoc.ngayvaodoan','24_hosonhaphoc.ngayvaodang','24_hosonhaphoc.bhyt',
+            '24_thongtincanhan.cccd','cancuoc.ngaycapcccd','cancuoc.noicapcccd',
+            'l_nationality.name_nationality as quoctich','l_nation.name_nation as dantoc','l_religion.tentongiao',
+            '24_khoas.namnhaphoc','24_khoa.tenkhoa','24_mssv.trangthai as hoatdong'
+        )
+        -> leftJoin('24_hosonhaphoc','24_hosonhaphoc.id_taikhoan','24_mssv.id_taikhoan')
+        ->join('24_lop','24_mssv.id_lop','24_lop.id')
+        ->join('24_khoas','24_khoas.id','24_lop.idkhoas')
+        ->join('24_khoa','24_khoa.id','24_lop.idkhoa')
+        ->join('24_thongtincanhan','24_thongtincanhan.id_taikhoan','24_mssv.id_taikhoan')
+        ->leftJoinSub(
+            DB::table('24_hosonhaphoc')
+                ->select(
+                    '24_hosonhaphoc.id_tinh_noisinh as id_noisinh',
+                    'l_province.name_province as tinh',
+                    'l_province2.name_province2 as huyen',
+                    'l_province3.name_province3 as xa',
+                    '24_hosonhaphoc.giaykhaisinh as ns_gks',
+                    '24_hosonhaphoc.id_taikhoan'
+                )
+                ->leftJoin('l_province', 'l_province.id', '24_hosonhaphoc.id_tinh_noisinh')
+                ->leftJoin('l_province2', 'l_province2.id', '24_hosonhaphoc.id_huyen_noisinh')
+                ->leftJoin('l_province3', 'l_province3.id', '24_hosonhaphoc.id_xa_noisinh')
+                ->when($id_noisinh > 0 , function ($query) use ($id_noisinh) {
+                    return $query->where('24_hosonhaphoc.id_tinh_noisinh', $id_noisinh);
+                }),
+            'noisinh',
+            function ($join) {
+                $join->on('noisinh.id_taikhoan', '=', '24_mssv.id_taikhoan');
+            }
+        )
+        ->leftJoinSub(
+            DB::table('24_hosonhaphoc')
+                ->select(
+                    '24_hosonhaphoc.id_tinh_ttru as id_hktt',
+                    'l_province.name_province as tinh',
+                    'l_province2.name_province2 as huyen',
+                    'l_province3.name_province3 as xa',
+                    '24_hosonhaphoc.duoi_xa_ttru as duoi_xa_ttru',
+                    '24_hosonhaphoc.id_taikhoan'
+                )
+                ->leftJoin('l_province', 'l_province.id', '24_hosonhaphoc.id_tinh_ttru')
+                ->leftJoin('l_province2', 'l_province2.id', '24_hosonhaphoc.id_huyen_ttru')
+                ->leftJoin('l_province3', 'l_province3.id', '24_hosonhaphoc.id_xa_ttru')
+                ->when($id_hktt > 0 , function ($query) use ($id_hktt) {
+                    return $query->where('24_hosonhaphoc.id_tinh_ttru', $id_hktt);
+                }),
+            'hktt',
+            function ($join) {
+                $join->on('hktt.id_taikhoan', '=', '24_mssv.id_taikhoan');
+            }
+        )
+        ->leftJoinSub(
+            DB::table('24_hosonhaphoc')
+                ->select(
+                    '24_hosonhaphoc.id_tinh_quequan as id_quequan',
+                    'l_province.name_province as tinh',
+                    'l_province2.name_province2 as huyen',
+                    'l_province3.name_province3 as xa',
+                    '24_hosonhaphoc.duoi_xa_quequan as duoi_xa_quequan',
+                    '24_hosonhaphoc.id_taikhoan'
+                )
+                ->leftJoin('l_province', 'l_province.id', '24_hosonhaphoc.id_tinh_quequan')
+                ->leftJoin('l_province2', 'l_province2.id', '24_hosonhaphoc.id_huyen_quequan')
+                ->leftJoin('l_province3', 'l_province3.id', '24_hosonhaphoc.id_xa_quequan')
+                ->when($id_hktt > 0 , function ($query) use ($id_hktt) {
+                    return $query->where('24_hosonhaphoc.id_tinh_quequan', $id_hktt);
+                }),
+            'qq',
+            function ($join) {
+                $join->on('qq.id_taikhoan', '=', '24_mssv.id_taikhoan');
+            }
+        )
+        ->leftJoinSub(
+            DB::table('24_hosonhaphoc')
+                ->select(
+                    '24_hosonhaphoc.ngaycapcccd',
+                    'l_province.name_province as noicapcccd',
+                    '24_hosonhaphoc.id_taikhoan'
+                )
+                ->leftJoin('l_province', 'l_province.id', '24_hosonhaphoc.noicapcccd'),
+            'cancuoc',
+            function ($join) {
+                $join->on('cancuoc.id_taikhoan', '=', '24_mssv.id_taikhoan');
+            }
+        )
+        ->leftJoin('l_nationality','l_nationality.id','24_hosonhaphoc.id_quoctich')
+        ->leftJoin('l_nation','l_nation.id','24_hosonhaphoc.id_dantoc')
+        ->leftJoin('l_religion','l_religion.id','24_hosonhaphoc.id_tongiao')
+        ->join('24_trungtuyen', function ($join) {
+            $join->on('24_trungtuyen.id_taikhoan', '=', '24_mssv.id_taikhoan')
+                    ->on('24_trungtuyen.iddot', '=', '24_mssv.iddotts');
+        })
+        ->join('l_major','24_trungtuyen.idnganh','l_major.id')
+        ->join('24_chuyennganh','24_chuyennganh.id','24_trungtuyen.id_chuyennganh')
+        ->when($id_khoas > 0 , function ($query) use ($id_khoas) {
+            return $query->where('24_khoas.id', $id_khoas);
+        })
+        ->when($id_khoa > 0 , function ($query) use ($id_khoa) {
+            return $query->where('24_khoa.id', $id_khoa);
+        })
+        ->when($id_nganh > 0 , function ($query) use ($id_nganh) {
+            return $query->where('l_major.id', $id_nganh);
+        })
+        ->when($id_chuyennganh > 0 , function ($query) use ($id_chuyennganh) {
+            return $query->where('24_chuyennganh.id', $id_chuyennganh);
+        })
+        ->when($id_lop > 0 , function ($query) use ($id_lop) {
+            return $query->where('24_lop.id', $id_lop);
+        })
+        ->when($id_dantoc > 0 , function ($query) use ($id_dantoc) {
+            return $query->where('l_nation.id', $id_dantoc);
+        })
+        ->when($id_tongiao > 0 , function ($query) use ($id_tongiao) {
+            return $query->where('l_religion.id', $id_tongiao);
+        })
+        ->when($id_giotinh > -1 , function ($query) use ($id_giotinh) {
+            return $query->where('24_thongtincanhan.gioitinh', $id_giotinh);
+        })
+        ->when($id_hktt > 0 , function ($query) use ($id_hktt) {
+            return $query->where('hktt.id_hktt', $id_hktt);
+        })
+        ->when($id_quequan > 0 , function ($query) use ($id_quequan) {
+            return $query->where('qq.id_quequan', $id_quequan);
+        })
+        ->when($hoten != '' , function ($query) use ($hoten) {
+            return $query->whereRaw('LOWER(24_thongtincanhan.hoten) LIKE ?', [strtolower("%{$hoten}%")]);
+        })
+        ->when($mssv != "" , function ($query) use ($mssv) {
+            return $query->where('24_mssv.mssv', $mssv);
+        })
+        ->when($cccd != "" , function ($query) use ($cccd) {
+            return $query->where('24_thongtincanhan.cccd', $cccd);
+        })
+        ->when($trangthai == 0 , function ($query) use ($trangthai) {
+            return $query->where('l_major.id', -100);
+        })
+        ->when($hoatdong > -1, function ($query) use ($hoatdong) {
+            return $query->where('24_mssv.trangthai',$hoatdong);
+        })
+        ->orderBy('l_major.id','ASC')
+        ->orderBy('24_chuyennganh.id','ASC')
+        ->orderBy('24_mssv.mssv','ASC')
+
+        ->get();
+        return  $data;
+    }
+    function tcsv_timkiem($search){
+        $json_data['data'] = $this->data_tcsv_timkiem($search);
+        $data = json_encode($json_data);
+        return $data;
+    }
+    function tcsv_load_img($id,$id_img){
+        return $this->data_img($id,$id_img);
+    }
+    function tcsv_excel($search){
+        $data =  $this->data_tcsv_timkiem($search);
+        $data_ex = new Collection([
+            ['stt','ID','MSSV','Họ và tên','Giới tính','Ngày sinh','Điện thoai','Điện thoại 2','Địa chỉ',
+            'Mã ngành','Ngành','Chuyên ngành','Mã lớp','Tên lớp',
+            'Nơi sinh Tỉnh','Nơi sinh Huyện','Nơi sinh Xã','Nơi sinh GKS',
+            'HKTT Tỉnh','HKTT Huyện','HKTT Xã','HKTT Ấp/KV',
+            'Quê quán Tỉnh', 'Quê quán Huyện', 'Quê quán Xã', 'Quê quán Ấp/KV',
+            'Họ tên Cha','Điện thoại Cha', 'Nghề nghiệp Cha',
+            'Họ tên Mẹ','Điện thoại Mẹ', 'Nghề nghiệp Mẹ',
+            'Người đỡ đầu','Điện thoại Ng Đỡ đầu', 'Nghề nghiệp Ng Đỡ đầu',
+            'Ngày vào Đoàn','Ngày vào Đảng','BHYT',
+            'CMND','Ngày cấp','Nơi cấp',
+            'Dân tộc','Quốc tịch','Tôn giáo',
+            'Năm nhập học','Khoa','Trạng thái tuyển sinh'
+            ]
+        ]);
+        foreach ( $data as  $key => $value) {
+            $value ->gioitinh == 1 ? $gioitinh = "Nam" : $gioitinh = "Nữ";
+            $value ->hoatdong == 0 ? $hoatdong = "Đã nhập học" : $hoatdong = "Rút hồ sơ";
+            $row =  [
+                    $value ->stt,
+                    $value ->id_taikhoan,
+                    $value ->mssv,
+                    $value ->hoten,
+                    $gioitinh,
+                    $value ->ngaysinh,
+                    $value ->dienthoai,
+                    $value ->dienthoai_phu,
+                    $value ->diachi,
+                    $value ->manganh,
+                    $value ->nganh,
+                    $value ->tenchuyennganh,
+                    $value ->malop,
+                    $value ->tenlop,
+                    $value ->ns_tinh,
+                    $value ->ns_huyen,
+                    $value ->ns_xa,
+                    $value ->ns_gks,
+                    $value ->hktt_tinh,
+                    $value ->hktt_huyen,
+                    $value ->hktt_xa,
+                    $value ->hktt_duoixa,
+                    $value ->qq_tinh,
+                    $value ->qq_huyen,
+                    $value ->qq_xa,
+                    $value ->qq_duoi,
+                    $value ->hotencha,
+                    $value ->dienthoaicha,
+                    $value ->nghenghiepcha,
+                    $value ->hotenme,
+                    $value ->dienthoaime,
+                    $value ->nghenghiepme,
+                    $value ->nguoidodau,
+                    $value ->dienthoainguoidodau,
+                    $value ->nghenghiepnguoidodau,
+                    $value ->ngayvaodoan,
+                    $value ->ngayvaodang,
+                    $value ->bhyt,
+                    $value ->cccd,
+                    $value ->ngaycapcccd,
+                    $value ->noicapcccd,
+                    $value ->dantoc,
+                    $value ->quoctich,
+                    $value ->tentongiao,
+                    $value ->namnhaphoc,
+                    $value ->tenkhoa,
+                    $hoatdong
+                ];
+            $data_ex[] = $row;
+        }
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+        $title = 'DanhSachNhapHoc'. date("d-m-Y H:i:s") .'.xlsx';
+        return Excel::download(new Admin24_XuatDSNhaphoc($data_ex), $title);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Lịch sử
     function testtaolao() {
@@ -10344,6 +11128,1615 @@ function xoahinhhhsnh(Request $request){
        dd(111111111);
     }
     //Quản lý đồng phục
+    // QUẢN LÝ LOẠI
+    function quanlyloai()
+    {
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view(
+                'user_24.admin24.manage.quanlydongphuc.quanlyloai',
+                [
+                    'menu' =>    $this->sidebar(),
+                    // 'table_data' => $this->tt_mail_sinhvien(),
+                ]
+            );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    function themloai (Request $request){
+        $loaimoi = $request->input('loaimoi');
+        $noidung = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'loaimoi' => 'required|regex:/^[\p{L}\s0-9]+$/u|unique:24_loaisanpham,loai',
+                ],
+                [
+                    'loaimoi.required'   => 'Vui lòng điền loại mới',
+                    'loaimoi.regex' => 'Tên loại chỉ gồm chữ cái và chữ số',
+                    'loaimoi.unique' => 'Sản phẩm đã tồn tại',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    $clean_loaimoi = Purifier::clean($loaimoi,'default');
+                    if($this->check_clean($clean_loaimoi) == 1){
+                        DB::table('24_loaisanpham')->insert([
+                            'loai'=> $clean_loaimoi,
+                        ]);
+                        $trangthai = 'ins_1';
+                        $noidung = "";
+                    }else{
+                        $trangthai = '-100';
+                    }
+                } catch (Exception $e) {
+                    $trangthai = 'ins_0';
+                    $noidung = "";
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+
+    }
+    function danhsachloai(){
+        $ds_loai = DB::table('24_loaisanpham')
+        ->select('id','loai','trangthai')->get();
+        $data = $ds_loai->map(function ($item, $index) {
+            $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+    }
+    function Upd_Loai (Request $request){
+        $upd_loai = $request->input('upd_loai');
+        $id = $request->input('id');
+        $noidung = "";
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'upd_loai' => 'required|regex:/^[\p{L}\s0-9]+$/u|unique:24_loaisanpham,loai,'. $id,
+                ],
+                [
+                    'upd_loai.required'   => 'Vui lòng điền loại mới',
+                    'upd_loai.regex' => 'Tên loại chỉ gồm chữ cái và chữ số',
+                    'upd_loai.unique' => 'Sản phẩm đã tồn tại',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    $clean_upd_loai = Purifier::clean($upd_loai,'default');
+                    $check_tontai = DB::table('24_danhmuc_sanpham')->where('id_loai', $id)->exists() ? 0 : 1;
+                    if($this->check_clean($clean_upd_loai) == 1 && $check_tontai == 1){
+                        $trangthai = DB::table('24_loaisanpham')->where('id',$id)->update(['loai'=>$clean_upd_loai]) > 0 ? 'upd_1' : 'upd_2';
+                        // $trangthai = 'upd_1';
+                    }else{
+                        $trangthai = $check_tontai == 0 ? 'prod_0' : '-100';
+                    }
+                } catch (Exception $e) {
+                    $trangthai = 'upd_0';
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+    }
+    public function change_TrangthaiLoai(Request $request)
+    {
+        $noidung = '';
+        $trangthai = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung ='';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $trangthai= $request->input('trangthai');
+            $id = $request->input('id');
+            $trangthai_moi = $trangthai == 0 ? 1 : 0;
+            $check = DB::table('24_loaisanpham')
+                ->where('id', $id)
+                ->update(['trangthai' => $trangthai_moi]);
+            $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return response()->json([
+            'trangthai' => $trangthai,
+            'noidung'   => $noidung,
+        ]);
+    }
+    function dlt_Loai($id,Request $request){
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $check_tontai = DB::table('24_danhmuc_sanpham')->where('id_loai',$id)->exists() ? 0 : 1;
+            if($check_tontai == 1){
+                $trangthai = DB::table('24_loaisanpham')->where('id', $id)->delete() == 1 ? 'del_1' : 'del_0';
+            }else{
+                $trangthai = $check_tontai == 0 ? 'prod_0' :  '-100';
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return $trangthai;
+    }
+    // QUẢN LÝ NHÀ SẢN XUẤT
+    function quanlynhasanxuat()
+    {
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view(
+                'user_24.admin24.manage.quanlydongphuc.quanlynhasanxuat',
+                [
+                    'menu' =>    $this->sidebar(),
+                    // 'table_data' => $this->tt_mail_sinhvien(),
+                ]
+            );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    function danhsach_nhasanxuat(){
+        $ds_loai = DB::table('24_danhmuc_nhasanxuat')
+        ->select('id','nhasanxuat','diachi','sdt','trangthai')->get();
+        $data = $ds_loai->map(function ($item, $index) {
+            $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+    }
+    function themnhasanxuat (Request $request){
+        $nhasanxuat_moi = $request->input('nhasanxuat_moi');
+        $diachi_moi = $request->input('diachi_moi');
+        $sdt_moi = $request->input('sdt_moi');
+        $noidung = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'nhasanxuat_moi' => 'required|regex:/^[\p{L}\s0-9]+$/u|unique:24_danhmuc_nhasanxuat,nhasanxuat',
+                    'diachi_moi' => 'required|regex:/^[\p{L}\s0-9]+$/u',
+                    'sdt_moi' => 'required|regex:/^0[0-9]{9}$/',
+                ],
+                [
+                    'nhasanxuat_moi.required'   => 'Vui lòng điền nhà sản xuất mới',
+                    'nhasanxuat_moi.regex' => 'Tên nhà sản xuất chỉ gồm chữ cái và chữ số',
+                    'nhasanxuat_moi.unique' => 'Nhà sản xuât đã tồn tại',
+
+                    'diachi_moi.required'   => 'Vui lòng điền địa chỉ mới',
+                    'diachi_moi.regex' => 'Địa chỉ chỉ gồm chữ cái và chữ số',
+
+                    'sdt_moi.required'   => 'Vui lòng điền SĐT mới',
+                    'sdt_moi.regex' => 'Số điện thoại gồm 10 số và bắt đầu bằng 0',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    $clean_nhasanxuat_moi = Purifier::clean($nhasanxuat_moi,'default');
+                    $clean_diachi_moi = Purifier::clean($diachi_moi,'default');
+                    $clean_sdt_moi = Purifier::clean($sdt_moi,'default');
+                    if($this->check_clean($clean_nhasanxuat_moi) == 1 && $this->check_clean($clean_diachi_moi) == 1 && $this->check_clean($clean_sdt_moi) == 1){
+                        DB::table('24_danhmuc_nhasanxuat')->insert([
+                            'nhasanxuat'=> $clean_nhasanxuat_moi,
+                            'diachi'=> $clean_diachi_moi,
+                            'sdt'=> $clean_sdt_moi,
+                        ]);
+                        $trangthai = 'ins_1';
+                        $noidung = "";
+                    }else{
+                        $trangthai = '-100';
+                    }
+                } catch (Exception $e) {
+                    $trangthai = 'ins_0';
+                    $noidung = "";
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+
+    }
+    function Upd_Nhasanxuat (Request $request){
+        $upd_nhasanxuat = $request->input('upd_nhasanxuat');
+        $upd_diachi = $request->input('upd_diachi');
+        $upd_sdt = $request->input('upd_sdt');
+        $id = $request->input('id');
+        $noidung = "";
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+            [
+                'upd_nhasanxuat' => 'required|regex:/^[\p{L}\s0-9]+$/u|unique:24_danhmuc_nhasanxuat,nhasanxuat,' . $id,
+                'upd_diachi' => 'required|regex:/^[\p{L}\s0-9]+$/u',
+                'upd_sdt' => 'required|regex:/^0[0-9]{9}$/',
+            ],
+            [
+                'upd_nhasanxuat.required'   => 'Vui lòng điền nhà sản xuất mới',
+                'upd_nhasanxuat.regex' => 'Tên nhà sản xuất chỉ gồm chữ cái và chữ số',
+                'upd_nhasanxuat.unique' => 'Nhà sản xuât đã tồn tại',
+
+                'upd_diachi.required'   => 'Vui lòng điền địa chỉ mới',
+                'upd_diachi.regex' => 'Địa chỉ chỉ gồm chữ cái và chữ số',
+
+                'upd_sdt.required'   => 'Vui lòng điền SĐT mới',
+                'upd_sdt.regex' => 'Số điện thoại gồm 10 số và bắt đầu bằng 0',
+            ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    $clean_upd_nhasanxuat = Purifier::clean($upd_nhasanxuat,'default');
+                    $clean_upd_diachi = Purifier::clean($upd_diachi,'default');
+                    $clean_upd_sdt = Purifier::clean($upd_sdt,'default');
+                    $check_tontai = DB::table('24_danhmuc_sanpham')->where('id_nhasanxuat', $id)->exists() ? 0 : 1;
+                    if($this->check_clean($clean_upd_nhasanxuat) == 1 && $this->check_clean($clean_upd_diachi) == 1 && $this->check_clean($clean_upd_sdt) == 1 && $check_tontai == 1){
+                        $check = DB::table('24_danhmuc_nhasanxuat')
+                        ->where('id', $id)
+                        ->update([
+                            'nhasanxuat' => $clean_upd_nhasanxuat,
+                            'diachi' => $clean_upd_diachi,
+                            'sdt' => $clean_upd_sdt
+                        ]);
+                        $trangthai = $check > 0 ? 'upd_1' : 'upd_0';
+                    }else{
+                        $trangthai = $check_tontai == 0 ? 'prod_0' : '-100';
+                    }
+                } catch (Exception $e) {
+                    $trangthai = 'upd_0';
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+    }
+    public function change_TrangthaiNSX(Request $request)
+    {
+        $noidung = '';
+        $trangthai = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung ='';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $trangthai= $request->input('trangthai');
+            $id = $request->input('id');
+            $trangthai_moi = $trangthai == 0 ? 1 : 0;
+            $check = DB::table('24_danhmuc_nhasanxuat')
+                ->where('id', $id)
+                ->update(['trangthai' => $trangthai_moi]);
+            $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return response()->json([
+            'trangthai' => $trangthai,
+            'noidung'   => $noidung,
+        ]);
+    }
+    function dlt_Nhasaxuat($id,Request $request){
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $check_tontai = DB::table('24_danhmuc_sanpham')->where('id_nhasanxuat',$id)->exists() ? 0 : 1;
+            if($check_tontai == 1){
+                $trangthai = DB::table('24_danhmuc_nhasanxuat')->where('id', $id)->delete() == 1 ? 'del_1' : 'del_0';
+            }else{
+                $trangthai = $check_tontai == 0 ? 'prod_0' :  '-100';
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return $trangthai;
+    }
+    // Quản lý size
+    function quanlysize()
+    {
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view(
+                'user_24.admin24.manage.quanlydongphuc.quanlysize',
+                [
+                    'menu' =>    $this->sidebar(),
+                ]
+            );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    function themsize (Request $request){
+        $sizemoi = $request->input('sizemoi');
+        $noidung = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'sizemoi' => 'required|regex:/^[\p{L}\s0-9]+$/u|unique:24_danhmuc_size,size',
+                ],
+                [
+                    'sizemoi.required'   => 'Vui lòng điền size mới',
+                    'sizemoi.regex' => 'Tên size chỉ gồm chữ cái và chữ số',
+                    'sizemoi.unique' => 'Size đã tồn tại',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    $clean_sizemoi = Purifier::clean($sizemoi,'default');
+                    if($this->check_clean($clean_sizemoi) == 1){
+                        DB::table('24_danhmuc_size')->insert([
+                            'size'=> $clean_sizemoi,
+                        ]);
+                        $trangthai = 'ins_1';
+                        $noidung = "";
+                    }else{
+                        $trangthai = '-100';
+                    }
+                } catch (Exception $e) {
+                    $trangthai = 'ins_0';
+                    $noidung = "";
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+
+    }
+    function danhsachsize(){
+        $ds_loai = DB::table('24_danhmuc_size')
+        ->select('id','size','trangthai')->get();
+        $data = $ds_loai->map(function ($item, $index) {
+            $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+    }
+    function Upd_Size (Request $request){
+        $upd_size = $request->input('upd_size');
+        $id = $request->input('id');
+        $noidung = "";
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'upd_size' => 'required|regex:/^[\p{L}\s0-9]+$/u|unique:24_danhmuc_size,size,'.$id,
+                ],
+                [
+                    'upd_size.required'   => 'Vui lòng điền size mới',
+                    'upd_size.regex' => 'Tên size chỉ gồm chữ cái và chữ số',
+                    'upd_size.unique' => 'Size đã tồn tại',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    $clean_upd_size = Purifier::clean($upd_size,'default');
+                    $check_tontai = DB::table('24_danhmuc_sanpham')->where('id_size', $id)->exists() ? 0 : 1;
+                    if($this->check_clean($clean_upd_size) == 1 && $check_tontai == 1){
+                        DB::table('24_danhmuc_size')->where('id',$id)->update(['size'=>$clean_upd_size]);
+                        $trangthai = 'upd_1';
+                    }else{
+                        $trangthai = $check_tontai == 0 ? 'prod_0' : '-100';
+                    }
+                } catch (Exception $e) {
+                    $trangthai = 'upd_0';
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+    }
+    public function change_TrangthaiSize(Request $request)
+    {
+        $noidung = '';
+        $trangthai = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung ='';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $trangthai= $request->input('trangthai');
+            $id = $request->input('id');
+            $trangthai_moi = $trangthai == 0 ? 1 : 0;
+            $check = DB::table('24_danhmuc_size')
+                ->where('id', $id)
+                ->update(['trangthai' => $trangthai_moi]);
+            $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return response()->json([
+            'trangthai' => $trangthai,
+            'noidung'   => $noidung,
+        ]);
+    }
+    function dlt_Size($id,Request $request){
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $check_tontai = DB::table('24_danhmuc_sanpham')->where('id_size',$id)->exists() ? 0 : 1;
+            if($check_tontai == 1){
+                $trangthai = DB::table('24_danhmuc_size')->where('id', $id)->delete() > 0 ? 'del_1' : 'del_0';
+            }else{
+                $trangthai = $check_tontai == 0 ? 'prod_0' :  '-100';
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return $trangthai;
+    }
+    // QUẢN LÝ SẢN PHẨM
+    function quanlysanpham()
+    {
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view(
+                'user_24.admin24.manage.quanlydongphuc.quanlysanpham',
+                [
+                    'menu' =>    $this->sidebar(),
+                    // 'table_data' => $this->tt_mail_sinhvien(),
+                ]
+            );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    function qlsp_loadds(){
+        $chonnhasanxuat = new Collection(
+            [
+                'id' => 0,
+                'text' => "Chọn nhà sản xuất",
+                'selected' => true
+            ]
+        );
+        $ds_nhasanxuat = DB::table('24_danhmuc_nhasanxuat')
+        ->select('id', 'nhasanxuat as text')
+        ->where('trangthai','=','1')
+        ->orderBy('id', 'ASC')
+        ->get();
+        $ds_nhasanxuat[] =  $chonnhasanxuat;
+
+        $chonloaisanpham = new Collection(
+            [
+                'id' => 0,
+                'text' => "Chọn loại sản phẩm",
+                'selected' => true
+            ]
+        );
+        $ds_loaisanpham = DB::table('24_loaisanpham')
+        ->select('id', 'loai as text')
+        ->where('trangthai','=','1')
+        ->orderBy('id', 'ASC')
+        ->get();
+        $ds_loaisanpham[] =  $chonloaisanpham;
+
+        $chonsize = new Collection(
+            [
+                'id' => 0,
+                'text' => "Chọn size",
+                'selected' => true
+            ]
+        );
+        $ds_size = DB::table('24_danhmuc_size')
+        ->select('id', 'size as text')
+        ->where('trangthai','=','1')
+        ->orderBy('id', 'ASC')
+        ->get();
+        $ds_size[] =  $chonsize;
+        return array(
+            'ds_nhasanxuat' => $ds_nhasanxuat,
+            'ds_loai' => $ds_loaisanpham,
+            'ds_size' => $ds_size,
+        );
+    }
+    function load_dssanpham(){
+        $ds_sanpham_dot = DB::table('24_danhmuc_sanpham')
+        ->select('24_danhmuc_sanpham.id as id','24_loaisanpham.loai as loai','24_loaisanpham.id as idloai','24_loaisanpham.id as id_loai','24_danhmuc_nhasanxuat.nhasanxuat as nhasanxuat','24_danhmuc_nhasanxuat.id as id_nhasanxuat','24_danhmuc_nhasanxuat.id as id_nhasanxuat','24_danhmuc_size.size as size','24_danhmuc_size.id as id_size','24_danhmuc_size.id as id_size', '24_danhmuc_sanpham.thongso as thongso','24_danhmuc_sanpham.trangthai as trangthai')
+        ->join('24_loaisanpham','24_loaisanpham.id','=','24_danhmuc_sanpham.id_loai')
+        ->join('24_danhmuc_size','24_danhmuc_size.id','=','24_danhmuc_sanpham.id_size')
+        ->join('24_danhmuc_nhasanxuat','24_danhmuc_nhasanxuat.id','=','24_danhmuc_sanpham.id_nhasanxuat')
+        ->orderBy('24_danhmuc_sanpham.id')
+        ->get();
+        $data = $ds_sanpham_dot->map(function ($item, $index) {
+            $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+            return $item;
+        });
+        $data = $ds_sanpham_dot->map(function ($item) {
+            $item->loaiSanpham = DB::table('24_loaisanpham')->select('id','loai as loaisanpham')->where('trangthai',1)->get();
+            return $item;
+        });
+        $data = $ds_sanpham_dot->map(function ($item) {
+            $item->All_Nhasanxuat = DB::table('24_danhmuc_nhasanxuat')->select('id','nhasanxuat as nhasanxuat')->where('trangthai',1)->get();
+            return $item;
+        });
+        $data = $ds_sanpham_dot->map(function ($item) {
+            $item->All_Size = DB::table('24_danhmuc_size')->select('id','size as size')->where('trangthai',1)->get();
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        echo  $res;
+
+    }
+    function themsanpham(Request $request){
+        $id_nhasanxuat =(int)$request->input('id_nhasanxuat');
+        $id_loai =(int)$request->input('id_loai');
+        $id_size =(int)$request->input('id_size');
+        $thongso =$request->input('thongso');
+        $noidung = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+
+                    'id_size'       => 'required|numeric|min:1',
+                    'id_nhasanxuat' => 'required|numeric|min:1',
+                    'id_loai'       => 'required|numeric|min:1',
+                    'thongso'  => 'required|regex:/^[\p{L}\s0-9]+$/u',
+
+                ],
+                [
+                    'id_nhasanxuat.required'   => 'Vui lòng chọn nhà sản xuất',
+                    'id_nhasanxuat.numeric'    => 'Hệ thống bị lỗi vui lòng thử lại sau',
+                    'id_nhasanxuat.min'        => 'Vui lòng chọn nhà sản xuất',
+
+                    'id_loai.required'   => 'Vui lòng chọn loại sản phẩm',
+                    'id_loai.numeric'    => 'Hệ thống bị lỗi vui lòng thử lại sau',
+                    'id_loai.min'        => 'Vui lòng chọn loại sản phẩm',
+
+                    'id_size.required'   => 'Vui lòng chọn size',
+                    'id_size.numeric'    => 'Hệ thống bị lỗi vui lòng thử lại sau',
+                    'id_size.min'        => 'Vui lòng chọn size',
+
+                    'thongso.required'    => 'Vui lòng nhập thông số',
+                    'thongso.regex'       => 'Thông số không chứa ký tự đặc biệt',
+
+
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                // try{
+                    $clean_thongso= Purifier::clean($thongso,'default');
+                    if($this->check_clean($clean_thongso) == 1){
+                        $check_sanpham = DB::table('24_danhmuc_sanpham')
+                        ->where('id_size', $id_size)
+                        ->where('id_nhasanxuat', $id_nhasanxuat)
+                        ->where('id_loai', $id_loai)
+                        ->exists();
+                        if($check_sanpham){
+                            $trangthai = 'newproduct_0';
+                        }else{
+                            DB::beginTransaction();
+                                DB::table('24_danhmuc_sanpham')
+                                ->insert([
+                                    'id_nhasanxuat' => $id_nhasanxuat,
+                                    'id_loai' => $id_loai,
+                                    'id_size' => $id_size,
+                                    'thongso' => $clean_thongso,
+                                ]);
+                            DB::commit();
+                            $trangthai = 'ins_1';
+                        }
+                    }else{
+                        $trangthai = '-100';
+                    }
+                // }catch(Exception $e){
+                //     $trangthai = '-100';
+                //     DB::rollBack();
+                // }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai'=> $trangthai,
+            'noidung'=> $noidung
+        );
+    }
+    function change_TrangthaiSP(Request $request){
+        $noidung = "";
+        $id = $request->input('id');
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $trangthai_moi = $request->input('trangthai') == 1 ? 0 : 1;
+            $check = DB::table('24_danhmuc_sanpham')->where('id',$id)->update(['trangthai'=>$trangthai_moi]);
+            $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai'=> $trangthai,
+            'noidung'=> $noidung
+        );
+    }
+    function update_Sanpham(Request $request){
+        $id = $request->input('id');
+        $idloai_upd = $request->input('idloai_upd');
+        $idnhasanxuat_upd = $request->input('idnhasanxuat_upd');
+        $idsize_upd = $request->input('idsize_upd');
+        $thongso_upd = $request->input('thongso_upd');
+        $noidung = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'thongso_upd'  => 'required|regex:/^[\p{L}\s0-9]+$/u',
+
+                ],
+                [
+                    'thongso_upd.required'    => 'Vui lòng nhập thông số',
+                    'thongso_upd.regex'       => 'Thông số không chứa ký tự đặc biệt',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                $clean_thongso_upd= Purifier::clean($thongso_upd,'default');
+
+                if($this->check_clean($clean_thongso_upd) == 1){
+                    try{
+                        $check_hopdong = DB::table('24_dotnhap_sanpham')->where('id_sanpham',$id)->exists() ? 0 : 1;
+                        $check_tontai = DB::table('24_danhmuc_sanpham')->where([['id_loai', $idloai_upd],['id_nhasanxuat', $idnhasanxuat_upd],['id_size', $idsize_upd]])->exists() ? 0 : 1;
+                        if($check_hopdong == 1){
+                            $check_thongso = DB::table('24_danhmuc_sanpham')->where('id',$id)->update(['thongso'=>$clean_thongso_upd]);
+                        }
+                        if($check_hopdong == 1 && $check_tontai == 1){
+                            $trangthai = DB::table('24_danhmuc_sanpham')->where('id', $id)->update(['id_nhasanxuat' => $idnhasanxuat_upd,'id_loai' => $idloai_upd,'id_size' => $idsize_upd]) > 0 ? 'upd_1' : 'upd_0';
+                        }else{
+                            if($check_thongso > 0){
+                                $trangthai = 'upd_1';
+                            }else{
+                                $trangthai = $check_tontai == 0 ? 'prod_2' :  'prod_0';
+                            }
+                        }
+                    }catch(Exception $e){
+                        $trangthai = '-100';
+                    }
+                }else{
+                    $trangthai = '-100';
+                }
+
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung' => $noidung,
+        );
+
+    }
+    function dlt_SP($id,Request $request){
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $check_nhap = DB::table('24_dotnhap_sanpham')->where('id_sanpham',$id)->exists() ? 0 : 1;
+            $check_kho = DB::table('24_kho')->where('idsanpham',$id)->exists() ? 0 : 1;
+            $check_trangthai = DB::table('24_danhmuc_sanpham')->where('id', $id)->first()->trangthai == 0 ? 0 : 1;
+            if($check_nhap == 1 && $check_kho == 1 && $check_trangthai == 1){
+                $trangthai = DB::table('24_danhmuc_sanpham')->where('id', $id)->delete() == 1 ? 'del_1' : 'del_0';
+            }else{
+                $trangthai = $check_trangthai == 0 ? 'prod_1' :  'prod_0';
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return $trangthai;
+    }
+
+    // NHẬP SẢN PHẨM
+    // Kiểm tra dữ liệu sau khi lọc
+    function check_clean($data){
+        if($data == ''){
+            $trangthai = 0;
+        }else{
+            $trangthai = 1;
+        }
+        return $trangthai;
+    }
+    function nhapdongphuc()
+    {
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view(
+                'user_24.admin24.manage.quanlydongphuc.nhapdongphuc',
+                [
+                    'menu' =>    $this->sidebar(),
+                ]
+            );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    function quanlynhap()
+    {
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+                return view(
+                    'user_24.admin24.manage.quanlydongphuc.quanlynhap',
+                    [
+                        'menu' =>    $this->sidebar(),
+                    ]
+                );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    // Danh sách đợt nhập
+    function ds_dotnhap(){
+        $chondot = new Collection(
+            [
+                'id' => 0,
+                'text' => "Chọn đợt",
+                'selected' => true
+            ]
+        );
+        $load_sanpham_dotnhap = DB::table('24_dotnhap')
+        ->select('id', 'dotnhap as text')
+        ->where('trangthai', 1)
+        ->orderBy('id', 'ASC')
+        ->get();
+        $load_sanpham_dotnhap[] =  $chondot;
+        return array(
+            'load_sanpham_dotnhap'=> $load_sanpham_dotnhap,
+        );
+    }
+    function load_dssanpham_dot($id_dotnhap) {
+        $ds_sanpham_dot = DB::table('24_dotnhap_sanpham')
+        ->select(
+            '24_dotnhap_sanpham.id as id',
+            '24_dotnhap_sanpham.id_sanpham as id_sanpham',
+            '24_dotnhap_sanpham.id_dotnhap as id_dotnhap',
+            '24_loaisanpham.loai as loai',
+            '24_danhmuc_size.size as size',
+            '24_dotnhap_sanpham.soluong as soluongyeucau',
+            '24_danhmuc_nhasanxuat.nhasanxuat as nhasanxuat',
+            DB::raw('COALESCE(SUM(24_kiemtranhap.soluongnhap), 0) as soluongnhap'),
+            DB::raw('COALESCE(MAX(24_kiemtranhap.ngaynhap), 0) as ngaynhap'),
+            '24_danhmuc_sanpham.thongso as thongso'
+        )
+        ->where('24_dotnhap_sanpham.id_dotnhap', '=', $id_dotnhap)
+        ->leftJoin('24_kiemtranhap', '24_kiemtranhap.id_dot_sanpham', '=', '24_dotnhap_sanpham.id')
+        ->join('24_danhmuc_sanpham', '24_danhmuc_sanpham.id', '=', '24_dotnhap_sanpham.id_sanpham')
+        ->join('24_loaisanpham', '24_loaisanpham.id', '=', '24_danhmuc_sanpham.id_loai')
+        ->join('24_danhmuc_size', '24_danhmuc_size.id', '=', '24_danhmuc_sanpham.id_size')
+        ->join('24_danhmuc_nhasanxuat', '24_danhmuc_nhasanxuat.id', '=', '24_danhmuc_sanpham.id_nhasanxuat')
+        ->groupBy(
+            '24_dotnhap_sanpham.id',
+            '24_dotnhap_sanpham.id_sanpham',
+            '24_dotnhap_sanpham.id_dotnhap',
+            '24_loaisanpham.loai',
+            '24_danhmuc_size.size',
+            '24_danhmuc_nhasanxuat.nhasanxuat',
+            '24_danhmuc_sanpham.thongso'
+        )
+        ->orderBy('24_dotnhap_sanpham.id', 'asc')
+        ->get();
+        $data = $ds_sanpham_dot->map(function ($item, $index) {
+        $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+    }
+
+    function change_nhapsanpham(Request $request){
+        $id_nhaphang = $request->input('id_nhaphang');
+        $id_dot = $request->input('id_dot');
+        $soluongnhap_moi = $request->input('soluong_moi');
+        $id_sanpham = $request->input('id_sanpham');
+        $noidung = '';
+        $dot_mo = 1;
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'soluong_moi' => 'required|integer|min:1',
+                ],
+                [
+                    'soluong_moi.required'   => 'Vui lòng nhập số lượng',
+                    'soluong_moi.integer'    => 'Số lượng phải là số nguyên',
+                    'soluong_moi.min'        => 'Số lượng phải lớn hơn 0',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    DB::beginTransaction();
+                    $check_dot = DB::table('24_dotnhap')
+                                ->select('trangthai')
+                                ->where('id', $id_dot)
+                                ->value('trangthai');
+                    if($check_dot == $dot_mo){
+                        $check_soluongdanhap = DB::table('24_kiemtranhap')
+                            ->where('id_dot_sanpham', $id_nhaphang)
+                            ->sum('soluongnhap');
+                        $soluongkiemtranhap = $check_soluongdanhap + $soluongnhap_moi;
+                        $soluongcannhap = DB::table('24_dotnhap_sanpham')->where('id', $id_nhaphang)->first()->soluong;
+                        if( $soluongkiemtranhap <= $soluongcannhap){
+                            DB::table('24_kiemtranhap')
+                                ->insert([
+                                    'id_dot_sanpham'    => $id_nhaphang,
+                                    'soluongnhap'       => $soluongnhap_moi,
+                                    'id_admin'          => Auth::guard('loginadmin')->user()->id,
+                                    'ngaynhap'          => Carbon::now(),
+                                ]);
+                            $soluongton = DB::table('24_kho')
+                                        ->where([
+                                            'id_dotnhap' =>$id_dot,
+                                            'idsanpham' =>$id_sanpham,
+                                        ])->value('soluongton');
+                            $soluongnhapkho = $soluongton + $soluongnhap_moi;
+                            DB::table('24_kho')->updateOrInsert(
+                                [
+                                    'id_dotnhap' =>$id_dot,
+                                    'idsanpham' =>$id_sanpham,
+                                ],
+                                [
+                                    'soluongton' => $soluongnhapkho,
+                                ]
+                            );
+                            DB::commit();
+                            $trangthai = 'ins_1';
+                        }else{
+                            DB::rollBack();
+                            $trangthai = 'checksl_0';
+                        }
+                    }else{
+                        $trangthai = 'dot_0';
+                    }
+                }catch(Exception $e){
+                    $trangthai = 'ins_0';
+                    DB::rollBack();
+                }
+            }
+        }else{
+            $trangthai = "rol_2";
+        }
+        return array(
+            'trangthai'=> $trangthai,
+            'noidung'=> $noidung,
+        );
+    }
+    function load_sanpham_quanlynhap($id_dotnhap){
+        $ds_sanpham_dot = DB::table('24_kiemtranhap')
+        ->select(
+            '24_kiemtranhap.id as id',
+
+            '24_kiemtranhap.soluongnhap as soluongnhap',
+
+            '24_kiemtranhap.id_dot_sanpham as id_dot_sanpham',
+
+            '24_dotnhap_sanpham.id_sanpham as id_sanpham',
+
+            '24_dotnhap_sanpham.id_dotnhap as id_dotnhap',
+
+            '24_loaisanpham.loai as loai',
+
+            '24_danhmuc_size.size as size',
+
+            '24_danhmuc_nhasanxuat.nhasanxuat as nhasanxuat',
+
+            '24_kiemtranhap.ngaynhap as ngaynhap',
+
+            '24_danhmuc_sanpham.thongso as thongso',
+
+            '24_accountsadmin.dienthoai as dienthoai'
+        )
+        ->where('24_dotnhap_sanpham.id_dotnhap', '=', $id_dotnhap)
+
+        ->join('24_dotnhap_sanpham','24_dotnhap_sanpham.id', '=', '24_kiemtranhap.id_dot_sanpham' )
+
+        ->join('24_danhmuc_sanpham', '24_danhmuc_sanpham.id', '=', '24_dotnhap_sanpham.id_sanpham')
+        ->join('24_loaisanpham', '24_loaisanpham.id', '=', '24_danhmuc_sanpham.id_loai')
+        ->join('24_danhmuc_size', '24_danhmuc_size.id', '=', '24_danhmuc_sanpham.id_size')
+        ->join('24_danhmuc_nhasanxuat', '24_danhmuc_nhasanxuat.id', '=', '24_danhmuc_sanpham.id_nhasanxuat')
+        ->join('24_accountsadmin', '24_accountsadmin.id', '=', '24_kiemtranhap.id_admin')
+
+        ->orderBy('24_dotnhap_sanpham.id', 'asc')
+        ->get();
+        $data = $ds_sanpham_dot->map(function ($item, $index) {
+            $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+    }
+    // Cập nhật số lượng nhập của sản phẩm theo đợt
+    function capnhat_soluongnhap(Request $request) {
+        $id_kiemtra = $request->input('id_kiemtra');
+        $id_dot_sanpham = $request->input('id_dot_sanpham');
+        $id_sanpham = $request->input('id_sanpham');
+        $soluongnhap_cu = $request->input('soluongnhap_cu');
+        $id_dot = $request->input('id_dot');
+        $soluong_moi = $request->input('soluong_moi');
+        $noidung = '';
+        $dot_mo = 1;
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'soluong_moi' => 'required|integer|min:1',
+                ],
+                [
+                    'soluong_moi.required'   => 'Vui lòng nhập số lượng mới',
+                    'soluong_moi.integer'    => 'Số lượng mới phải là số nguyên',
+                    'soluong_moi.min'        => 'Số lượng mới phải lớn hơn 0',
+
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                try {
+                    DB::beginTransaction();
+                    $check_dot = DB::table('24_dotnhap')
+                                ->select('trangthai')
+                                ->where('id', $id_dot)
+                                ->value('trangthai');
+                    if($check_dot == $dot_mo){
+                        if ($soluong_moi != $soluongnhap_cu){
+                            $val_soluong = $soluong_moi - $soluongnhap_cu;
+                            $check_updatekiemtra = DB::table('24_kiemtranhap')
+                                ->where([
+                                    'id'=> $id_kiemtra,
+                                    'id_dot_sanpham'=> $id_dot_sanpham,
+                                ])
+                                ->update([
+                                    'soluongnhap'    => $soluong_moi
+                                ]);
+                            $soluongton_cu = DB::table('24_kho')
+                            ->where('idsanpham','=', $id_sanpham)
+                            ->where('id_dotnhap','=', $id_dot)
+                            ->value('soluongton');
+                            $soluongton_moi = $soluongton_cu + $val_soluong;
+                            $check_updatesanphamnhap =DB::table('24_kho')
+                                ->where('idsanpham', $id_sanpham)
+                                ->update([
+                                    'soluongton'    => $soluongton_moi
+                                ]);
+                            if($check_updatekiemtra && $check_updatesanphamnhap){
+                                DB::commit();
+                                $trangthai = 'ins_1';
+                            }else{
+                                DB::rollBack();
+                                $trangthai = 'ins_0';
+                            }
+
+                        }else{
+                            $trangthai = 'ins_-1';
+                        }
+                    }else{
+                        $trangthai = 'dot_0';
+                    }
+                }catch(Exception $e){
+                    $trangthai = '-100';
+                    DB::rollBack();
+                }
+
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai'=> $trangthai,
+            'noidung'=> $noidung,
+        );
+    }
+    function delete_sanphamnhap(Request $request) {
+        $id_dot = $request->input('id_dot');
+        $id_kiemtra = $request->input('id_kiemtra');
+        $id_dot_sanpham = $request->input('id_dot_sanpham');
+        $id_sanpham = $request->input('id_sanpham');
+        $soluong_xoa = $request->input('soluong_xoa');
+        $noidung = '';
+        $dot_mo = 1;
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            try {
+                $check_dot = DB::table('24_dotnhap')
+                ->select('trangthai')
+                ->where('id', $id_dot)
+                ->value('trangthai');
+                if($check_dot == $dot_mo){
+                    DB::beginTransaction();
+                    $check_soluongton = DB::table('24_kho')
+                                            ->where([
+                                                'id_dotnhap'=> $id_dot,
+                                                'idsanpham'=> $id_sanpham,
+                                            ])->value('soluongton');
+                        $soluongton_moi = (int)$check_soluongton - (int)$soluong_xoa;
+                        if($soluongton_moi > 0){
+                            $capnhat_soluongton = DB::table('24_kho')
+                                                ->where([
+                                                    'idsanpham'=> $id_sanpham,
+                                                    'id_dotnhap'=> $id_dot,
+                                                ])
+                                                ->update([
+                                                    'soluongton'=> $soluongton_moi
+                                                ]);
+                        }else{
+                            $capnhat_soluongton = DB::table('24_kho')
+                                            ->where([
+                                                'id_dotnhap'=> $id_dot,
+                                                'idsanpham'=> $id_sanpham,
+                                            ])->delete();
+                        }
+                    $check = DB::table('24_kiemtranhap')
+                        ->where([
+                            'id'    => $id_kiemtra,
+                            'id_dot_sanpham'    => $id_dot_sanpham
+                        ])->delete();
+                    if($check && $capnhat_soluongton){
+                        DB::commit();
+                        $trangthai = 'del_1';
+                    }else{
+                        DB::rollBack();
+                        $trangthai = 'del_0';
+                    }
+                }else{
+                    $trangthai = 'dot_0';
+                }
+
+            }catch(Exception $e){
+                $trangthai = '-100';
+                DB::rollBack();
+            }
+        }else{
+            $trangthai = "rol_2";
+        }
+        return array(
+            'trangthai'=> $trangthai,
+            'noidung'=> $noidung
+        );
+    }
+    // Xuất danh sách
+    function btt_xuatexcel_ql_sanphamnhap(Request $request){
+        $id_dot = $request->input('id_dotnhap');
+        $noidung = "";
+        $validator = Validator::make( $request->all(),
+            [
+                'id_dotnhap' => 'required|numeric|min:1',
+            ],
+            [
+                'id_dotnhap.required'   => 'Vui lòng chọn đợt',
+                'id_dotnhap.numeric'    => 'Hệ thống bị lỗi vui lòng thử lại sau',
+                'id_dotnhap.min'        => 'Vui lòng chọn đợt',
+            ]
+        );
+        if ($validator->fails()) {
+            $trangthai = 'validate';
+            $noidung = response()->json($validator->errors());
+        }else{
+            $trangthai = 'excel_1';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung'   =>$noidung
+        );
+    }
+    function xuatexcel_ql_sanphamnhap($id_dotnhap){
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+        $title = 'DanhsachQuanLySanphamDot_' . $id_dotnhap .'_' . date("d-m-Y_H-i-s") . '.xlsx';
+        return Excel::download(new Admin24_ExportDanhSachQuanLySanPhamNhapDotNhap($id_dotnhap), $title);
+    }
+    // Xuất thống kê
+    function btt_xuatexcel_sanphamnhap(Request $request){
+        $id_dot = $request->input('id_dotnhap');
+        $noidung = "";
+        $validator = Validator::make( $request->all(),
+            [
+                'id_dotnhap' => 'required|numeric|min:1',
+            ],
+            [
+                'id_dotnhap.required'   => 'Vui lòng chọn đợt',
+                'id_dotnhap.numeric'    => 'Hệ thống bị lỗi vui lòng thử lại sau',
+                'id_dotnhap.min'        => 'Vui lòng chọn đợt',
+            ]
+        );
+        if ($validator->fails()) {
+            $trangthai = 'validate';
+            $noidung = response()->json($validator->errors());
+        }else{
+            $trangthai = 'excel_1';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung'   =>$noidung
+        );
+    }
+    function xuatexcel_sanphamnhap($id_dotnhap){
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+        $title = 'DanhsachSanphamDot_' . $id_dotnhap .'_' . date("d-m-Y_H-i-s") . '.xlsx';
+        return Excel::download(new Admin24_ExportDanhSachSanPhamNhapDotNhap($id_dotnhap), $title);
+    }
+
+    // Đợt nhập
+    public function check_Trangthaidot($id){
+        $result = DB::table('24_dotnhap')
+        ->select('trangthai')
+        ->where('id', $id)
+        ->first();
+        return $result ? $result->trangthai : 0;
+    }
+     // thêm đợt
+    function themDot(Request $request){
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung = '';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make( $request->all(),
+                [
+                    'ten_dot' => 'required|regex:/^[\p{L}\p{N}\-\s]+$/u|unique:24_dotnhap,dotnhap',
+                ],
+                [
+                    'ten_dot.required'      => 'Vui lòng nhập tên đợt',
+                    'ten_dot.regex'    => 'Tên đợt chỉ gồm chữ cái và số',
+                    'ten_dot.unique'    => 'Tên đợt đã tồn tại',
+                ]
+            );
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            }else{
+                $ten_dot = $request->input('ten_dot');
+                $cleanHtml = Purifier::clean($ten_dot,'default');
+                $check = DB::table('24_dotnhap')
+                ->insert([
+                    "dotnhap" => $cleanHtml,
+                    "trangthai" => 0,
+                ]);
+                if($check == 1){
+                    $trangthai = 'ins_1';
+                }else{
+                    $trangthai = 'ins_0';
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return array(
+            'trangthai' => $trangthai,
+            'noidung'   =>$noidung
+        );
+    }
+    // Data danh sách đợt nhập
+    function load_dsdotnhap(){
+        $data_dotnhap = DB::table('24_dotnhap')
+        ->select('id', 'dotnhap', DB::raw("DATE_FORMAT(start, '%d/%m/%Y') AS ngaytao"), 'trangthai')
+        ->get();
+        $data = $data_dotnhap->map(function ($item, $index) {
+            $item->stt = $index + 1;
+            return $item;
+        });
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return  $res;
+    }
+    function capnhat_Dot(Request $request){
+        $noidung = '';
+        $trangthai = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung ='';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'tenDot' => 'required|regex:/^[\p{L}\p{N}\-\s]+$/u|unique:24_dotnhap,dotnhap',
+            ], [
+                'id.required'      => 'Hệ thống bị lỗi. Vui lòng liên hệ adnmin',
+
+                'tenDot.required'      => 'Vui lòng nhập tên đợt',
+                'tenDot.regex'    => 'Tên đợt chỉ gồm chữ cái và số',
+                'tenDot.unique'    => 'Tên đợt đã tồn tại',
+            ]);
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            } else {
+                $id = $request->input('id');
+                $tenDot = $request->input('tenDot');
+                $cleanHtml = Purifier::clean($tenDot,'default');
+                if($this->check_Trangthaidot($id) == 1){
+                    $check = DB::table('24_dotnhap')->where('id',$id)->update(['dotnhap' => $cleanHtml]);
+                    if($check == 1){
+                        $trangthai = "upd_1";
+                    }else{
+                        $trangthai = "upd_0";
+                    }
+                }else{
+                    $trangthai = "dotnhap_0";
+                }
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return response()->json([
+            'trangthai' => $trangthai,
+            'noidung'   => $noidung,
+        ]);
+    }
+    public function change_trangthai(Request $request)
+    {
+        $noidung = '';
+        $trangthai = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung ='';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make($request->all(), [
+                'trangthai' => 'required',
+                'id'        => 'required',
+            ], [
+                'trangthai.required' => 'Hệ thống bị lỗi. Vui lòng liên hệ admin',
+                'id.required'        => 'Hệ thống bị lỗi. Vui lòng liên hệ admin',
+            ]);
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            } else {
+                $trangthai= $request->input('trangthai');
+                $id = $request->input('id');
+                $trangthai_moi = $trangthai == 0 ? 1 : 0;
+                $check = DB::table('24_dotnhap')
+                    ->where('id', $id)
+                    ->update(['trangthai' => $trangthai_moi]);
+                $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return response()->json([
+            'trangthai' => $trangthai,
+            'noidung'   => $noidung,
+        ]);
+    }
+    // Quản lý đợt nhập
+    function ql_dotnhap(){
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+
+            return view(
+                'user_24.admin24.manage.quanlydongphuc.quanlydotnhap',
+                [
+                    'menu'         => $this->sidebar(),
+                ]
+            );
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+
+    function qldn_ds_dotnhap(){
+        $chondot = new Collection(
+            [
+                'id' => 0,
+                'text' => "Chọn đợt",
+                'selected' => true
+            ]
+        );
+        $qldn_ds_dotnhap = DB::table('24_dotnhap')
+        ->select('id', 'dot as text')
+        ->where('trangthai',1)
+        ->orderBy('id', 'ASC')
+        ->get();
+        $qldn_ds_dotnhap[] =  $chondot;
+        return  $qldn_ds_dotnhap;
+    }
+    // danh sách sản phẩm nhập trong đợt
+    function qldot_load_dssanpham_dot($id){
+        if($id == -1){
+            $data = [];
+        }else{
+            $data_sanphamnhap = DB::table('24_danhmuc_sanpham')
+            ->select(
+                '24_danhmuc_sanpham.id as id',
+                '24_loaisanpham.loai as loai',
+                '24_danhmuc_size.size as size',
+                '24_danhmuc_sanpham.thongso as thongso',
+                '24_danhmuc_nhasanxuat.nhasanxuat as nhasanxuat',
+                DB::raw('IF(sanphamnhap.soluong IS NOT NULL, sanphamnhap.soluong, 0) as soluong')
+            )
+            ->join('24_loaisanpham', '24_loaisanpham.id', '=', '24_danhmuc_sanpham.id_loai')
+            ->join('24_danhmuc_size', '24_danhmuc_size.id', '=', '24_danhmuc_sanpham.id_size')
+            ->join('24_danhmuc_nhasanxuat', '24_danhmuc_nhasanxuat.id', '=', '24_danhmuc_sanpham.id_nhasanxuat')
+            ->leftJoin(DB::raw('(SELECT id_sanpham, soluong FROM 24_dotnhap_sanpham WHERE id_dotnhap = ' . $id . ') as sanphamnhap'),
+                       'sanphamnhap.id_sanpham', '=', '24_danhmuc_sanpham.id')
+            ->where('24_danhmuc_sanpham.trangthai',1)
+            ->orderBy('24_danhmuc_sanpham.id_loai')
+            ->get();
+            $data = $data_sanphamnhap->map(function ($item, $index) {
+                $item->stt = $index + 1; // Thêm số thứ tự tự tăng, bắt đầu từ 1
+                return $item;
+            });
+        }
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+
+        return  $res;
+
+    }
+
+    function change_soluong(Request $request){
+        $noidung = '';
+        $trangthai = '';
+        $id_chucnang = $request->input('id_chucnang');
+        $id_manhinh = $request->input('id_manhinh');
+        $time = $request->input('time');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $noidung ='';
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            $validator = Validator::make($request->all(), [
+                'id_dot'       => 'required|integer|min:1',
+                'id_sanpham' => 'required',
+                'soluong' => 'required|integer|min:0',
+            ],
+            [
+                'id_dot.required'       => 'Lỗi hệ thống. Vui lòng liên hệ admin',
+                'id_dot.integer'       => 'Lỗi hệ thống. Vui lòng liên hệ admin',
+                'id_dot.min'            => 'Vui lòng chọn đợt',
+                'id_sanpham.required' => 'Lỗi hệ thống. Vui lòng liên hệ admin',
+                'soluong.required' => 'Vui lòng nhập số lượng',
+                'soluong.integer' => 'Số lượng phải là số nguyên',
+                'soluong.min' => 'Số lượng không bé hơn 0',
+            ]);
+            if ($validator->fails()) {
+                $trangthai = 'validate';
+                $noidung = response()->json($validator->errors());
+            } else {
+                $id_sanpham = $request->input('id_sanpham');
+                $id_dot = $request->input('id_dot');
+                $soluong = $request->input('soluong');
+                $check_dot = DB::table('24_dotnhap')->where('id',$id_dot)->first();
+                if($check_dot->trangthai == 1){
+                    $check_tontai = DB::table('24_dotnhap_sanpham')
+                    ->where('id_sanpham', $id_sanpham)
+                    ->where('id_dotnhap', $id_dot)->first();
+                    if($soluong > 0){
+                        if($check_tontai){
+                        $check_soluongnhap = DB::table('24_kiemtranhap')->where('id_dot_sanpham',$check_tontai->id)->sum('soluongnhap');
+                        }else{
+                            $check_soluongnhap = 0;
+                        }
+                        if($soluong >  $check_soluongnhap){
+                            $check = DB::table('24_dotnhap_sanpham')
+                            ->updateOrInsert(
+                                ['id_sanpham' => $id_sanpham, 'id_dotnhap' => $id_dot],
+                                ['soluong' => $soluong]
+                            );
+                            $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+                        }else{
+                            $trangthai = "DaNhap_1";
+                        }
+                    }else{
+                        $check_nhaphang = DB::table('24_kiemtranhap')
+                        ->where('id_dot_sanpham',$check_tontai->id)->get();
+
+                        if(count($check_nhaphang) > 0){
+                            $trangthai = "DaNhap_0";
+                        }else{
+                            $check = DB::table('24_dotnhap_sanpham')
+                            ->where('id_sanpham', $id_sanpham)
+                            ->where('id_dotnhap', $id_dot)
+                            ->delete();
+                            $trangthai = $check == 1 ? 'upd_1' : 'upd_0';
+                        }
+                    }
+                }else{
+                    $trangthai = "dotnhap_0";
+                }
+
+            }
+        }else{
+            $trangthai = 'rol_2';
+        }
+        return response()->json([
+            'trangthai' => $trangthai,
+            'noidung'   => $noidung,
+        ]);
+    }
+    // Biểu đồ thống kê nhâp
+    function bieudo_thongke_nhap(Request $request) {
+        $id_dotnhap = $request->input('id_dotnhap');
+
+        // Truy vấn dữ liệu
+        $data = DB::table('24_kiemtranhap')
+            ->select([
+                '24_danhmuc_nhasanxuat.nhasanxuat AS nsx',
+                '24_loaisanpham.loai AS loai',
+                '24_danhmuc_size.size AS size',
+                DB::raw('SUM(24_kiemtranhap.soluongnhap) AS tong_sl_nhap')
+            ])
+            ->join('24_dotnhap_sanpham', '24_dotnhap_sanpham.id', '=', '24_kiemtranhap.id_dot_sanpham')
+            ->join('24_danhmuc_sanpham', '24_danhmuc_sanpham.id', '=', '24_dotnhap_sanpham.id_sanpham')
+            ->join('24_danhmuc_nhasanxuat', '24_danhmuc_nhasanxuat.id', '=', '24_danhmuc_sanpham.id_nhasanxuat')
+            ->join('24_loaisanpham', '24_loaisanpham.id', '=', '24_danhmuc_sanpham.id_loai') // Chỉnh sửa id_loai
+            ->join('24_danhmuc_size', '24_danhmuc_size.id', '=', '24_danhmuc_sanpham.id_size') // Chỉnh sửa id_size
+            ->where('24_dotnhap_sanpham.id_dotnhap', $id_dotnhap) // Lọc theo đợt nhập
+            ->groupBy('24_danhmuc_nhasanxuat.nhasanxuat', '24_loaisanpham.loai', '24_danhmuc_size.size') // Chỉnh lại groupBy
+            ->get();
+
+        // Trả về dữ liệu dưới dạng JSON
+        return response()->json($data);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Phát đồng phục
     function phatdongphuc()
     {
         //Select box
@@ -10364,43 +12757,62 @@ function xoahinhhhsnh(Request $request){
         array_unshift($sqlArray, $customItem);
 
         $dot_phat = $sqlArray;
-        //Lấy all đồng phục
-        $sanpham = DB::table('24_kho')
-        ->join('24_danhmuc_sanpham','24_kho.idsanpham','24_danhmuc_sanpham.id')
-        ->join('24_loaisanpham','24_danhmuc_sanpham.id_loai','24_loaisanpham.id')
-        ->join('24_danhmuc_nhasanxuat','24_danhmuc_sanpham.id_nhasanxuat','24_danhmuc_nhasanxuat.id')
-        ->join('24_danhmuc_size','24_danhmuc_sanpham.id_size','24_danhmuc_size.id')
-        ->join('24_dotnhap','24_kho.id_dotnhap','24_dotnhap.id')
-        ->select(
-            '24_kho.idsanpham as id_sp',
-            '24_kho.id as id_sp_kho',
-            '24_kho.soluongton as sl',
-            '24_danhmuc_sanpham.*',
-            '24_loaisanpham.*',
-            '24_danhmuc_nhasanxuat.nhasanxuat as ten_nsx',
-            '24_dotnhap.dotnhap as ten_dot',
-            '24_danhmuc_size.size as ten_size'
-        )
-        ->get();
-        //Lấy all loại đồng phục gom nhóm
-        $loai = DB::table('24_loaisanpham')->get();
-        //
-    //    $agent = new Agent();
+        $subquery = DB::table('24_kho')
+        ->select('idsanpham', DB::raw('MIN(stt) AS min_stt'))
+        ->where('trangthai', '=', 0)
+        ->groupBy('idsanpham');
 
-    //    if ($agent->isMobile()) {
-           return view('user_24.admin24.manage.quanlydongphuc.phatdongphuc_livewire',[
-               'sanpham' => $sanpham,
-               'loai' => $loai,
-               'dot_phat' => $dot_phat,
-               'menu' => $this->sidebar(),
-           ]);
-    //    } else {
-        //    return view('user_24.admin24.manage.quanlydongphuc.phatdongphuc',[
-        //         'menu' => $this->sidebar(),
-        //    ]);
-    //    }
-
-   }
+        // Main query
+        $sanpham = DB::table('24_kho as kho')
+            ->join('24_dotnhap as dotnhap', 'dotnhap.id', '=', 'kho.id_dotnhap')
+            ->join('24_danhmuc_sanpham as sanpham', 'sanpham.id', '=', 'kho.idsanpham')
+            ->join('24_danhmuc_nhasanxuat as nhasanxuat', 'nhasanxuat.id', '=', 'sanpham.id_nhasanxuat')
+            ->join('24_loaisanpham as loaisanpham', 'loaisanpham.id', '=', 'sanpham.id_loai')
+            ->join('24_danhmuc_size as size', 'size.id', '=', 'sanpham.id_size')
+            ->joinSub($subquery, 'kho_min', function ($join) {
+                $join->on('kho.idsanpham', '=', 'kho_min.idsanpham')
+                    ->on('kho.stt', '=', 'kho_min.min_stt');
+            })
+            ->select(
+                'kho.id as id_sp_kho',
+                'kho.idsanpham as id_sp',
+                'kho.stt as stt',
+                'dotnhap.dotnhap as ten_dot',
+                'nhasanxuat.nhasanxuat as ten_nsx',
+                'loaisanpham.*',
+                'sanpham.*',
+                'size.size as ten_size',
+                'kho.soluongton as sl'
+            )
+            ->where('kho.trangthai', '=', 0)
+            ->groupBy(
+                'kho.id',
+                'kho.idsanpham',
+                // 'kho.stt',
+                'dotnhap.dotnhap',
+                'nhasanxuat.nhasanxuat',
+                // 'loaisanpham.*',
+                // 'sanpham.*',
+                'size.size',
+                'kho.soluongton'
+            )
+            ->get();
+            $loai = DB::table('24_loaisanpham as lsp')
+            ->whereIn('lsp.id', function ($query) {
+                $query->select('dmsp.id_loai')
+                    ->from('24_danhmuc_sanpham as dmsp')
+                    ->join('24_kho', '24_kho.idsanpham', '=', 'dmsp.id')
+                    ->where('dmsp.trangthai', 1);
+            })
+            ->where('lsp.trangthai', 1)
+            ->get();
+            return view('user_24.admin24.manage.quanlydongphuc.phatdongphuc_livewire',[
+                'sanpham' => $sanpham,
+                'loai' => $loai,
+                'dot_phat' => $dot_phat,
+                'menu' => $this->sidebar(),
+            ]);
+    }
    //Lấy số lượng tồn mới sau khi phát
    function lay_soluong_ton(){
        $sanpham = DB::table('24_kho')
@@ -10428,56 +12840,180 @@ function xoahinhhhsnh(Request $request){
            'loai' => $loai,
        ];
    }
-   //tìm kiếm sinh viên
-   function phatdongphuc_timkiem(Request $request){
-       $cccd_sv = $request->input('cccd_sv');
-       $trangthai = 1;
-       $validator = Validator::make(
-           $request->all(),
-           [
-               'cccd_sv' => 'required|regex:/^[0-9]{9,12}$/',
-           ],
-           [
-               'cccd_sv.required'       => 'Vui lòng điền cccd của sinh viên để tìm kiếm',
-               'cccd_sv.regex' => 'CCCD của sinh viên phải là 9 hoặc 12 số'
-           ]
-       );
-       if ($validator->fails()) {
-           $noidung = response()->json($validator->errors());
-           $trangthai=0;
-       } else {
-           $sql=DB::table("24_thongtincanhan")->where("cccd",$cccd_sv)->first();
-           if($sql){
-               $noidung = $sql;
-           }else{
-               $trangthai=2;
-               $noidung="";
-           }
-       }
-       return array(
-           'noidung' => $noidung,
-           'trangthai' => $trangthai,
-       );
-   }
-   //table đồng phục
-   function ds_dongphuc(){
-       $sql = DB::select("SELECT `24_kho`.id,`24_dotnhap`.dotnhap AS dotnhap,`24_danhmuc_nhasanxuat`.`nhasanxuat` AS `nsx`, `24_loaisanpham`.`loai` AS `loai`,`24_danhmuc_size`.`size` AS `size`,`24_kho`.`soluongton` AS `slton`
-                           FROM `24_kho`
-                            INNER JOIN `24_dotnhap`
-                               ON		`24_dotnhap`.id=`24_kho`.`id_dotnhap`
-                           INNER JOIN `24_danhmuc_sanpham`
-                               ON		`24_danhmuc_sanpham`.id=`24_kho`.`idsanpham`
-                           INNER JOIN `24_danhmuc_nhasanxuat`
-                               ON `24_danhmuc_nhasanxuat`.`id` = `24_danhmuc_sanpham`.`id_nhasanxuat`
-                           INNER JOIN `24_loaisanpham`
-                               ON `24_loaisanpham`.`id` = `24_danhmuc_sanpham`.`id_loai`
-                           INNER JOIN `24_danhmuc_size`
-                               ON `24_danhmuc_size`.`id` = `24_danhmuc_sanpham`.`id_size`");
-      $json_data['data'] = $sql;
-      $res = json_encode($json_data);
-      return  $res;
 
-   }
+  //tìm kiếm sinh viên
+  function phatdongphuc_timkiem(Request $request){
+    $cccd_sv = $request->input('cccd_sv');
+    $trangthai = 1;
+    $email="111";
+    $res=null;
+    $validator = Validator::make(
+        $request->all(),
+        [
+            'cccd_sv' => 'required|regex:/^[0-9]{9,12}$/',
+        ],
+        [
+            'cccd_sv.required'       => 'Vui lòng điền cccd của sinh viên để tìm kiếm',
+            'cccd_sv.regex' => 'CCCD của sinh viên phải là 9 hoặc 12 số'
+        ]
+    );
+    if ($validator->fails()) {
+        $noidung = response()->json($validator->errors());
+        $trangthai=0;
+    } else {
+        $sql=DB::table("24_thongtincanhan")->where("cccd",$cccd_sv)->first();
+        if($sql){
+                $noidung = $sql;
+                $email = DB::table("account24s")
+                ->where("id", $noidung->id_taikhoan)
+                ->first()
+                ->email;
+        }else{
+            $trangthai=2;
+            $noidung="";
+        }
+    }
+    return array(
+        'noidung' => $noidung,
+        'trangthai' => $trangthai,
+        'email' => $email,
+    );
+}
+
+
+        //table đồng phục
+    //table đồng phục
+    function ds_dongphuc(){
+        $sql = DB::select("SELECT 24_kho.id,24_kho.stt AS stt,24_dotnhap.dotnhap AS dotnhap,24_danhmuc_nhasanxuat.nhasanxuat AS nsx, 24_loaisanpham.loai AS loai,24_danhmuc_size.size AS size,24_kho.soluongton AS slton
+        FROM 24_kho
+        INNER JOIN 24_dotnhap
+            ON 24_dotnhap.id=24_kho.id_dotnhap
+        INNER JOIN 24_danhmuc_sanpham
+            ON 24_danhmuc_sanpham.id=24_kho.idsanpham
+        INNER JOIN 24_danhmuc_nhasanxuat
+            ON 24_danhmuc_nhasanxuat.id = 24_danhmuc_sanpham.id_nhasanxuat
+        INNER JOIN 24_loaisanpham
+            ON 24_loaisanpham.id = 24_danhmuc_sanpham.id_loai
+        INNER JOIN 24_danhmuc_size
+            ON 24_danhmuc_size.id = 24_danhmuc_sanpham.id_size
+        ORDER BY 24_loaisanpham.id, 24_danhmuc_size.id");
+
+        $json_data['data'] = $sql;
+        $res = json_encode($json_data);
+        return  $res;
+
+    }
+    function ds_hoadon_sv($id) {
+        // Câu truy vấn SQL
+        $sql = "SELECT
+                `24_thongtincanhan`.`hoten` AS `hoten_sv`,
+                `24_accountsadmin`.`name` AS `hoten_nguoiphat`,
+                `24_thongtincanhan`.`cccd` AS `cccd`,
+                `24_thongtincanhan`.`ngaysinh` AS `ngaysinh`,
+                `24_hoadon`.`mahoadon` AS `mahoadon`,
+                `24_hoadon`.`sl_phat` AS `sl_phat`,
+                `24_hoadon`.`id` AS `id`,
+                `24_danhmuc_dotphat`.`dot` AS `dot_phat`,
+                `tt_sanpham`.`ten_loai` AS `loai`,
+                `tt_sanpham`.`ten_size` AS `size`,
+                `tt_sanpham`.`ten_nhasanxuat` AS `nsx`,
+                DATE_FORMAT(`24_hoadon`.`ngaytao`, '%d-%m-%Y') AS `ngaytao`,
+                DAY(`24_hoadon`.`ngaytao`) AS `ngay`,
+                MONTH(`24_hoadon`.`ngaytao`) AS `thang`,
+                YEAR(`24_hoadon`.`ngaytao`) AS `nam`
+            FROM `24_hoadon`
+            INNER JOIN `24_thongtincanhan` ON `24_hoadon`.`id_sinhvien` = `24_thongtincanhan`.`id_taikhoan`
+            INNER JOIN `24_accountsadmin` ON `24_hoadon`.`id_nguoiphat` = `24_accountsadmin`.`id`
+            INNER JOIN `24_danhmuc_dotphat` ON `24_hoadon`.`id_dotphat` = `24_danhmuc_dotphat`.`id`
+            INNER JOIN (
+                SELECT
+                    `24_danhmuc_sanpham`.`id` AS `id`,
+                    `24_danhmuc_nhasanxuat`.`nhasanxuat` AS `ten_nhasanxuat`,
+                    `24_danhmuc_size`.`size` AS `ten_size`,
+                    `24_loaisanpham`.`loai` AS `ten_loai`
+                FROM `24_danhmuc_sanpham`
+                INNER JOIN `24_danhmuc_nhasanxuat` ON `24_danhmuc_sanpham`.`id_nhasanxuat` = `24_danhmuc_nhasanxuat`.`id`
+                INNER JOIN `24_danhmuc_size` ON `24_danhmuc_sanpham`.`id_size` = `24_danhmuc_size`.`id`
+                INNER JOIN `24_loaisanpham` ON `24_danhmuc_sanpham`.`id_loai` = `24_loaisanpham`.`id`
+            ) AS `tt_sanpham` ON `24_hoadon`.`id_sanpham` = `tt_sanpham`.`id`
+            WHERE `24_hoadon`.`trangthai` = 0 AND `24_thongtincanhan`.`id_taikhoan` = $id";
+
+        // Thực hiện truy vấn
+        $hoadon = DB::select($sql);
+
+        // Tìm tất cả mã hóa đơn
+        // $allhoadoan = DB::table('24_hoadon')->distinct('mahoadon')->where('id_sinhvien',$id)->get();
+        $allhoadoan = DB::table('24_hoadon')
+        ->select('mahoadon')  // Chỉ chọn cột 'mahoadon'
+        ->where('id_sinhvien', $id)
+        ->distinct()  // Áp dụng distinct
+        ->get();
+
+        // Ướng với mỗi mã hóa đơn lấy dữ liệu các loại đồng phục của hóa đơn đón
+
+        if($allhoadoan){
+            foreach ($allhoadoan as $value) {
+                $loaisp = DB::table('24_hoadon')
+                ->select(DB::raw('ROW_NUMBER() OVER (ORDER BY mahoadon) as stt'),'24_hoadon.*')
+                ->where('mahoadon',$value->mahoadon)->get();
+                $value->chitietsp = $loaisp;
+            }
+        }
+
+
+
+
+
+        // Nhóm dữ liệu theo mã hóa đơn
+        // $invoices = [];
+        // foreach ($hoadon as $item) {
+        //     if (!isset($invoices[$item->mahoadon])) {
+        //         $invoices[$item->mahoadon] = [
+        //             'info' => [
+        //                 'hoten_sv' => $item->hoten_sv,
+        //                 'hoten_nguoiphat' => $item->hoten_nguoiphat,
+        //                 'cccd' => $item->cccd,
+        //                 'ngaysinh' => $item->ngaysinh,
+        //                 'mahoadon' => $item->mahoadon,
+        //                 'dot_phat' => $item->dot_phat,
+        //                 'ngaytao' => $item->ngaytao,
+        //                 'ngay' => $item->ngay,
+        //                 'thang' => $item->thang,
+        //                 'nam' => $item->nam
+        //             ],
+        //             'products' => []
+        //         ];
+        //     }
+
+        //     // Đếm STT cho sản phẩm
+        //     $stt = count($invoices[$item->mahoadon]['products']) + 1;
+
+        //     $invoices[$item->mahoadon]['products'][] = [
+        //         'stt' => $stt, // Thêm cột STT cho mỗi loại hàng hóa
+        //         'loai' => $item->loai,
+        //         'size' => $item->size,
+        //         'nsx' => $item->nsx,
+        //         'sl_phat' => $item->sl_phat
+        //     ];
+        // }
+        // $json_data['data'] =
+        // Định dạng dữ liệu cho DataTables
+        // $json_data = [];
+        // foreach ($invoices as $invoice) {
+        //     $json_data['data'][] = array_merge($invoice['info'], [
+        //         'products' => $invoice['products'] // Đây là phần dữ liệu con để DataTables xử lý
+        //     ]);
+        // }
+
+
+        $json_data['data'] = $allhoadoan;
+        $res = json_encode($json_data);
+        return $res;
+
+
+        // Chuyển đổi dữ liệu thành JSON và trả về
+        // return json_encode($json_data);
+    }
    //select 2 của đợt phát
    function select_dot_phat() {
        $chondot = new Collection(
@@ -10902,16 +13438,35 @@ function xoahinhhhsnh(Request $request){
         return  $res;
     }
     function select2_hoadon_search(){
-        $select_loai=DB::table('24_loaisanpham')->select(['id as id','loai as text'])->get();
-        $select_size=DB::table('24_danhmuc_size')->select(['id as id','size as text'])->get();
-        $select_nhasanxuat=DB::table('24_danhmuc_nhasanxuat')->select(['id as id','nhasanxuat as text'])->get();
-        $select_dotphat=DB::table('24_danhmuc_dotphat')->select(['id as id','dot as text'])->get();
-        return response()->json([
-            'select_loai' => $select_loai,
-            'select_size' => $select_size,
-            'select_nhasanxuat' => $select_nhasanxuat,
-            'select_dotphat' => $select_dotphat
-        ]);
+
+        // $select_size=DB::table('24_danhmuc_size')->select(['id as id','size as text'])->get();
+        // $select_nhasanxuat=DB::table('24_danhmuc_nhasanxuat')->select(['id as id','nhasanxuat as text'])->get();
+        // $select_dotphat=DB::table('24_danhmuc_dotphat')->select(['id as id','dot as text'])->get();
+        // $select_dotnhap=DB::table('24_dotnhap')->select(['id as id','dotnhap as text'])->get();
+        $trangthai = array(
+            [
+                'id' => -1,
+                'text' => "Tất cả"
+            ],
+            [
+                'id' => 0,
+                'text' => "Đang hoạt động"
+            ],
+            [
+                'id' => 1,
+                'text' => "Ngưng hoạt động"
+            ]
+        );
+        return array(
+            'select_loai' => $this->load_seclectbox('24_loaisanpham','id','loai',0,'Tất cả loại'),
+            'select_size' => $this->load_seclectbox('24_danhmuc_size','id','size',0,'Tất cả size'),
+            'select_nhasanxuat' => $this->load_seclectbox('24_danhmuc_nhasanxuat','id','nhasanxuat',0,'Tất cả NSX'),
+            'select_dotphat' => $this->load_seclectbox('24_danhmuc_dotphat','id','dot',0,'Tất cả đợt'),
+            'select_dotnhap' => $this->load_seclectbox('24_dotnhap','id','dotnhap',0,'Tất cả đợt'),
+            'select_trangthai' => $trangthai,
+
+
+        );
     }
     public function data_timkiem_hoadon(Request $request){
         $dotphat = $request->input('dotphat');
@@ -10935,69 +13490,69 @@ function xoahinhhhsnh(Request $request){
         ->join('24_danhmuc_dotphat', '24_hoadon.id_dotphat', '=', '24_danhmuc_dotphat.id')
         ->join('24_dotnhap', '24_hoadon.id_dotnhap', '=', '24_dotnhap.id')
         ->join(DB::raw('(SELECT
-            24_danhmuc_sanpham.id AS id,
-            24_danhmuc_nhasanxuat.nhasanxuat AS ten_nhasanxuat,
-            24_danhmuc_nhasanxuat.id AS id_nhasanxuat,
-            24_danhmuc_size.size AS ten_size,
-            24_danhmuc_size.id AS id_size,
-            24_loaisanpham.loai AS ten_loai,
-            24_loaisanpham.id AS id_loai
-        FROM 24_danhmuc_sanpham
-        INNER JOIN 24_danhmuc_nhasanxuat ON 24_danhmuc_sanpham.id_nhasanxuat = 24_danhmuc_nhasanxuat.id
-        INNER JOIN 24_danhmuc_size ON 24_danhmuc_sanpham.id_size = 24_danhmuc_size.id
-        INNER JOIN 24_loaisanpham ON 24_danhmuc_sanpham.id_loai = 24_loaisanpham.id) AS tt_sanpham'), '24_hoadon.id_sanpham', '=', 'tt_sanpham.id')
-        ->select([
-            '24_thongtincanhan.hoten AS hoten_sv',
-            '24_accountsadmin.name AS hoten_nguoiphat',
-            '24_thongtincanhan.cccd AS cccd',
-            '24_thongtincanhan.ngaysinh AS ngaysinh',
-            '24_hoadon.mahoadon AS mahoadon',
-            '24_hoadon.sl_phat AS sl_phat',
-            '24_hoadon.id AS id',
-            '24_hoadon.trangthai AS trangthai',
-            '24_danhmuc_dotphat.dot AS dot_phat',
-            '24_dotnhap.dotnhap AS dot_nhap',
-            'tt_sanpham.ten_loai AS loai',
-            'tt_sanpham.ten_size AS size',
-            'tt_sanpham.ten_nhasanxuat AS nsx',
-            DB::raw("DATE_FORMAT(24_hoadon.ngaytao, '%d-%m-%Y') AS ngaytao"),
-            DB::raw('DAY(24_hoadon.ngaytao) AS ngay'),
-            DB::raw('MONTH(24_hoadon.ngaytao) AS thang'),
-            DB::raw('YEAR(24_hoadon.ngaytao) AS nam')
-        ])
-        ->when($dotphat, function ($query, $dotphat) {
-            return $query->where('24_hoadon.id_dotphat', $dotphat);
-        })
-        ->when($mahoadon, function ($query, $mahoadon) {
-            return $query->where('24_hoadon.mahoadon', $mahoadon);
-        })
-        ->when($loai, function ($query, $loai) {
-            return $query->where('tt_sanpham.id_loai', $loai);
-        })
-        ->when($size, function ($query, $size) {
-            return $query->where('tt_sanpham.id_size', $size);
-        })
-        ->when($nsx, function ($query, $nsx) {
-            return $query->where('tt_sanpham.id_nhasanxuat', $nsx);
-        })
-        ->when($cccd, function ($query, $cccd) {
-            return $query->where('24_thongtincanhan.cccd', $cccd);
-        })
-        ->when($start && $end && $start == $end, function ($query) use ($start) {
-            return $query->whereDate('24_hoadon.ngaytao', '=', $start);
-        })
-        ->when($start && $end && $start != $end, function ($query) use ($start, $end) {
-            return $query->whereBetween('24_hoadon.ngaytao', [$start, $end]);
-        })
-        ->when($start && !$end, function ($query, $start) {
-            return $query->where('24_hoadon.ngaytao', '>=', $start);
-        })
-        ->when($end && !$start, function ($query, $end) {
+                24_danhmuc_sanpham.id AS id,
+                24_danhmuc_nhasanxuat.nhasanxuat AS ten_nhasanxuat,
+                24_danhmuc_nhasanxuat.id AS id_nhasanxuat,
+                24_danhmuc_size.size AS ten_size,
+                24_danhmuc_size.id AS id_size,
+                24_loaisanpham.loai AS ten_loai,
+                24_loaisanpham.id AS id_loai
+            FROM 24_danhmuc_sanpham
+            INNER JOIN 24_danhmuc_nhasanxuat ON 24_danhmuc_sanpham.id_nhasanxuat = 24_danhmuc_nhasanxuat.id
+            INNER JOIN 24_danhmuc_size ON 24_danhmuc_sanpham.id_size = 24_danhmuc_size.id
+            INNER JOIN 24_loaisanpham ON 24_danhmuc_sanpham.id_loai = 24_loaisanpham.id) AS tt_sanpham'), '24_hoadon.id_sanpham', '=', 'tt_sanpham.id')
+            ->select([
+                '24_thongtincanhan.hoten AS hoten_sv',
+                '24_accountsadmin.name AS hoten_nguoiphat',
+                '24_thongtincanhan.cccd AS cccd',
+                '24_thongtincanhan.ngaysinh AS ngaysinh',
+                '24_hoadon.mahoadon AS mahoadon',
+                '24_hoadon.sl_phat AS sl_phat',
+                '24_hoadon.id AS id',
+                '24_hoadon.trangthai AS trangthai',
+                '24_danhmuc_dotphat.dot AS dot_phat',
+                '24_dotnhap.dotnhap AS dot_nhap',
+                'tt_sanpham.ten_loai AS loai',
+                'tt_sanpham.ten_size AS size',
+                'tt_sanpham.ten_nhasanxuat AS nsx',
+                DB::raw("DATE_FORMAT(24_hoadon.ngaytao, '%d-%m-%Y') AS ngaytao"),
+                DB::raw('DAY(24_hoadon.ngaytao) AS ngay'),
+                DB::raw('MONTH(24_hoadon.ngaytao) AS thang'),
+                DB::raw('YEAR(24_hoadon.ngaytao) AS nam')
+            ])
+            ->when($dotphat, function ($query, $dotphat) {
+                return $query->where('24_hoadon.id_dotphat', $dotphat);
+            })
+            ->when($mahoadon, function ($query, $mahoadon) {
+                return $query->where('24_hoadon.mahoadon', $mahoadon);
+            })
+            ->when($loai, function ($query, $loai) {
+                return $query->where('tt_sanpham.id_loai', $loai);
+            })
+            ->when($size, function ($query, $size) {
+                return $query->where('tt_sanpham.id_size', $size);
+            })
+            ->when($nsx, function ($query, $nsx) {
+                return $query->where('tt_sanpham.id_nhasanxuat', $nsx);
+            })
+            ->when($cccd, function ($query, $cccd) {
+                return $query->where('24_thongtincanhan.cccd', $cccd);
+            })
+            ->when($start && $end && $start == $end, function ($query) use ($start) {
+                return $query->whereDate('24_hoadon.ngaytao', '=', $start);
+            })
+            ->when($start && $end && $start != $end, function ($query) use ($start, $end) {
+                return $query->whereBetween('24_hoadon.ngaytao', [$start, $end]);
+            })
+            ->when($start && !$end, function ($query, $start) {
+                return $query->where('24_hoadon.ngaytao', '>=', $start);
+            })
+            ->when($end && !$start, function ($query, $end) {
             return $query->where('24_hoadon.ngaytao', '<=', $end);
-        })
-        ->when(isset($trangthai) && $trangthai != -1, function ($query) use ($trangthai) {
-            return $query->where('24_hoadon.trangthai', $trangthai);
-        });
+            })
+            ->when(isset($trangthai) && $trangthai != -1, function ($query) use ($trangthai) {
+                return $query->where('24_hoadon.trangthai', $trangthai);
+            });
         $data= $ds_thongke_phat;
         return $data;
     }
@@ -11073,7 +13628,7 @@ function xoahinhhhsnh(Request $request){
             $start .= ' 00:00:00';
         }
         if (!empty($end)) {
-            $end .= ' 23:59:59';
+    $end .= ' 23:59:59';
         }
 
         // Lấy tên đợt phát nếu dotphat không phải là 0
@@ -11145,7 +13700,7 @@ function xoahinhhhsnh(Request $request){
                 24_danhmuc_size.id AS id_size,
                 24_loaisanpham.loai AS ten_loai,
                 24_loaisanpham.id AS id_loai
-            FROM 24_danhmuc_sanpham
+    FROM 24_danhmuc_sanpham
             INNER JOIN 24_danhmuc_nhasanxuat ON 24_danhmuc_sanpham.id_nhasanxuat = 24_danhmuc_nhasanxuat.id
             INNER JOIN 24_danhmuc_size ON 24_danhmuc_sanpham.id_size = 24_danhmuc_size.id
             INNER JOIN 24_loaisanpham ON 24_danhmuc_sanpham.id_loai = 24_loaisanpham.id) AS tt_sanpham'), '24_hoadon.id_sanpham', '=', 'tt_sanpham.id')
@@ -11225,4 +13780,519 @@ function xoahinhhhsnh(Request $request){
             'noidung' => $noidung
         ]);
     }
+    //View đợt phát
+    function quanlydotphat(){
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view('user_24.admin24.manage.quanlydongphuc.quanlydotphat',[
+                'menu' =>$this->sidebar(),
+            ]);
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    function ds_dotphat(){
+        $sql = DB::table(DB::raw("
+                (
+                    SELECT
+                        *,
+                        ROW_NUMBER() OVER (ORDER BY id) AS stt,
+                        DATE(create_at) AS formatted_create_at
+                    FROM 24_danhmuc_dotphat
+                ) as t
+            "))
+            ->select("*")
+            ->get();
+
+        $json_data['data'] = $sql;
+        $res = json_encode($json_data);
+        return $res;
+    }
+    function them_dot(Request $request) {
+        $name = $request->input('name');
+        $time = $request->input('time');
+        $id_manhinh = $request->input('id_manhinh');
+        $id_chucnang = $request->input('id_chucnang');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $status = 1;
+        $noidung = "ins_1";
+        $kieudulieu="text";
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            try{
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        'name' => 'required','regex:/^[a-zA-Z0-9]+$/',
+                    ],
+                    [
+                        'name.required' => 'Vui lòng nhập tên đợt!!',
+                        'name.regex' => 'Tên đợt chỉ gồm chữ cái và số!!',
+                    ]
+                );
+
+                if ($validator->fails()) {
+                    $noidung = response()->json($validator->errors());
+                    $kieudulieu = "json";
+                    $status = 0;
+                }else{
+                    $sql=DB::table('24_danhmuc_dotphat')->insert([
+                        'dot' => $name,
+                        'trangthai' => 0
+                    ]);
+                }
+            } catch (Exception $e) {
+                $status=0;
+                $noidung="ins_0";
+            }
+
+        }else{
+            $status=0;
+            $noidung="rol_2";
+        }
+        return [
+    'status' => $status,
+            'noidung' => $noidung,
+            'kieudulieu' => $kieudulieu,
+        ];
+    }
+    function change_trangthai_dotphat($id,$trangthai,Request $request) {
+        $time = $request->input('time');
+        $id_manhinh = $request->input('id_manhinh');
+        $id_chucnang = $request->input('id_chucnang');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $status = 1;
+        $noidung = "upd_1";
+        $cleanHtml = (int)Purifier::clean($trangthai);
+        if($cleanHtml==1){
+            $cleanHtml=0;
+        }else{
+            $cleanHtml=1;
+        }
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            try{
+                $sql=DB::table('24_danhmuc_dotphat')->where('id',$id)->update([
+                    'trangthai' => $cleanHtml
+                ]);
+            } catch (Exception $e) {
+                $status=0;
+                $noidung="upd_0";
+            }
+        }else{
+            $status=0;
+            $noidung="rol_2";
+        }
+        return [
+            'status' => $status,
+            'noidung' => $noidung,
+        ];
+    }
+    function change_dot(Request $request) {
+        $time = $request->input('time');
+
+        $id = $request->input('id');
+        $value = $request->input('value');
+        $trangthai = $request->input('trangthai');
+
+        $id_manhinh = $request->input('id_manhinh');
+        $id_chucnang = $request->input('id_chucnang');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $status = 1;
+        $noidung = "upd_1";
+        $kieudulieu="text";
+        $clean_val = Purifier::clean($value);
+        // $clean_val = $value;
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            try{
+                $rules = [];//Điều kiện validate
+                $messages = [];//Thông báo của validate
+                switch ($trangthai) {
+                    case 'dot':
+                        // Trường hợp validate tên đợt
+                        $rules['clean_val'] = 'required|regex:/^[\p{L}\p{N}\s]+$/u';
+                        // $rules['value'] = 'required';
+                        $messages = [
+                            'clean_val.required' => 'Vui lòng nhập tên đợt!!',
+                            'clean_val.regex' => 'Tên đợt chỉ bao gồm số, chữ cái và khoảng trắng!!',
+                        ];
+                        break;
+
+                    case 'create_at':
+                        // Trường hợp validate ngày tạo
+                        $rules['clean_val'] = 'required|date';
+                        $messages = [
+                            'clean_val.required' => 'Ngày tạo không hợp lệ',
+                            'clean_val.date' => 'Định dạng ngày không đúng',
+                        ];
+                        break;
+                    default:
+                        break;
+                }
+                $validator = Validator::make(
+                    ['clean_val' => $clean_val],
+                    $rules,
+                    $messages
+                );
+                if ($validator->fails()) {
+                    return response()->json([
+                        'status' => 0,
+                        'noidung' => $validator->errors()->first(),
+                        'kieudulieu' => 'json',
+                    ]);
+                }else{
+                    $sql=DB::table('24_danhmuc_dotphat')->where('id',$id)->update([
+                        $trangthai => $clean_val
+                    ]);
+                }
+            } catch (Exception $e) {
+                $status=0;
+                $noidung="upd_0";
+            }
+        }else{
+            $status=0;
+            $noidung="rol_2";
+        }
+        return [
+            'status' => $status,
+            'noidung' => $noidung,
+            'kieudulieu' => $kieudulieu,
+            // 'value' => $value,
+            // 'clean_val' => $clean_val,
+        ];
+    }
+    function change_stt(Request $request) {
+        $id = $request->input('id');
+        $value = $request->input('value');
+
+        $time = $request->input('time');
+        $id_manhinh = $request->input('id_manhinh');
+        $id_chucnang = $request->input('id_chucnang');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+        $status = 1;
+        $noidung = "upd_1";
+        $kieudulieu="text";
+        // Kiểm tra quyền
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            try {
+                $validator = Validator::make(
+                    ['value' => $value],
+                    ['value' => 'required|integer|min:0'],
+                    [
+                        'value.required' => 'STT ưu tiên là 1 số lớn hơn hoặc bằng 0!!',
+                        'value.integer' => 'STT ưu tiên là 1 số lớn hơn hoặc bằng 0!!',
+                        'value.min' => 'STT ưu tiên là 1 số lớn hơn hoặc bằng 0!!',
+                    ]
+                );
+                if ($validator->fails()) {
+                    $noidung = $validator->errors()->first();
+                    $status = 0;
+                    $kieudulieu="json";
+                } else {
+                    $sql = DB::table('24_kho')->where('id', $id)->update([
+                        'stt' => $value
+                    ]);
+                }
+            } catch (Exception $e) {
+                $status = 0;
+                $noidung = "upd_0";
+            }
+        } else {
+            $status = 0;
+            $noidung = "rol_2";
+        }
+
+        return [
+            'status' => $status,
+            'noidung' => $noidung,
+            'kieudulieu' => $kieudulieu,
+        ];
+    }
+    //Kho
+    function quanlykho(){
+        $url = URL::current();
+    $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view('user_24.admin24.manage.quanlydongphuc.quanlykho',[
+                'menu' =>$this->sidebar(),
+            ]);
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+    //Danh sách đồng phục trong kho
+    function ds_kho(Request $request){
+        $dotnhap = $request->input('dotnhap');
+        $trangthai = $request->input('trangthai');
+        $loai = $request->input('loai');
+        $size = $request->input('size');
+        $nsx = $request->input('nsx');
+
+        $data = DB::table('24_kho')
+            ->select(
+                DB::raw('ROW_NUMBER() OVER(ORDER BY 24_kho.id) as stt'), // Sử dụng ROW_NUMBER để tạo cột stt
+                // DB::raw('SUM(24_kho.soluongton) OVER(PARTITION BY 24_kho.idsanpham) as total_soluongton'), // Tổng số lượng tồn theo idsanpham
+                '24_danhmuc_size.size as size',
+                '24_kho.id as id',
+                '24_loaisanpham.loai as loai',
+                '24_danhmuc_nhasanxuat.nhasanxuat as nsx',
+                '24_kho.soluongton as slton',
+                '24_kho.trangthai as trangthai',
+                '24_dotnhap.dotnhap as dotnhap',
+                '24_dotnhap.id as id_dotnhap'
+            )
+            ->join('24_danhmuc_sanpham', '24_kho.idsanpham', '=', '24_danhmuc_sanpham.id')
+            ->join('24_dotnhap', '24_kho.id_dotnhap', '=', '24_dotnhap.id')
+            ->join('24_loaisanpham', '24_danhmuc_sanpham.id_loai', '=', '24_loaisanpham.id')
+            ->join('24_danhmuc_size', '24_danhmuc_sanpham.id_size', '=', '24_danhmuc_size.id')
+            ->join('24_danhmuc_nhasanxuat', '24_danhmuc_sanpham.id_nhasanxuat', '=', '24_danhmuc_nhasanxuat.id')
+            ->when($dotnhap, function ($query, $dotnhap) {
+                return $query->where('24_kho.id_dotnhap', $dotnhap);
+            })
+            ->when(isset($trangthai) && $trangthai != -1, function ($query) use ($trangthai) {
+                return $query->where('24_kho.trangthai', $trangthai);
+            })
+            ->when($loai, function ($query, $loai) {
+                return $query->where('24_danhmuc_sanpham.id_loai', $loai);
+            })
+            ->when($size, function ($query, $size) {
+                return $query->where('24_danhmuc_sanpham.id_size', $size);
+            })
+            ->when($nsx, function ($query, $nsx) {
+                return $query->where('24_danhmuc_sanpham.id_nhasanxuat', $nsx);
+            })
+            ->get();
+
+        return response()->json(['data' => $data]);
+    }
+    //đổi trạng thái kho
+    function change_trangthai_kho(Request $request){
+        $time = $request->input('time');
+        $id_manhinh = $request->input('id_manhinh');
+        $id_chucnang = $request->input('id_chucnang');
+        $active = $request->input('active');
+        $id_admin = Auth::guard('loginadmin')->user()->id;
+    $id = $request->input('id');
+        $trangthai = $request->input('trangthai');
+
+        $status = 1;
+        $noidung = "upd_1";
+        $cleanHtml = (int)Purifier::clean($trangthai);
+        if($cleanHtml==1){
+            $cleanHtml=0;
+        }else{
+            $cleanHtml=1;
+        }
+        if ($this->kiemtraquyen($id_admin, $id_manhinh, $id_chucnang, $time, $active) == 1) {
+            try{
+                $sql=DB::table('24_kho')->where('id',$id)->update([
+                    'trangthai' => $cleanHtml
+                ]);
+            } catch (Exception $e) {
+                $status=0;
+                $noidung="upd_0";
+            }
+        }else{
+            $status=0;
+            $noidung="rol_2";
+        }
+        return [
+            'status' => $status,
+            'noidung' => $noidung,
+        ];
+    }
+    function btt_excel_kho(Request $request){
+        $dotnhap = $request->input('dotnhap');
+        $trangthai = $request->input('trangthai');
+        $loai = $request->input('loai');
+        $size = $request->input('size');
+        $nsx = $request->input('nsx');
+
+        $noidung="";
+        $status = 1;
+        $title = 'DanhSachKho_' . date("d-m-Y_H-i-s") . '.xlsx';
+        return Excel::download(new Admin24_DanhSachKho($dotnhap, $trangthai, $loai, $size, $nsx), $title);
+    }
+    //Thống kê kho
+    function thongkekho(){
+        $url = URL::current();
+        $quyen = $this->kiemtraquyen_url($url);
+        if ($quyen == 1) {
+            return view('user_24.admin24.manage.quanlydongphuc.thongkekho',[
+                'menu' =>$this->sidebar(),
+            ]);
+        } else {
+            return view('user_24.admin24.include.404');
+        }
+    }
+
+
+
+
+
+                    //Quản lý Chức năng - Quyền
+
+    function themchucnang(){
+        return view('user_24.admin24.manage.quanlychucnang.themchucnang',[
+            'menu' => $this->sidebar(),
+        ]);
+    }
+    function rasoathososinhvien(){
+        return view('user_24.admin24.manage.quanlynhaphoc.rasoathososinhvien',
+            [
+            'menu' => $this->sidebar(),
+            ]
+        );
+    }
+    function danhmuchososinhvien(){
+        return view('user_24.admin24.manage.quanlynhaphoc.danhmuchososinhvien',
+            [
+            'menu' => $this->sidebar(),
+            ]
+        );
+    }
+    function thongkehososinhvien(){
+        return view('user_24.admin24.manage.quanlynhaphoc.thongkehososinhvien',
+            [
+            'menu' => $this->sidebar(),
+            ]
+        );
+    }
+    function dmhs_danhsach(){
+        $data = DB::select('SELECT * FROM `l_file_list_hssv`');
+        foreach ($data as $index => $item) {
+            $item->stt = $index + 1; // Gán số thứ tự bắt đầu từ 1
+        }
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return $res;
+    }
+    function thongkehs_khoa(){
+        $data0 = new Collection(
+            [
+                'id' => 0,
+                'text' => 'Chọn Khoa',
+                'selected' => 'selected'
+            ]
+        );
+        $data = DB::select('SELECT id, tenkhoa as text FROM `24_khoa`');
+        $data[] = $data0;
+        return $data;
+    } 
+    function thongkehs_lop(){
+        return $this ->load_seclectbox('24_lop','id','malop',0,'Chọn Lớp');
+    }
+    function thongkehs_nganh(){
+        return $this ->load_seclectbox('l_major','id','name_major',0,'Chọn Ngành');
+    }
+    function thongkehs_khoas(){
+        return $this ->load_seclectbox('24_khoas','id','namnhaphoc',0,'Chọn Khóa');
+    }
+    function thongkehs_trangthai(){
+        $data0 = new Collection(
+            [
+                'id' => 0,
+                'text' => 'Chọn Trạng Thái',
+                'selected' => 'selected'
+            ]
+        );
+        $data1 = collect([
+            'id' => 1,
+            'text' => 'Đã nộp'
+        ]);
+        $data2 = collect([
+            'id' => 2,
+            'text' => 'Chưa nộp'
+        ]);
+    
+        $data = collect([$data0, $data1, $data2]);
+        
+        return $data;
+    }
+    function thongkehs_danhsach($idkhoas,$idkhoa, $idnganh, $idlop){
+        $data_hosothisinh = DB::table('24_nhanhoso')->get();
+        $danhmuc_hoso = DB::table('24_danhmuc_hoso')->get();
+        // $danhsachsinhvien = DB::table('24_mssv')
+        // ->join('24_thongtincanhan','24_thongtincanhan.id_taikhoan','24_mssv.id_taikhoan')
+        // ->where('id_lop',$idlop)
+        // ->get(); 
+        $danhsachsinhvien = DB::table('24_mssv')
+        ->join('24_thongtincanhan','24_thongtincanhan.id_taikhoan','24_mssv.id_taikhoan')
+        ->leftjoin('24_khoas', '24_khoas.id',  '24_lop.idkhoas')
+        ->leftjoin('24_khoa', '24_khoa.id',  '24_nganh.idkhoa')
+        ->leftjoin('l_major', 'l_major.id',  '24_lop.idnganh') 
+        ->leftjoin('24_lop', '24_lop.id',  '24_mssv.id_lop')
+        ->where('24_khoas.id',$idkhoas)
+        ->where('24_khoa.id',$idkhoa)
+        ->where('l_major.id',$idnganh)
+        ->where('id_lop',$idlop)
+        ->get();
+        foreach ($danhsachsinhvien as $keysv => $sinhvien) {
+            $sinhvien->stt = $keysv + 1; // Gán số thứ tự bắt đầu từ 1
+            $i=0;
+            foreach ($danhmuc_hoso as $keydm => $danhmuc) {
+                $tenhoso = $danhmuc->id;
+                foreach ($data_hosothisinh as $keyhs => $hososv) {
+                    if($sinhvien->id_taikhoan == $hososv->id_taikhoan && $hososv->id_hoso == $danhmuc->id ){
+                        $sinhvien-> $tenhoso = '<input type="checkbox"  onclick = "return false"  checked style="height:14px">'; 
+                        $i++;
+                        break;
+                    }
+                }
+                if($i > 0){
+                    $i = 0;
+                }else{
+                    $sinhvien-> $tenhoso = '<input type="checkbox"  onclick = "return false"  style="height:14px">';
+                }
+            }
+        }     
+        $tieude[] = array(
+            'title' => 'STT',
+            'data' => 'stt',
+        );
+    
+        $tieude[] = array(
+            'title' => 'MSSV',
+            'data' => 'mssv',
+        );
+        $tieude[] = array(
+            'title' => 'Họ tên',
+            'data' => 'hoten',
+        );
+        $tieude[] = array(
+            'title' => 'CCCD',
+            'data' => 'cccd',
+        );
+        foreach ($danhmuc_hoso as $keydm => $danhmuc) {
+            $col = array(
+                'title' => $danhmuc->hienthi,
+                'data' => $danhmuc->id,
+                'className' => 'dt-center'
+            );
+            $tieude[] =  $col;
+        }
+    
+        $response['columns'] = $tieude;
+        $response['data'] = $danhsachsinhvien;
+    
+        return $response;
+ 
+
+        // Thêm cột số thứ tự
+    
+    
+        foreach ($data as $index => $item) {
+            $item->stt = $index + 1; // Gán số thứ tự bắt đầu từ 1
+        }
+        $json_data['data'] = $data;
+        $res = json_encode($json_data);
+        return $res;
+    }
+
+
 }
+
+
